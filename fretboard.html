@@ -4,46 +4,82 @@
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
 	<script type="text/javascript">
 /* code to handle manipulation */
-jQuery(function() {
-	var gen_fret_boxes = function(size, num_strings){
-	    var tr = "<tr>";
-	    for (var i = 0; i < size; i++){
-		tr += "<td>&nbsp;</td>";
-	    }
-	    tr += "</tr>";
-	    var table = '<table id="fretclone">';
-	    for (var i = 0; i < num_strings; i++) {
-		table += tr;
-	    }
-	    table += "</table>\n";
-	    return table;
-	}
-	$(gen_fret_boxes(16, 6)).insertAfter($('#mainfretboard'));
-	$('#fretclone tr td').toggle(
-	    function(){
-		$(this).css('background-color', '#dda');
-		$(this).css('border-color', '#aa7');
-	    },
-	    function(){
-		$(this).css('background-color', 'transparent');
-		$(this).css('border-color', 'transparent');
+var guitar_strings;
+var gen_fret_boxes = function(size, num_strings){
+    var tr = "<tr>";
+    for (var i = 0; i < size; i++){
+	tr += "<td>&nbsp;</td>";
+    }
+    tr += "</tr>";
+    var table = '<table id="fretclone">';
+    for (var i = 0; i < num_strings; i++) {
+	table += tr;
+    }
+    table += "</table>\n";
+    return table;
+}
+var td_show = function(td){
+    $(td).css('background-color', '#dda');
+    $(td).css('border-color', '#aa7');
+}
+var note_hide = function(td){
+    $(td).css('background-color', 'transparent');
+    $(td).css('border-color', 'transparent');
+}
+var getFretcloneStrings = function(){
+    var board_strings = $('#fretclone tr');
+    var guitarStrings = [[], [], [], [], [], []];
+    for (var i = 0; i < board_strings.length; i++){
+	var children = board_strings[i].children;
+	for (var j = 0; j < children.length; j++){
+	    guitarStrings[i].push({
+		td: children[j],
+		click: function(){ td_show(children[j]); }
 	    });
+	    $(children[j]).click(guitarStrings[i][j].click);
+	}
+    }
+    return guitarStrings;
+};
+var show_notes_string = function(n, notes){
+    if (notes != null){
+	for (var i = 0; i < notes.length; i++){
+	    if (notes[i] != null){
+		td_show(guitar_strings[n][notes[i]].td);
+	    }
+	}
+    }
+}
+var show_chord = function (chord){
+    for(var i = 0; i < chord.length; i++){
+	show_notes_string(i, [chord[i]]);
+    }
+}
+var show_scale = function (scale){
+    for(var i = 0; i < scale.length; i++){
+	if (scale[i] != null){
+	    show_notes_string(i, scale[i]);
+	}
+    }
+}
+jQuery(function() {
+	$(gen_fret_boxes(17, 6)).insertAfter($('#mainfretboard'));
+	guitar_strings = getFretcloneStrings();
+	show_chord([null, 1, null, 2, 3]);
+
+	var a_minor_penta = [[5, 8], [5, 8], [5, 7], [5, 7], [5, 7], [5, 8]];
+	show_scale(a_minor_penta);
+
+	$('#fretclone tr td').toggle(function(){ td_show($(this)); }, function(){ td_hide($(this)); });
 });
 	</script>
 	<style>
-	    /*
-	    ref values:
-	    fretboard - top:20px; left:20px;
-	    fretboard tr td - width:36px; heigh:24px; border:1px;
-	    fretclone - top:5px; left:18px; border-spacing:8px;
-	    fretclone tr td - border:1px; font-size:9px; width: 28px; height: 16px;
-	    */
 	    * { margin:0; padding:0; border-spacing:0; }
 	    body { font-family:Arial,Helvetica,sans-serif; font-size:14px; }
 	    table#mainfretboard { position:absolute; top:50px; left:50px; border:1px solid red; }
 	    table#mainfretboard tr td { border:1px solid black; font-size: 28px; width:46px; height:34px; text-align:center; }
 
-	    table#fretclone { position:absolute; top:30px; left:48px; border-spacing:8px; }
+	    table#fretclone { position:absolute; top:30px; left:-1px; border-spacing:8px; }
 	    table#fretclone tr td { border:1px solid transparent; font-size:18px; font-weight:bold; width:38px; height:26px; text-align:center; background-color:transparent; z-index:1; }
 	    table#fretclone tr td:hover { cursor:pointer; }
 	</style>
