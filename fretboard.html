@@ -4,7 +4,7 @@
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
 	<script type="text/javascript">
 /* code to handle manipulation */
-var guitar_strings;
+var GUITAR_STRINGS;
 var gen_fret_boxes = function(size, num_strings){
     var tr = "<tr>";
     for (var i = 0; i < size; i++){
@@ -18,13 +18,20 @@ var gen_fret_boxes = function(size, num_strings){
     table += "</table>\n";
     return table;
 }
-var td_show = function(td){
-    $(td).css('background-color', '#dda');
-    $(td).css('border-color', '#aa7');
+var td_paint = function(td){
+    var color = arguments.length > 1 ? arguments[1] : "normal";
+    var td = $(td);
+    switch(color){
+	case "transparent":
+	    td.css('background-color', 'transparent');
+	    td.css('border-color', 'transparent'); break;
+	default:
+	    td.css('background-color', '#dda');
+	    td.css('border-color', '#aa7'); break;
+    }
 }
-var td_hide = function(td){
-    $(td).css('background-color', 'transparent');
-    $(td).css('border-color', 'transparent');
+var td_clear = function(td){
+    td_paint(td, 'transparent');
 }
 var getFretcloneStrings = function(){
     var board_strings = $('#fretclone tr');
@@ -32,11 +39,17 @@ var getFretcloneStrings = function(){
     for (var i = 0; i < board_strings.length; i++){
 	var children = board_strings[i].children;
 	for (var j = 0; j < children.length; j++){
-	    guitarStrings[i].push({
+	    var box = {
 		td: children[j],
-		click: function(){ td_show(children[j]); }
-	    });
-	    $(children[j]).click(guitarStrings[i][j].click);
+		paint: function(){
+		    td_paint(this);
+		},
+		clear: function(){
+		    td_clear(this);
+		},
+	    }
+	    guitarStrings[i].push(box);
+	    $(children[j]).toggle(box.paint, box.clear);
 	}
     }
     return guitarStrings;
@@ -45,7 +58,7 @@ var show_notes_string = function(n, notes){
     if (notes != null){
 	for (var i = 0; i < notes.length; i++){
 	    if (notes[i] != null){
-		td_show(guitar_strings[n][notes[i]].td);
+		td_paint(GUITAR_STRINGS[n][notes[i]].td);
 	    }
 	}
     }
@@ -63,14 +76,13 @@ var show_scale = function (scale){
     }
 }
 jQuery(function() {
-	$(gen_fret_boxes(17, 6)).insertAfter($('#mainfretboard'));
-	guitar_strings = getFretcloneStrings();
+	$(gen_fret_boxes(18, 6)).insertAfter($('#mainfretboard'));
+	GUITAR_STRINGS = getFretcloneStrings();
 	show_chord([null, 1, null, 2, 3]);
 
 	var a_minor_penta = [[5, 8], [5, 8], [5, 7], [5, 7], [5, 7], [5, 8]];
 	show_scale(a_minor_penta);
 
-	$('#fretclone tr td').toggle(function(){ td_show($(this)); }, function(){ td_hide($(this)); });
 });
 	</script>
 	<style>
@@ -87,11 +99,11 @@ jQuery(function() {
     <body>
 	<div id="main">
 	    <table id="mainfretboard">
-		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&#x25cf;</td></tr>
-		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-		    <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td></tr>
+		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
 		</tr>
 	    </table>
 	</div>
