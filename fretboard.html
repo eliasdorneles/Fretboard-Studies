@@ -12,8 +12,10 @@
 	    table#fretclone { position:absolute; top:30px; left:-1px; border-spacing:8px; }
 	    table#fretclone tr td { border:1px solid transparent; background-color:transparent; font-size:18px; font-weight:bold; width:38px; height:26px; text-align:center; z-index:1; }
 	    table#fretclone tr td:hover { cursor:pointer; }
-	    .red    { background-color:#e44 !important; border-color:#a33 !important; }
-	    .coffee { background-color:#dda !important; border-color:#aa7 !important; }
+	    .red    { background-color:#dd4444 !important; border-color:#aa3333 !important; }
+	    .orange { background-color:#ffbb67 !important; border-color:#f11f00 !important; }
+	    .green  { background-color:#67ad38 !important; border-color:#597b46 !important; }
+	    .coffee { background-color:#ddddaa !important; border-color:#aaaa77 !important; }
 	    .transparent { background-color:transparent !important; border-color:transparent !important; }
 	    input.color_button { width:40px; }
 	    div#main { height: 250px; border:1px solid yellow; }
@@ -31,8 +33,10 @@
 	    </table>
 	</div>
 	<div id="form_controls">
-	    <input type="button" class="color_button red"    value="&nbsp;" onclick="COLOR='red'" />
-	    <input type="button" class="color_button coffee" value="&nbsp;" onclick="COLOR='coffee'" />
+	    <input type="button" value="&nbsp;" class="color_button red"    onclick="COLOR='red'" />
+	    <input type="button" value="&nbsp;" class="color_button coffee" onclick="COLOR='coffee'" />
+	    <input type="button" value="&nbsp;" class="color_button orange" onclick="COLOR='green'" />
+	    <input type="button" value="&nbsp;" class="color_button green"  onclick="COLOR='green'" />
 	</div>
     </body>
 </html>
