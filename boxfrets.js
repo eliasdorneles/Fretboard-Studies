@@ -75,7 +75,7 @@ var show_scale = function (scale){
     }
 }
 jQuery(function() {
-	$(gen_fret_boxes(18, 6)).insertAfter($('#mainfretboard'));
+	$(gen_fret_boxes(19, 6)).insertAfter($('#mainfretboard'));
 	GUITAR_STRINGS = getFretcloneStrings();
 
 	// show diagram of a C Major chord
