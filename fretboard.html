@@ -19,13 +19,14 @@
 	    .transparent { background-color:transparent !important; border-color:transparent !important; }
 	    input.color_button { width:40px; }
 	    div#main { height:280px; margin:10px; }
-	    #diagram_title { margin:15px; }
+	    /*#diagram_title { margin:15px; }*/
+	    #diagram_title { font-size:25px; font-weight:bold; margin:15px; display:block; padding:4px; border:0; width:300px; } 
 	    #form_controls { padding:10px; }
 	    @media print { #form_controls { display:none; } }
 	</style>
     </head>
     <body>
-	<h1 id="diagram_title" contenteditable="true">Untitled</h1>
+	<input id="diagram_title" type="text" value="Click to change title..." />
 	<div id="main">
 	    <table id="mainfretboard">
 		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>

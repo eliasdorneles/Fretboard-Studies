@@ -68,7 +68,7 @@ var create_link_from_fretboard = function(){
     }
     href += '#';
     href += "strings=" + uri_diagram_repr(GUITAR_STRINGS);
-    href += "&diagram_title=" + escape($('#diagram_title').text());
+    href += "&diagram_title=" + escape($('#diagram_title').val());
     return href;
 }
 // handle url parameters
@@ -163,7 +163,7 @@ jQuery(function() {
 	    fill_from_repr(url_params['strings']);
 	}
 	if (is_defined(url_params['diagram_title'])){
-	    $('#diagram_title').text(unescape(url_params['diagram_title']));
+	    $('#diagram_title').val(unescape(url_params['diagram_title']));
 	}
 	var update_link = function(){
 	    $('#linkthis').attr('href', create_link_from_fretboard());
@@ -172,10 +172,8 @@ jQuery(function() {
 	// update link at every click on a note...
 	$('#fretclone tr td').click(update_link);
 	// or when changes are made to the title
-	$('#diagram_title').mouseout(update_link);
-	$('#diagram_title').keydown(update_link);
-	$('#diagram_title').keyup(update_link);
-	$('#diagram_title').keypress(update_link);
-	$('#diagram_title').focus(update_link);
-	$('#diagram_title').blur(update_link);
+	$('#diagram_title').change(update_link)
+	    .keyup(update_link)
+	    .keydown(update_link);
+	$('#diagram_title').click(function(){ this.select(); });
 });
