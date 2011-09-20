@@ -68,7 +68,7 @@ var create_link_from_fretboard = function(){
     }
     href += '#';
     href += "strings=" + uri_diagram_repr(GUITAR_STRINGS);
-    href += "&diagram_title=" + $('#diagram_title').text();
+    href += "&diagram_title=" + escape($('#diagram_title').text());
     return href;
 }
 // handle url parameters
@@ -162,8 +162,8 @@ jQuery(function() {
 	if (is_defined(url_params['strings'])){
 	    fill_from_repr(url_params['strings']);
 	}
-	if (is_defined(url_params['title'])){
-	    $('#diagram_title').text(url_params['title']);
+	if (is_defined(url_params['diagram_title'])){
+	    $('#diagram_title').text(unescape(url_params['diagram_title']));
 	}
 	var update_link = function(){
 	    $('#linkthis').attr('href', create_link_from_fretboard());
