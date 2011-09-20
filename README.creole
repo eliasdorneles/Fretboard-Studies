@@ -1,7 +1,10 @@
 = Fretboard Studies =
 
-This tool (when it is ready) shall help the guitar student to study the guitar fretboard.
-It should enable the user to draw diagrams of scales and chords, and check if they are correct.
-It should also have a game mode, when the user can test and improve her habilities in spotting notes, having a feedback.
+This tool aims to help you to learn the guitar fretboard.
+You can use it to draw diagrams of scales and chords, using the color palette to highlight or differentiate some notes from other.
 
-If you want to help, or have ideas or suggestions, drop me an email: eliasdorneles (at) gmail com
+It's planned to have a game mode, when you could test and improve you habilities in spotting notes, chords, or scales, with a quick feedback.
+
+If you want to help, or have ideas or suggestions, feel free to drop me an email: eliasdorneles (at) gmail com
+
+See it in action at: http://eliasdorneles.github.com/Fretboard-Studies/
