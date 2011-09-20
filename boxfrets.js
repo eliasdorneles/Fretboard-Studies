@@ -169,7 +169,13 @@ jQuery(function() {
 	    $('#linkthis').attr('href', create_link_from_fretboard());
 	}
 	update_link();
-	// update link at every click on a note, and mouseout from title
+	// update link at every click on a note...
 	$('#fretclone tr td').click(update_link);
+	// or when changes are made to the title
 	$('#diagram_title').mouseout(update_link);
+	$('#diagram_title').keydown(update_link);
+	$('#diagram_title').keyup(update_link);
+	$('#diagram_title').keypress(update_link);
+	$('#diagram_title').focus(update_link);
+	$('#diagram_title').blur(update_link);
 });
