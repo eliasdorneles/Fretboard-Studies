@@ -43,6 +43,10 @@ var note_paint = function(n_string, note){
 }
 /*
  * generate representation of the diagram for url
+ *
+ * the ';'s separate strings, the commas separate
+ * notes definition, the ':'s separate note number
+ * from note color.
  */
 var uri_diagram_repr = function(guitarStrings){
     var arr = $.map(guitarStrings, function (n, i){
@@ -64,8 +68,7 @@ var create_link_from_fretboard = function(){
     }
     href += '#';
     href += "strings=" + uri_diagram_repr(GUITAR_STRINGS);
-    href += "&diagram_title=" + $('#diagram_title').text()
-    alert(href);
+    href += "&diagram_title=" + $('#diagram_title').text();
     return href;
 }
 // handle url parameters
@@ -155,5 +158,18 @@ jQuery(function() {
 	var a_minor_penta = [[5, 8], [5, 8], [5, 7], [5, 7], [5, 7], [5, 8]];
 	// show diagram of an A minor penta scale form
 	//show_scale(a_minor_penta);
-	fill_from_repr(get_url_parameters()['strings']);
+	var url_params = get_url_parameters();
+	if (is_defined(url_params['strings'])){
+	    fill_from_repr(url_params['strings']);
+	}
+	if (is_defined(url_params['title'])){
+	    $('#diagram_title').text(url_params['title']);
+	}
+	var update_link = function(){
+	    $('#linkthis').attr('href', create_link_from_fretboard());
+	}
+	update_link();
+	// update link at every click on a note, and mouseout from title
+	$('#fretclone tr td').click(update_link);
+	$('#diagram_title').mouseout(update_link);
 });

@@ -19,6 +19,7 @@
 	    .transparent { background-color:transparent !important; border-color:transparent !important; }
 	    input.color_button { width:40px; }
 	    div#main { height: 250px; border:1px solid yellow; }
+	    #form_controls { padding:10px; }
 	    @media print { #form_controls { display:none; } }
 	</style>
     </head>
@@ -39,8 +40,8 @@
 	    <input type="button" value="&nbsp;" class="color_button red"    onclick="COLOR='red'" />
 	    <input type="button" value="&nbsp;" class="color_button green"  onclick="COLOR='green'" />
 	    <input type="button" value="&nbsp;" class="color_button orange" onclick="COLOR='orange'" />
-	    <input type="button" value="link" onclick="create_link_from_fretboard()" />
-	    <input type="button" value="urlp" onclick="fill_from_repr(get_url_parameters()['strings']);" />
+	    <a id="linkthis" href="#">Link</a><br />
+	    <a href="http://twitter.com/share" class="twitter-share-button" data-count="none">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
 	</div>
     </body>
 </html>
