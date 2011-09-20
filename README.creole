@@ -7,8 +7,9 @@ You can use it to draw diagrams of scales and chords, using colors to highlight 
 See it in action at: http://eliasdorneles.github.com/Fretboard-Studies/
 
 Every diagram is linkable, so you can give the diagram a title and share the link with your friends (or students, maybe).
-Here is an example, a diagram of an A minor pentatonic scale in the first position:
+Here are some examples:
 
-http://eliasdorneles.github.com/Fretboard-Studies/#strings=5:2,8:0;5:0,8:0;5:0,7:0;5:0,7:2;5:0,7:0;5:2,8:0&diagram_title=A minor pentatonic
+* [[http://eliasdorneles.github.com/Fretboard-Studies/#strings=5:2,8:0;5:0,8:0;5:0,7:0;5:0,7:2;5:0,7:0;5:2,8:0&diagram_title=A+minor+pentatonic|A minor pentatonic scale]]
+* [[http://eliasdorneles.github.com/Fretboard-Studies/#strings=5:0,8:2;5:0,8:0;5:2,7:0;5:0,7:0;5:0,7:0;5:0,8:2&diagram_title=C+major+pentatonic|C major pentatonic scale]]
 
 If you want to help, or have ideas or suggestions, feel free to drop me an email: eliasdorneles (at) gmail com
