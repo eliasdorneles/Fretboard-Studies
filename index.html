@@ -174,18 +174,24 @@ jQuery(function() {
 	    $('#linkthis').attr('href', create_link_from_fretboard());
 	}
 	update_link();
-	// update link at every click on a note, and mouseout from title
+	// update link at every click on a note...
 	$('#fretclone tr td').click(update_link);
+	// or when changes are made to the title
 	$('#diagram_title').mouseout(update_link);
+	$('#diagram_title').keydown(update_link);
+	$('#diagram_title').keyup(update_link);
+	$('#diagram_title').keypress(update_link);
+	$('#diagram_title').focus(update_link);
+	$('#diagram_title').blur(update_link);
 });
 </script>
 	<style>
 	    * { margin:0; padding:0; border-spacing:0; }
 	    body { font-family:Arial,Helvetica,sans-serif; font-size:14px; }
-	    table#mainfretboard { position:absolute; top:50px; left:50px; border:1px solid red; }
+	    table#mainfretboard { position:absolute; top:100px; left:50px; border:1px solid red; }
 	    table#mainfretboard tr td { border:1px solid black; font-size: 28px; width:46px; height:34px; text-align:center; }
 
-	    table#fretclone { position:absolute; top:30px; left:-1px; border-spacing:8px; }
+	    table#fretclone { position:absolute; top:80px; left:-1px; border-spacing:8px; }
 	    table#fretclone tr td { border:1px solid transparent; background-color:transparent; font-size:18px; font-weight:bold; width:38px; height:26px; text-align:center; z-index:1; }
 	    table#fretclone tr td:hover { cursor:pointer; border:1px solid black !important; }
 	    .red    { background-color:#dd4444 !important; border-color:#aa3333 !important; }
@@ -194,7 +200,8 @@ jQuery(function() {
 	    .coffee { background-color:#ddddaa !important; border-color:#aaaa77 !important; }
 	    .transparent { background-color:transparent !important; border-color:transparent !important; }
 	    input.color_button { width:40px; }
-	    div#main { height: 250px; border:1px solid yellow; }
+	    div#main { height:280px; margin:10px; }
+	    #diagram_title { margin:15px; }
 	    #form_controls { padding:10px; }
 	    @media print { #form_controls { display:none; } }
 	</style>
@@ -215,8 +222,8 @@ jQuery(function() {
 	    <input type="button" value="&nbsp;" class="color_button coffee" onclick="COLOR='coffee'" />
 	    <input type="button" value="&nbsp;" class="color_button red"    onclick="COLOR='red'" />
 	    <input type="button" value="&nbsp;" class="color_button green"  onclick="COLOR='green'" />
-	    <input type="button" value="&nbsp;" class="color_button orange" onclick="COLOR='orange'" />
-	    <a id="linkthis" href="#">Link</a><br />
+	    <input type="button" value="&nbsp;" class="color_button orange" onclick="COLOR='orange'" /><br />
+	    <a id="linkthis" href="#">Link to this diagram</a><br />
 	    <a href="http://twitter.com/share" class="twitter-share-button" data-count="none">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
 	</div>
     </body>
