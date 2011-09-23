@@ -22,6 +22,7 @@
 	    /*#diagram_title { margin:15px; }*/
 	    #diagram_title { font-size:25px; font-weight:bold; margin:15px; display:block; padding:4px; border:0; width:300px; } 
 	    #form_controls { padding:10px; }
+	    #checkanswer { display:none; }
 	    @media print { #form_controls { display:none; } }
 	</style>
     </head>
@@ -38,11 +39,15 @@
 	    </table>
 	</div>
 	<div id="form_controls">
-	    <input type="button" value="&nbsp;" class="color_button coffee" onclick="COLOR='coffee'" />
-	    <input type="button" value="&nbsp;" class="color_button red"    onclick="COLOR='red'" />
-	    <input type="button" value="&nbsp;" class="color_button green"  onclick="COLOR='green'" />
-	    <input type="button" value="&nbsp;" class="color_button orange" onclick="COLOR='orange'" /><br />
+	    <div id="colorchooser">
+		<input type="button" value="&nbsp;" class="color_button coffee" onclick="COLOR='coffee'" />
+		<input type="button" value="&nbsp;" class="color_button green"  onclick="COLOR='green'" />
+		<input type="button" value="&nbsp;" class="color_button orange" onclick="COLOR='orange'" /><br />
+	    </div>
+	    <input type="button" id="checkanswer" value="Check answer!" />
+	    <!-- input type="button" id="clean" value="Try again!" / -->
 	    <a id="linkthis" href="#">Link to this diagram</a><br />
+	    <a id="linkquiz" href="#">Link to a quiz for this diagram</a><br />
 	</div>
     </body>
 </html>

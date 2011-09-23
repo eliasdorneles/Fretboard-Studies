@@ -148,6 +148,27 @@ var show_scale = function (scale){
 	}
     }
 }
+var check_answers = function(a_repr) {
+    var a_rep = a_repr.split(';');
+    for(var i = 0; i < a_rep.length; i++){
+	if (is_defined(a_rep[i]) && a_rep[i] != ""){
+	    var marked_notes = $.map(a_rep[i].split(","), function (e, index){
+	        return [e.split(":")[0]];
+	    });
+	    for (var j = 0; j < GUITAR_STRINGS[i].length; j++){
+		if ($.inArray(j.toString(), marked_notes) >= 0){
+		    var color = is_painted(GUITAR_STRINGS[i][j].td) ? "green" : "orange";
+		    note_paint(i, [j, color]);
+		} else {
+		    if (is_painted(GUITAR_STRINGS[i][j].td)){
+			// show wrong notes in red
+			note_paint(i, [j, "red"]);
+		    }
+		}
+	    }
+	}
+    }
+}
 jQuery(function() {
 	$(gen_fret_boxes(19, 6)).insertAfter($('#mainfretboard'));
 	GUITAR_STRINGS = getFretcloneStrings();
@@ -159,14 +180,24 @@ jQuery(function() {
 	// show diagram of an A minor penta scale form
 	//show_scale(a_minor_penta);
 	var url_params = get_url_parameters();
-	if (is_defined(url_params['strings'])){
-	    fill_from_repr(url_params['strings']);
-	}
 	if (is_defined(url_params['diagram_title'])){
 	    $('#diagram_title').val(unescape(url_params['diagram_title']));
 	}
+	if (is_defined(url_params['strings'])){
+	    if (is_defined(url_params['q']) && url_params['q'] == 'y'){
+		COLOR = "coffee";
+		$('#checkanswer').click(function(){
+		    check_answers(url_params['strings']);
+		});
+		$('#colorchooser').hide();
+		$('#checkanswer').show();
+	    } else {
+		fill_from_repr(url_params['strings']);
+	    }
+	}
 	var update_link = function(){
 	    $('#linkthis').attr('href', create_link_from_fretboard());
+	    $('#linkquiz').attr('href', create_link_from_fretboard() + "&q=y");
 	}
 	update_link();
 	// update link at every click on a note...
