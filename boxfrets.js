@@ -86,11 +86,16 @@ function get_url_parameters(){
 }
 function fill_from_repr(repr){
     var a_rep = repr.split(';');
+    var match_color = arguments.length > 1 ? arguments[1] : null;
     for(var i = 0; i < a_rep.length; i++){
 	if (is_defined(a_rep[i]) && a_rep[i] != ""){
 	    var par = $.map(a_rep[i].split(","), function (e, index){
 		var a = e.split(':');
-		return [[a[0], POSSIBLE_COLORS[a[1]]]];
+		var color = POSSIBLE_COLORS[a[1]];
+		if (match_color != null && color != match_color){
+		    return null;
+		}
+		return [[a[0], color]];
 	    });
 	    show_notes_string(i, par);
 	}
@@ -191,6 +196,7 @@ jQuery(function() {
 		});
 		$('#colorchooser').hide();
 		$('#checkanswer').show();
+		fill_from_repr(url_params['strings'], "green");
 	    } else {
 		fill_from_repr(url_params['strings']);
 	    }
