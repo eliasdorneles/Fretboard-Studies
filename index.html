@@ -91,11 +91,16 @@ function get_url_parameters(){
 }
 function fill_from_repr(repr){
     var a_rep = repr.split(';');
+    var match_color = arguments.length > 1 ? arguments[1] : null;
     for(var i = 0; i < a_rep.length; i++){
 	if (is_defined(a_rep[i]) && a_rep[i] != ""){
 	    var par = $.map(a_rep[i].split(","), function (e, index){
 		var a = e.split(':');
-		return [[a[0], POSSIBLE_COLORS[a[1]]]];
+		var color = POSSIBLE_COLORS[a[1]];
+		if (match_color != null && color != match_color){
+		    return null;
+		}
+		return [[a[0], color]];
 	    });
 	    show_notes_string(i, par);
 	}
@@ -196,6 +201,7 @@ jQuery(function() {
 		});
 		$('#colorchooser').hide();
 		$('#checkanswer').show();
+		//fill_from_repr(url_params['strings'], "green");
 	    } else {
 		fill_from_repr(url_params['strings']);
 	    }
@@ -221,17 +227,17 @@ jQuery(function() {
 	    table#mainfretboard tr td { border:1px solid black; font-size: 28px; width:46px; height:34px; text-align:center; }
 
 	    table#fretclone { position:absolute; top:80px; left:-1px; border-spacing:8px; }
-	    table#fretclone tr td { border:1px solid transparent; background-color:transparent; font-size:18px; font-weight:bold; width:38px; height:26px; text-align:center; z-index:1; }
-	    table#fretclone tr td:hover { cursor:pointer; border:1px solid black !important; }
+	    table#fretclone tr td { border:2px solid transparent; background-color:transparent; font-size:18px; font-weight:bold; width:36px; height:26px; text-align:center; z-index:1; border-radius: 5px; }
+	    table#fretclone tr td:hover { cursor:pointer; border-color: black !important; border-style: dotted !important; }
 	    .red    { background-color:#dd4444 !important; border-color:#aa3333 !important; }
 	    .orange { background-color:#ffbb67 !important; border-color:#f11f00 !important; }
-	    .green  { background-color:#67ad38 !important; border-color:#597b46 !important; }
-	    .coffee { background-color:#ddddaa !important; border-color:#aaaa77 !important; }
+	    .green  { background-color:#669999 !important; border-color:#003333 !important; }
+	    .coffee { background-color:#DAC582 !important; border-color:#AB8860 !important; }
 	    .transparent { background-color:transparent !important; border-color:transparent !important; }
 	    input.color_button { width:40px; }
 	    div#main { height:280px; margin:10px; }
 	    /*#diagram_title { margin:15px; }*/
-	    #diagram_title { font-size:25px; font-weight:bold; margin:15px; display:block; padding:4px; border:0; width:300px; } 
+	    #diagram_title { font-size:25px; font-weight:bold; margin:15px; display:block; padding:4px; border:0; width:100%; } 
 	    #form_controls { padding:10px; }
 	    #checkanswer { display:none; }
 	    @media print { #form_controls { display:none; } }
@@ -255,7 +261,7 @@ jQuery(function() {
 		<input type="button" value="&nbsp;" class="color_button green"  onclick="COLOR='green'" />
 		<input type="button" value="&nbsp;" class="color_button orange" onclick="COLOR='orange'" /><br />
 	    </div>
-	    <input type="button" id="checkanswer" value="Check answer!" />
+	    <input type="button" id="checkanswer" value="Check answer!" /><br />
 	    <!-- input type="button" id="clean" value="Try again!" / -->
 	    <a id="linkthis" href="#">Link to this diagram</a><br />
 	    <a id="linkquiz" href="#">Link to a quiz for this diagram</a><br />
