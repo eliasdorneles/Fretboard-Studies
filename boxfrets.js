@@ -196,7 +196,7 @@ jQuery(function() {
 		});
 		$('#colorchooser').hide();
 		$('#checkanswer').show();
-		fill_from_repr(url_params['strings'], "green");
+		//fill_from_repr(url_params['strings'], "green");
 	    } else {
 		fill_from_repr(url_params['strings']);
 	    }
