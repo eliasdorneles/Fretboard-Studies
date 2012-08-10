@@ -71,6 +71,10 @@ var create_link_from_fretboard = function(){
     href += "&diagram_title=" + escape($('#diagram_title').val());
     return href;
 }
+var update_link = function(){
+	    $('#linkthis').attr('href', create_link_from_fretboard());
+	    $('#linkquiz').attr('href', create_link_from_fretboard() + "&q=y");
+}
 // handle url parameters
 function get_url_parameters(){
     var params = {};
@@ -118,17 +122,25 @@ var getFretcloneStrings = function(){
     var board_strings = $('#fretclone tr');
     var guitarStrings = [[], [], [], [], [], []];
     for (var i = 0; i < board_strings.length; i++){
-	var children = board_strings[i].children;
-	for (var j = 0; j < children.length; j++){
-	    var box = {
-		td: children[j],
-		paint: function(){
-		    td_paint_or_clear(this, COLOR);
-		},
-	    }
-	    guitarStrings[i].push(box);
-	    $(children[j]).click(box.paint);
-	}
+		var children = board_strings[i].children;
+		for (var j = 0; j < children.length; j++){
+		    var box = {
+				td: children[j],
+				paint: function(){
+				    td_paint_or_clear(this, COLOR);
+				},
+		    }
+		    guitarStrings[i].push(box);
+		    $(children[j]).click(box.paint);
+
+		    // eraser:
+		    $(children[j]).mouseover(function(){
+		    	if (COLOR == 'transparent'){
+	    			td_clear(this);
+	    		}
+	    		update_link();
+	    	});
+		}
     }
     return guitarStrings;
 };
@@ -156,23 +168,30 @@ var show_scale = function (scale){
 var check_answers = function(a_repr) {
     var a_rep = a_repr.split(';');
     for(var i = 0; i < a_rep.length; i++){
-	if (is_defined(a_rep[i]) && a_rep[i] != ""){
-	    var marked_notes = $.map(a_rep[i].split(","), function (e, index){
-	        return [e.split(":")[0]];
-	    });
-	    for (var j = 0; j < GUITAR_STRINGS[i].length; j++){
-		if ($.inArray(j.toString(), marked_notes) >= 0){
-		    var color = is_painted(GUITAR_STRINGS[i][j].td) ? "green" : "orange";
-		    note_paint(i, [j, color]);
-		} else {
-		    if (is_painted(GUITAR_STRINGS[i][j].td)){
-			// show wrong notes in red
-			note_paint(i, [j, "red"]);
+		if (is_defined(a_rep[i]) && a_rep[i] != ""){
+		    var marked_notes = $.map(a_rep[i].split(","), function (e, index){
+		        return [e.split(":")[0]];
+		    });
+		    for (var j = 0; j < GUITAR_STRINGS[i].length; j++){
+				if ($.inArray(j.toString(), marked_notes) >= 0){
+				    var color = is_painted(GUITAR_STRINGS[i][j].td) ? "green" : "orange";
+				    note_paint(i, [j, color]);
+				} else {
+				    if (is_painted(GUITAR_STRINGS[i][j].td)){
+					// show wrong notes in red
+					note_paint(i, [j, "red"]);
+				    }
+				}
 		    }
 		}
-	    }
 	}
-    }
+}
+var clear_fretboard = function(){
+	for(var i = 0; i < GUITAR_STRINGS.length; i++){
+		for(var j = 0; j < GUITAR_STRINGS[i].length; j++){
+			td_clear(GUITAR_STRINGS[i][j].td);
+		}
+	}
 }
 jQuery(function() {
 	$(gen_fret_boxes(19, 6)).insertAfter($('#mainfretboard'));
@@ -190,20 +209,15 @@ jQuery(function() {
 	}
 	if (is_defined(url_params['strings'])){
 	    if (is_defined(url_params['q']) && url_params['q'] == 'y'){
-		COLOR = "coffee";
-		$('#checkanswer').click(function(){
-		    check_answers(url_params['strings']);
-		});
-		$('#colorchooser').hide();
-		$('#checkanswer').show();
-		//fill_from_repr(url_params['strings'], "green");
+			COLOR = "coffee";
+			$('#checkanswer').click(function(){
+			    check_answers(url_params['strings']);
+			});
+			$('#colorchooser').hide();
+			$('#checkanswer').show();
 	    } else {
-		fill_from_repr(url_params['strings']);
+			fill_from_repr(url_params['strings']);
 	    }
-	}
-	var update_link = function(){
-	    $('#linkthis').attr('href', create_link_from_fretboard());
-	    $('#linkquiz').attr('href', create_link_from_fretboard() + "&q=y");
 	}
 	update_link();
 	// update link at every click on a note...
@@ -213,4 +227,17 @@ jQuery(function() {
 	    .keyup(update_link)
 	    .keydown(update_link);
 	$('#diagram_title').click(function(){ this.select(); });
+
+	$('.color_button').click(function(){
+		COLOR = $(this).attr('class').split(' ')[1];
+	})
+	$('#eraser').click(function(){
+		COLOR = 'transparent';
+		$('#message').html('Mouseover the marks to erase them')
+	});
+	$('#clear').click(function(){
+		clear_fretboard(); update_link();
+	});
+	// TODO: generate jTab
+	// TODO: show chord in standard notation
 });
