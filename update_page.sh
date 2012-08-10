@@ -6,6 +6,7 @@ die(){
 }
 [ -f fretboard.html ] || die "dir gh-pages doesn't exist! aborting..."
 
+set -e # exits if encounters an error
 gitstatus=`git status -s`
 [ "x$gitstatus" == "x" ] || die "there are changes to be commited!"
 
