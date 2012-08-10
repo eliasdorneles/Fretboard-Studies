@@ -220,6 +220,7 @@ jQuery(function() {
 	    }
 	}
 	update_link();
+	var message = $('#message');
 	// update link at every click on a note...
 	$('#fretclone tr td').click(update_link);
 	// or when changes are made to the title
@@ -230,12 +231,14 @@ jQuery(function() {
 
 	$('.color_button').click(function(){
 		COLOR = $(this).attr('class').split(' ')[1];
+		message.html('');
 	})
 	$('#eraser').click(function(){
 		COLOR = 'transparent';
-		$('#message').html('Mouseover the marks to erase them')
+		message.html('<b>Eraser activated!</b><br /><sub>Mouseover the marks to erase them</sub>')
 	});
 	$('#clear').click(function(){
+		message.html('');
 		clear_fretboard(); update_link();
 	});
 	// TODO: generate jTab
