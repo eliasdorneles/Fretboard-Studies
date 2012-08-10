@@ -1,7 +1,9 @@
+<!DOCTYPE html>
 <html>
     <head>
         <title>Fretboard Studies</title>
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+        <meta charset='utf-8' />
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
 <script type="text/javascript">
 /* code to handle manipulation */
 var GUITAR_STRINGS;
@@ -76,6 +78,10 @@ var create_link_from_fretboard = function(){
     href += "&diagram_title=" + escape($('#diagram_title').val());
     return href;
 }
+var update_link = function(){
+	    $('#linkthis').attr('href', create_link_from_fretboard());
+	    $('#linkquiz').attr('href', create_link_from_fretboard() + "&q=y");
+}
 // handle url parameters
 function get_url_parameters(){
     var params = {};
@@ -123,17 +129,25 @@ var getFretcloneStrings = function(){
     var board_strings = $('#fretclone tr');
     var guitarStrings = [[], [], [], [], [], []];
     for (var i = 0; i < board_strings.length; i++){
-	var children = board_strings[i].children;
-	for (var j = 0; j < children.length; j++){
-	    var box = {
-		td: children[j],
-		paint: function(){
-		    td_paint_or_clear(this, COLOR);
-		},
-	    }
-	    guitarStrings[i].push(box);
-	    $(children[j]).click(box.paint);
-	}
+		var children = board_strings[i].children;
+		for (var j = 0; j < children.length; j++){
+		    var box = {
+				td: children[j],
+				paint: function(){
+				    td_paint_or_clear(this, COLOR);
+				},
+		    }
+		    guitarStrings[i].push(box);
+		    $(children[j]).click(box.paint);
+
+		    // eraser:
+		    $(children[j]).mouseover(function(){
+		    	if (COLOR == 'transparent'){
+	    			td_clear(this);
+	    		}
+	    		update_link();
+	    	});
+		}
     }
     return guitarStrings;
 };
@@ -161,23 +175,30 @@ var show_scale = function (scale){
 var check_answers = function(a_repr) {
     var a_rep = a_repr.split(';');
     for(var i = 0; i < a_rep.length; i++){
-	if (is_defined(a_rep[i]) && a_rep[i] != ""){
-	    var marked_notes = $.map(a_rep[i].split(","), function (e, index){
-	        return [e.split(":")[0]];
-	    });
-	    for (var j = 0; j < GUITAR_STRINGS[i].length; j++){
-		if ($.inArray(j.toString(), marked_notes) >= 0){
-		    var color = is_painted(GUITAR_STRINGS[i][j].td) ? "green" : "orange";
-		    note_paint(i, [j, color]);
-		} else {
-		    if (is_painted(GUITAR_STRINGS[i][j].td)){
-			// show wrong notes in red
-			note_paint(i, [j, "red"]);
+		if (is_defined(a_rep[i]) && a_rep[i] != ""){
+		    var marked_notes = $.map(a_rep[i].split(","), function (e, index){
+		        return [e.split(":")[0]];
+		    });
+		    for (var j = 0; j < GUITAR_STRINGS[i].length; j++){
+				if ($.inArray(j.toString(), marked_notes) >= 0){
+				    var color = is_painted(GUITAR_STRINGS[i][j].td) ? "green" : "orange";
+				    note_paint(i, [j, color]);
+				} else {
+				    if (is_painted(GUITAR_STRINGS[i][j].td)){
+					// show wrong notes in red
+					note_paint(i, [j, "red"]);
+				    }
+				}
 		    }
 		}
-	    }
 	}
-    }
+}
+var clear_fretboard = function(){
+	for(var i = 0; i < GUITAR_STRINGS.length; i++){
+		for(var j = 0; j < GUITAR_STRINGS[i].length; j++){
+			td_clear(GUITAR_STRINGS[i][j].td);
+		}
+	}
 }
 jQuery(function() {
 	$(gen_fret_boxes(19, 6)).insertAfter($('#mainfretboard'));
@@ -195,20 +216,15 @@ jQuery(function() {
 	}
 	if (is_defined(url_params['strings'])){
 	    if (is_defined(url_params['q']) && url_params['q'] == 'y'){
-		COLOR = "coffee";
-		$('#checkanswer').click(function(){
-		    check_answers(url_params['strings']);
-		});
-		$('#colorchooser').hide();
-		$('#checkanswer').show();
-		//fill_from_repr(url_params['strings'], "green");
+			COLOR = "coffee";
+			$('#checkanswer').click(function(){
+			    check_answers(url_params['strings']);
+			});
+			$('#colorchooser').hide();
+			$('#checkanswer').show();
 	    } else {
-		fill_from_repr(url_params['strings']);
+			fill_from_repr(url_params['strings']);
 	    }
-	}
-	var update_link = function(){
-	    $('#linkthis').attr('href', create_link_from_fretboard());
-	    $('#linkquiz').attr('href', create_link_from_fretboard() + "&q=y");
 	}
 	update_link();
 	// update link at every click on a note...
@@ -218,34 +234,50 @@ jQuery(function() {
 	    .keyup(update_link)
 	    .keydown(update_link);
 	$('#diagram_title').click(function(){ this.select(); });
+
+	$('.color_button').click(function(){
+		COLOR = $(this).attr('class').split(' ')[1];
+	})
+	$('#eraser').click(function(){
+		COLOR = 'transparent';
+		$('#message').html('Mouseover the marks to erase them')
+	});
+	$('#clear').click(function(){
+		clear_fretboard(); update_link();
+	});
+	// TODO: generate jTab
+	// TODO: show chord in standard notation
 });
 </script>
-	<style>
-	    * { margin:0; padding:0; border-spacing:0; }
-	    body { font-family:Arial,Helvetica,sans-serif; font-size:14px; }
-	    table#mainfretboard { position:absolute; top:100px; left:50px; border:1px solid red; }
-	    table#mainfretboard tr td { border:1px solid black; font-size: 28px; width:46px; height:34px; text-align:center; }
+		<style>
+		    * { margin:0; padding:0; border-spacing:0; }
+		    body { font-family:Arial,Helvetica,sans-serif; font-size:14px; }
+		    table#mainfretboard { position:absolute; top:120px; left:50px; border:1px solid red; }
+		    table#mainfretboard tr td { border:1px solid black; font-size: 28px; width:46px; height:34px; text-align:center; }
 
-	    table#fretclone { position:absolute; top:80px; left:-1px; border-spacing:8px; }
-	    table#fretclone tr td { border:2px solid transparent; background-color:transparent; font-size:18px; font-weight:bold; width:36px; height:26px; text-align:center; z-index:1; border-radius: 5px; }
-	    table#fretclone tr td:hover { cursor:pointer; border-color: black !important; border-style: dotted !important; }
-	    .red    { background-color:#dd4444 !important; border-color:#aa3333 !important; }
-	    .orange { background-color:#ffbb67 !important; border-color:#f11f00 !important; }
-	    .green  { background-color:#669999 !important; border-color:#003333 !important; }
-	    .coffee { background-color:#DAC582 !important; border-color:#AB8860 !important; }
-	    .transparent { background-color:transparent !important; border-color:transparent !important; }
-	    input.color_button { width:40px; }
-	    div#main { height:280px; margin:10px; }
-	    /*#diagram_title { margin:15px; }*/
-	    #diagram_title { font-size:25px; font-weight:bold; margin:15px; display:block; padding:4px; border:0; width:100%; } 
-	    #form_controls { padding:10px; }
-	    #checkanswer { display:none; }
-	    @media print { #form_controls { display:none; } }
-	</style>
+		    table#fretclone { position:absolute; top:100px; left:-1px; border-spacing:8px; }
+		    table#fretclone tr td { border:2px solid transparent; background-color:transparent; font-size:18px; font-weight:bold; width:36px;height:26px; text-align:center; z-index:1; border-radius: 5px; }
+		    table#fretclone tr td:hover { cursor:pointer; border-color: black !important; border-style: dotted !important; }
+		    .red    { background-color:#dd4444 !important; border-color:#aa3333 !important; }
+		    .orange { background-color:#ffbb67 !important; border-color:#f11f00 !important; }
+		    .green  { background-color:#669999 !important; border-color:#003333 !important; }
+		    .coffee { background-color:#DAC582 !important; border-color:#AB8860 !important; }
+		    .blank { background-color:#dddddd !important; border-color:#333333 !important; }
+		    .transparent { background-color:transparent !important; border-color:transparent !important; }
+		    input.color_button { width:40px; border-radius: 5px; }
+		    div#main { height:280px; margin:10px; width: 940px; }
+		    /*#diagram_title { margin:15px; }*/
+		    #diagram_title { font-size:25px; font-weight:bold; margin:15px; display:block; padding:4px; border:0; width:100%; } 
+		    #form_controls { padding:10px; }
+		    #checkanswer { display:none; }
+		    #message { text-align: right; display: none; font-weight: bold; }
+		    @media print { #form_controls { display:none; } }
+		</style>
     </head>
     <body>
 	<input id="diagram_title" type="text" value="Click to change title..." />
 	<div id="main">
+		<div id="message">Aloha Oe</div>
 	    <table id="mainfretboard">
 		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
 		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
@@ -257,14 +289,18 @@ jQuery(function() {
 	</div>
 	<div id="form_controls">
 	    <div id="colorchooser">
-		<input type="button" value="&nbsp;" class="color_button coffee" onclick="COLOR='coffee'" />
-		<input type="button" value="&nbsp;" class="color_button green"  onclick="COLOR='green'" />
-		<input type="button" value="&nbsp;" class="color_button orange" onclick="COLOR='orange'" /><br />
+	    	Palette:
+	    	<input type="button" value="&nbsp;" class="color_button green" />
+			<input type="button" value="&nbsp;" class="color_button coffee" />
+			<input type="button" value="&nbsp;" class="color_button orange" /><br /><br />
+			You can
+			<input id="clear" type="button" value="Clear" class="blank" /> the diagram or use an
+			<input id="eraser" type="button" value="Eraser" class="blank" /><br />
 	    </div>
 	    <input type="button" id="checkanswer" value="Check answer!" /><br />
 	    <!-- input type="button" id="clean" value="Try again!" / -->
-	    <a id="linkthis" href="#">Link to this diagram</a><br />
-	    <a id="linkquiz" href="#">Link to a quiz for this diagram</a><br />
+	    <a id="linkthis" href="javascript:void(0)">Link</a> |
+	    <a id="linkquiz" href="javascript:void(0)">Quiz link</a><br />
 	</div>
     </body>
 </html>
