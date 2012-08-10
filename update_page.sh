@@ -21,4 +21,8 @@ git checkout gh-pages
 cat $tmpfile > index.html
 echo "Page generated!"
 ls -l index.html
-echo "Commit and push to publish it!"
+echo "Commiting to gh-pages"
+git commit -m "* updated gh-pages" -a
+git checkout master
+echo "Everything done, push to publish it!"
+rm -f $tmpfile
