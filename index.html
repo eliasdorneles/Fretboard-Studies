@@ -211,21 +211,24 @@ jQuery(function() {
 	// show diagram of an A minor penta scale form
 	//show_scale(a_minor_penta);
 	var url_params = get_url_parameters();
-	if (is_defined(url_params['diagram_title'])){
-	    $('#diagram_title').val(unescape(url_params['diagram_title']));
+	var loadFromUrl = function(){
+		if (is_defined(url_params['diagram_title'])){
+			$('#diagram_title').val(unescape(url_params['diagram_title']));
+		}
+		if (is_defined(url_params['strings'])){
+			if (is_defined(url_params['q']) && url_params['q'] == 'y'){
+				COLOR = "coffee";
+				$('#checkanswer').click(function(){
+					check_answers(url_params['strings']);
+				});
+				$('#colorchooser').hide();
+				$('#checkanswer').show();
+			} else {
+				fill_from_repr(url_params['strings']);
+			}
+		}
 	}
-	if (is_defined(url_params['strings'])){
-	    if (is_defined(url_params['q']) && url_params['q'] == 'y'){
-			COLOR = "coffee";
-			$('#checkanswer').click(function(){
-			    check_answers(url_params['strings']);
-			});
-			$('#colorchooser').hide();
-			$('#checkanswer').show();
-	    } else {
-			fill_from_repr(url_params['strings']);
-	    }
-	}
+	loadFromUrl();
 	update_link();
 	var message = $('#message');
 	// update link at every click on a note...
@@ -247,6 +250,10 @@ jQuery(function() {
 	$('#clear').click(function(){
 		message.html('');
 		clear_fretboard(); update_link();
+	});
+	$('#examples ul li a').click(function(){
+		clear_fretboard(); update_link();
+		loadFromUrl();
 	});
 	// TODO: generate jTab
 	// TODO: show chord in standard notation
