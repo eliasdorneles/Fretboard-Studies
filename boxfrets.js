@@ -80,7 +80,7 @@ function get_url_parameters(){
     var query = arguments.length > 0 ? arguments[0] : window.location.href;
     var params = {};
     var index_params = query.indexOf('#');
-    if (index_params > 0){
+    if (index_params >= 0){
 	var hashes = query.slice(index_params + 1).split('&');
 	for(var i = 0; i < hashes.length; i++){
 	    var hash = hashes[i].split('=');
