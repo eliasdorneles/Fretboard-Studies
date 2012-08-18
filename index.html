@@ -276,6 +276,7 @@ jQuery(function() {
 		    #form_controls { padding:10px; }
 		    #checkanswer { display:none; }
 		    #message { text-align: right; }
+		    #examples ul { margin-left: 20px; }
 		    @media print { #form_controls { display:none; } }
 		</style>
     </head>
@@ -302,13 +303,21 @@ jQuery(function() {
 			<input type="button" value="&nbsp;" class="color_button red" />
 			<input type="button" value="&nbsp;" class="color_button orange" /><br /><br />
 			You can
-			<input id="clear" type="button" value="Clear" class="blank" /> the diagram or use an
-			<input id="eraser" type="button" value="Eraser" class="blank" /><br />
+			<input id="clear" type="button" value="Clear" class="blank" /> the whole diagram or use an
+			<input id="eraser" type="button" value="Eraser" class="blank" />. Also, you can just click on a painted fret to clear it.<br />
 		</div>
 		<input type="button" id="checkanswer" value="Check answer!" /><br />
 		<!-- input type="button" id="clean" value="Try again!" / -->
 		<a id="linkthis" href="javascript:void(0)">Link</a> |
 		<a id="linkquiz" href="javascript:void(0)">Quiz link</a><br />
+		<div id="examples"><strong>Examples:</strong>
+			<ul>
+				<li><a href="http://eliasdorneles.github.com/Fretboard-Studies/#strings=6:1,18:1;11:1;3:1,15:1;8:1;1:1,13:1;6:1,18:1&diagram_title=Bb%20octaves">Bb octaves</a></li>
+				<li><a href="http://eliasdorneles.github.com/Fretboard-Studies/#strings=0:2,3:2,8:2,12:2,15:2;1:2,5:2,8:2,13:2;0:2,5:2,9:2,12:2;2:2,5:2,10:2,14:2;3:2,7:2,10:2,15:2;0:2,3:2,8:2,12:2,15:2&diagram_title=C%20major%20along%20the%20fretboard">C major all along the fretboard</a></li>
+				<li><a href="http://eliasdorneles.github.com/Fretboard-Studies/#strings=3:3;2:0;3:0;2:0;;3:0&diagram_title=Gdim%20fingering">Gdim fingering</a></li>
+				<li><a href="http://eliasdorneles.github.com/Fretboard-Studies/#strings=0:4,2:3,5:3,7:2,10:3,12:3,14:3;0:2,3:3,5:3,7:3,10:3,12:2,15:3;2:3,4:2,7:3,9:3,11:3,14:3;0:4,2:3,4:3,7:3,9:2,12:3,14:3;0:4,2:2,5:3,7:3,9:3,12:3,14:2;0:4,2:3,5:3,7:2,10:3,12:3,14:3&diagram_title=B%20minor%20pentatonic">B minor pentatonic</a></li>
+			</ul>
+		</div>
 	</div>
     </body>
 </html>
