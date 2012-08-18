@@ -12,7 +12,9 @@ gitstatus=`git status -s`
 
 tmpfile=`mktemp`
 echo Updating page...
-sed '/src=.boxfrets.js/ {
+sed '
+s|jquery-1.4.4.min.js|http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js|;
+/src=.boxfrets.js/ {
     a <script type="text/javascript">
     r boxfrets.js
     a </script>
