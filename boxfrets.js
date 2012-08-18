@@ -1,7 +1,7 @@
 /* code to handle manipulation */
 var GUITAR_STRINGS;
 var COLOR = "green";
-var POSSIBLE_COLORS = ["coffee", "red", "green", "orange", "transparent"]
+var POSSIBLE_COLORS = ["orange", "green", "blue", "yellow", "coffee", "red", "transparent"]
 var gen_fret_boxes = function(size, num_strings){
     var tr = "<tr>";
     for (var i = 0; i < size; i++){

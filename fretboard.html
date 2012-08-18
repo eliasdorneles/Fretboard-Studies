@@ -14,10 +14,12 @@
 		    table#fretclone { position:absolute; top:100px; left:-5px; border-spacing:8px; }
 		    table#fretclone tr td { margin: 0 2px; display:inline-block; border:2px solid transparent; background-color:transparent; font-size:18px; font-weight:bold; width:40px;height:24px; text-align:center; z-index:1; border-radius: 5px; }
 		    table#fretclone tr td:hover { cursor:pointer; border-color: black !important; border-style: dotted !important; }
-		    .red    { background-color:#dd4444 !important; border-color:#aa3333 !important; }
-		    .orange { background-color:#ffbb67 !important; border-color:#f11f00 !important; }
+		    .orange { background-color:#ffbb67 !important; border-color:#543d22 !important; }
 		    .green  { background-color:#669999 !important; border-color:#003333 !important; }
-		    .coffee { background-color:#DAC582 !important; border-color:#AB8860 !important; }
+		    .blue  { background-color:#333745 !important; border-color:#afcded !important; }
+		    .yellow { background-color:#f6f792 !important; border-color:#4c4c2d !important; }
+		    .coffee { background-color:#daede2 !important; border-color:black !important; }
+		    .red { background-color:#ea2e49 !important; border-color:#400d14 !important; }
 		    .blank { background-color:#dddddd !important; border-color:#333333 !important; }
 		    .transparent { background-color:transparent !important; border-color:transparent !important; }
 		    input.color_button { width:40px; border-radius: 5px; }
@@ -44,19 +46,22 @@
 	    </table>
 	</div>
 	<div id="form_controls">
-	    <div id="colorchooser">
-	    	Palette:
-	    	<input type="button" value="&nbsp;" class="color_button green" />
+		<div id="colorchooser">
+			Palette:
+			<input type="button" value="&nbsp;" class="color_button green" />
+			<input type="button" value="&nbsp;" class="color_button yellow" />
+			<input type="button" value="&nbsp;" class="color_button blue" />
 			<input type="button" value="&nbsp;" class="color_button coffee" />
+			<input type="button" value="&nbsp;" class="color_button red" />
 			<input type="button" value="&nbsp;" class="color_button orange" /><br /><br />
 			You can
 			<input id="clear" type="button" value="Clear" class="blank" /> the diagram or use an
 			<input id="eraser" type="button" value="Eraser" class="blank" /><br />
-	    </div>
-	    <input type="button" id="checkanswer" value="Check answer!" /><br />
-	    <!-- input type="button" id="clean" value="Try again!" / -->
-	    <a id="linkthis" href="javascript:void(0)">Link</a> |
-	    <a id="linkquiz" href="javascript:void(0)">Quiz link</a><br />
+		</div>
+		<input type="button" id="checkanswer" value="Check answer!" /><br />
+		<!-- input type="button" id="clean" value="Try again!" / -->
+		<a id="linkthis" href="javascript:void(0)">Link</a> |
+		<a id="linkquiz" href="javascript:void(0)">Quiz link</a><br />
 	</div>
     </body>
 </html>
