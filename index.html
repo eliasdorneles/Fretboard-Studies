@@ -84,10 +84,11 @@ var update_link = function(){
 }
 // handle url parameters
 function get_url_parameters(){
+    var query = arguments.length > 0 ? arguments[0] : window.location.href;
     var params = {};
-    var index_params = window.location.href.indexOf('#');
+    var index_params = query.indexOf('#');
     if (index_params > 0){
-	var hashes = window.location.href.slice(index_params + 1).split('&');
+	var hashes = query.slice(index_params + 1).split('&');
 	for(var i = 0; i < hashes.length; i++){
 	    var hash = hashes[i].split('=');
 	    params[hash[0]] = hash[1];
@@ -252,6 +253,7 @@ jQuery(function() {
 		clear_fretboard(); update_link();
 	});
 	$('#examples ul li a').click(function(){
+		url_params = get_url_parameters($(this).attr('href'));
 		clear_fretboard(); update_link();
 		loadFromUrl();
 	});
