@@ -12,7 +12,7 @@ var POSSIBLE_COLORS = ["orange", "green", "blue", "yellow", "coffee", "red", "tr
 var gen_fret_boxes = function(size, num_strings){
     var tr = "<tr>";
     for (var i = 0; i < size; i++){
-	tr += '<td class="transparent">&nbsp;</td>';
+	tr += '<td class="transparent"><span class="note"></span></td>';
     }
     tr += "</tr>";
     var table = '<table id="fretclone">';
@@ -201,9 +201,25 @@ var clear_fretboard = function(){
 		}
 	}
 }
+var pick_note = function(position, offset){
+	if(typeof(offset)==='undefined') offset=0; // defaults to E
+	if(typeof(position)==='undefined') position=4; // defaults to E
+	var scale = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+	return scale[(position + offset) % scale.length];
+}
+var set_notes = function(){
+	//var offsets = [4, 9, 2, 7, 11, 4];
+	var offsets = [4, 11, 7, 2, 9, 4];
+	for(var i = 0; i < GUITAR_STRINGS.length; i++){
+		for(var j = 0; j < GUITAR_STRINGS[i].length; j++){
+			$(GUITAR_STRINGS[i][j].td).find('.note').html(pick_note(j, offsets[i]));
+		}
+	}
+}
 jQuery(function() {
 	$(gen_fret_boxes(19, 6)).insertAfter($('#mainfretboard'));
 	GUITAR_STRINGS = getFretcloneStrings();
+	set_notes();
 
 	// show diagram of a C Major chord
 	//show_chord([null, 1, null, 2, [3, 'red']]);
@@ -270,17 +286,16 @@ jQuery(function() {
 		    table#fretclone { position:absolute; top:100px; left:-5px; border-spacing:8px; }
 		    table#fretclone tr td { margin: 0 2px; display:inline-block; border:2px solid transparent; background-color:transparent; font-size:18px; font-weight:bold; width:40px;height:24px; text-align:center; z-index:1; border-radius: 5px; }
 		    table#fretclone tr td:hover { cursor:pointer; border-color: black !important; border-style: dotted !important; }
-		    .orange { background-color:#ffbb67 !important; border-color:#543d22 !important; }
-		    .green  { background-color:#669999 !important; border-color:#003333 !important; }
-		    .blue  { background-color:#333745 !important; border-color:#afcded !important; }
-		    .yellow { background-color:#f6f792 !important; border-color:#4c4c2d !important; }
-		    .coffee { background-color:#daede2 !important; border-color:black !important; }
-		    .red { background-color:#ea2e49 !important; border-color:#400d14 !important; }
-		    .blank { background-color:#dddddd !important; border-color:#333333 !important; }
-		    .transparent { background-color:transparent !important; border-color:transparent !important; }
+		    .orange { background-color:#ffbb67 !important; border-color:#543d22 !important; color:#543d22 !important; }
+		    .green  { background-color:#669999 !important; border-color:#003333 !important; color:#003333 !important; }
+		    .blue   { background-color:#333745 !important; border-color:#afcded !important; color:#afcded !important; }
+		    .yellow { background-color:#f6f792 !important; border-color:#4c4c2d !important; color:#4c4c2d !important; }
+		    .coffee { background-color:#daede2 !important; border-color:#000000 !important; color:#000000 !important; }
+		    .red    { background-color:#ea2e49 !important; border-color:#400d14 !important; color:#400d14 !important; }
+		    .blank  { background-color:#dddddd !important; border-color:#333333 !important; color:#333333 !important; }
+		    .transparent { background-color:transparent !important; border-color:transparent !important; color:transparent !important }
 		    input.color_button { width:40px; border-radius: 5px; }
 		    div#main { height:280px; margin:10px; width: 940px; }
-		    /*#diagram_title { margin:15px; }*/
 		    #diagram_title { font-size:25px; font-weight:bold; margin:15px; display:block; padding:4px; border:0; width:100%; } 
 		    #form_controls { padding:10px; }
 		    #checkanswer { display:none; }
