@@ -2,6 +2,7 @@
 var GUITAR_STRINGS;
 var COLOR = "green";
 var POSSIBLE_COLORS = ["orange", "green", "blue", "yellow", "coffee", "red", "transparent"]
+var ERASER = true;
 var gen_fret_boxes = function(size, num_strings){
     var tr = "<tr>";
     for (var i = 0; i < size; i++){
@@ -136,7 +137,7 @@ var getFretcloneStrings = function(){
 
 		    // eraser:
 		    $(children[j]).mouseover(function(){
-		    	if (COLOR == 'transparent'){
+		    	if (ERASER == true){
 	    			td_clear(this);
 	    		}
 	    		update_link();
@@ -217,7 +218,7 @@ jQuery(function() {
 	// show diagram of a C Major chord
 	//show_chord([null, 1, null, 2, [3, 'red']]);
 
-	var a_minor_penta = [[5, 8], [5, 8], [5, 7], [5, 7], [5, 7], [5, 8]];
+	//var a_minor_penta = [[5, 8], [5, 8], [5, 7], [5, 7], [5, 7], [5, 8]];
 	// show diagram of an A minor penta scale form
 	//show_scale(a_minor_penta);
 	var url_params = get_url_parameters();
@@ -249,18 +250,26 @@ jQuery(function() {
 	    .keydown(update_link);
 	$('#diagram_title').click(function(){ this.select(); });
 
+	// set up color buttons according each element's class
 	$('.color_button').click(function(){
 		COLOR = $(this).attr('class').split(' ')[1];
 		message.html('');
 	})
-	$('#eraser').click(function(){
-		COLOR = 'transparent';
+
+	// set up eraser and clear buttons:
+	$('#eraser').toggle(function(){
+		ERASER = true;
 		message.html('<b>Eraser activated!</b><br /><sub>Mouseover the marks to erase them</sub>')
+	}, function(){
+		ERASER = false;
+		message.html('')
 	});
 	$('#clear').click(function(){
 		message.html('');
 		clear_fretboard(); update_link();
 	});
+
+	// set up example links
 	$('#examples ul li a').click(function(){
 		url_params = get_url_parameters($(this).attr('href'));
 		clear_fretboard(); update_link();
