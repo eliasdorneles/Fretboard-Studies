@@ -5,7 +5,7 @@ var POSSIBLE_COLORS = ["orange", "green", "blue", "yellow", "coffee", "red", "tr
 var gen_fret_boxes = function(size, num_strings){
     var tr = "<tr>";
     for (var i = 0; i < size; i++){
-	tr += '<td class="transparent">&nbsp;</td>';
+	tr += '<td class="transparent"><span class="note"></span></td>';
     }
     tr += "</tr>";
     var table = '<table id="fretclone">';
@@ -194,9 +194,25 @@ var clear_fretboard = function(){
 		}
 	}
 }
+var pick_note = function(position, offset){
+	if(typeof(offset)==='undefined') offset=0; // defaults to E
+	if(typeof(position)==='undefined') position=4; // defaults to E
+	var scale = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+	return scale[(position + offset) % scale.length];
+}
+var set_notes = function(){
+	//var offsets = [4, 9, 2, 7, 11, 4];
+	var offsets = [4, 11, 7, 2, 9, 4];
+	for(var i = 0; i < GUITAR_STRINGS.length; i++){
+		for(var j = 0; j < GUITAR_STRINGS[i].length; j++){
+			$(GUITAR_STRINGS[i][j].td).find('.note').html(pick_note(j, offsets[i]));
+		}
+	}
+}
 jQuery(function() {
 	$(gen_fret_boxes(19, 6)).insertAfter($('#mainfretboard'));
 	GUITAR_STRINGS = getFretcloneStrings();
+	set_notes();
 
 	// show diagram of a C Major chord
 	//show_chord([null, 1, null, 2, [3, 'red']]);
