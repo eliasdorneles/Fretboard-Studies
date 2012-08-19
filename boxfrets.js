@@ -259,8 +259,10 @@ jQuery(function() {
 	// set up eraser and clear buttons:
 	$('#eraser').toggle(function(){
 		ERASER = true;
+		$(this).removeClass('blank').addClass('white');
 		message.html('<b>Eraser activated!</b><br /><sub>Mouseover the marks to erase them</sub>')
 	}, function(){
+		$(this).removeClass('white').addClass('blank');
 		ERASER = false;
 		message.html('')
 	});
