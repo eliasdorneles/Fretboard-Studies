@@ -9,6 +9,7 @@
 var GUITAR_STRINGS;
 var COLOR = "green";
 var POSSIBLE_COLORS = ["orange", "green", "blue", "yellow", "coffee", "red", "transparent"]
+var ERASER = true;
 var gen_fret_boxes = function(size, num_strings){
     var tr = "<tr>";
     for (var i = 0; i < size; i++){
@@ -143,7 +144,7 @@ var getFretcloneStrings = function(){
 
 		    // eraser:
 		    $(children[j]).mouseover(function(){
-		    	if (COLOR == 'transparent'){
+		    	if (ERASER == true){
 	    			td_clear(this);
 	    		}
 	    		update_link();
@@ -224,7 +225,7 @@ jQuery(function() {
 	// show diagram of a C Major chord
 	//show_chord([null, 1, null, 2, [3, 'red']]);
 
-	var a_minor_penta = [[5, 8], [5, 8], [5, 7], [5, 7], [5, 7], [5, 8]];
+	//var a_minor_penta = [[5, 8], [5, 8], [5, 7], [5, 7], [5, 7], [5, 8]];
 	// show diagram of an A minor penta scale form
 	//show_scale(a_minor_penta);
 	var url_params = get_url_parameters();
@@ -256,18 +257,28 @@ jQuery(function() {
 	    .keydown(update_link);
 	$('#diagram_title').click(function(){ this.select(); });
 
+	// set up color buttons according each element's class
 	$('.color_button').click(function(){
 		COLOR = $(this).attr('class').split(' ')[1];
 		message.html('');
 	})
-	$('#eraser').click(function(){
-		COLOR = 'transparent';
+
+	// set up eraser and clear buttons:
+	$('#eraser').toggle(function(){
+		ERASER = true;
+		$(this).removeClass('blank').addClass('white');
 		message.html('<b>Eraser activated!</b><br /><sub>Mouseover the marks to erase them</sub>')
+	}, function(){
+		$(this).removeClass('white').addClass('blank');
+		ERASER = false;
+		message.html('')
 	});
 	$('#clear').click(function(){
 		message.html('');
 		clear_fretboard(); update_link();
 	});
+
+	// set up example links
 	$('#examples ul li a').click(function(){
 		url_params = get_url_parameters($(this).attr('href'));
 		clear_fretboard(); update_link();
@@ -293,6 +304,7 @@ jQuery(function() {
 		    .coffee { background-color:#daede2 !important; border-color:#000000 !important; color:#000000 !important; }
 		    .red    { background-color:#ea2e49 !important; border-color:#400d14 !important; color:#400d14 !important; }
 		    .blank  { background-color:#dddddd !important; border-color:#333333 !important; color:#333333 !important; }
+		    .white  { background-color:#ffffff !important; border-color:#111111 !important; color:#111111 !important; }
 		    .transparent { background-color:transparent !important; border-color:transparent !important; color:transparent !important }
 		    input.color_button { width:40px; border-radius: 5px; }
 		    div#main { height:280px; margin:10px; width: 940px; }
@@ -301,6 +313,7 @@ jQuery(function() {
 		    #checkanswer { display:none; }
 		    #message { text-align: right; }
 		    #examples ul { margin-left: 20px; }
+		    #clear, #eraser { font-weight: bold; padding: 2px; }
 		    a:focus { outline: thin dotted #333; outline: 5px auto -webkit-focus-ring-color; outline-offset: -2px; }
 		    a:hover, a:active { outline: 0; }
 		    a { color: #0088cc; text-decoration: none; }
