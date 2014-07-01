@@ -210,6 +210,23 @@ var set_notes = function(){
 		}
 	}
 }
+var loadFromUrl = function(url_params){
+	if (is_defined(url_params['diagram_title'])){
+		$('#diagram_title').val(unescape(url_params['diagram_title']));
+	}
+	if (is_defined(url_params['strings'])){
+		if (is_defined(url_params['q']) && url_params['q'] == 'y'){
+			COLOR = "coffee";
+			$('#checkanswer').click(function(){
+				check_answers(url_params['strings']);
+			});
+			$('#colorchooser').hide();
+			$('#checkanswer').show();
+		} else {
+			fill_from_repr(url_params['strings']);
+		}
+	}
+}
 jQuery(function() {
 	$(gen_fret_boxes(19, 6)).insertAfter($('#mainfretboard'));
 	GUITAR_STRINGS = getFretcloneStrings();
@@ -221,25 +238,7 @@ jQuery(function() {
 	//var a_minor_penta = [[5, 8], [5, 8], [5, 7], [5, 7], [5, 7], [5, 8]];
 	// show diagram of an A minor penta scale form
 	//show_scale(a_minor_penta);
-	var url_params = get_url_parameters();
-	var loadFromUrl = function(){
-		if (is_defined(url_params['diagram_title'])){
-			$('#diagram_title').val(unescape(url_params['diagram_title']));
-		}
-		if (is_defined(url_params['strings'])){
-			if (is_defined(url_params['q']) && url_params['q'] == 'y'){
-				COLOR = "coffee";
-				$('#checkanswer').click(function(){
-					check_answers(url_params['strings']);
-				});
-				$('#colorchooser').hide();
-				$('#checkanswer').show();
-			} else {
-				fill_from_repr(url_params['strings']);
-			}
-		}
-	}
-	loadFromUrl();
+	loadFromUrl(get_url_parameters());
 	update_link();
 	var message = $('#message');
 	// update link at every click on a note...
@@ -273,10 +272,10 @@ jQuery(function() {
 
 	// set up example links
 	$('#examples ul li a').click(function(){
-		url_params = get_url_parameters($(this).attr('href'));
-		clear_fretboard(); update_link();
-		loadFromUrl();
+		clear_fretboard();
+		loadFromUrl(get_url_parameters($(this).attr('href')));
+		update_link();
 	});
-	// TODO: generate jTab
-	// TODO: show chord in standard notation
+	// TODO: fix quiz behavior (do not show note names in quiz mode), and show message on check answer
+	// TODO: find a way to show enarmonics
 });

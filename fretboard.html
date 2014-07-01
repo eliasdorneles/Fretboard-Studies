@@ -9,10 +9,10 @@
 		    * { margin:0; padding:0; border-spacing:0; }
 		    body { font-family:sans-serif; font-size:100%; }
 		    table#mainfretboard { position:absolute; top:120px; left:50px; border:1px solid red; }
-		    table#mainfretboard tr td { border:1px solid black; font-size: 28px; width:46px; height:34px; text-align:center; }
+		    table#mainfretboard tr td { border:1px solid black; font-size:28px; width:46px; height:34px; text-align:center; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
 
-		    table#fretclone { position:absolute; top:100px; left:-5px; border-spacing:8px; }
-		    table#fretclone tr td { margin: 0 2px; display:inline-block; border:2px solid transparent; background-color:transparent; font-size:18px; font-weight:bold; width:40px;height:24px; text-align:center; z-index:1; border-radius: 5px; }
+		    table#fretclone { position:absolute; top:100px; left:0px; border-spacing:8px; }
+		    table#fretclone tr td { margin: 0 2px; border:2px solid transparent; background-color:transparent; font-size:18px; font-weight:bold; width:38px; height:27px; text-align:center; z-index:1; border-radius:5px; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
 		    table#fretclone tr td:hover { cursor:pointer; border-color: black !important; border-style: dotted !important; }
 		    .orange { background-color:#ffbb67 !important; border-color:#543d22 !important; color:#543d22 !important; }
 		    .green  { background-color:#669999 !important; border-color:#003333 !important; color:#003333 !important; }
@@ -22,7 +22,7 @@
 		    .red    { background-color:#ea2e49 !important; border-color:#400d14 !important; color:#400d14 !important; }
 		    .blank  { background-color:#dddddd !important; border-color:#333333 !important; color:#333333 !important; }
 		    .white  { background-color:#ffffff !important; border-color:#111111 !important; color:#111111 !important; }
-		    .transparent { background-color:transparent !important; border-color:transparent !important; color:transparent !important }
+		    .transparent { background-color:transparent !important; border-color:#ddd !important; color:transparent !important }
 		    input.color_button { width:40px; border-radius: 5px; }
 		    div#main { height:280px; margin:10px; width: 940px; }
 		    #diagram_title { font-size:25px; font-weight:bold; margin:15px; display:block; padding:4px; border:0; width:100%; } 
@@ -65,8 +65,8 @@
 			<input id="clear" type="button" value="Clear" class="blank" /> the whole diagram or use an
 			<input id="eraser" type="button" value="Eraser" class="blank" />. Also, you can just click on a painted fret to clear it.<br />
 		</div>
-		<input type="button" id="checkanswer" value="Check answer!" /><br />
-		<!-- input type="button" id="clean" value="Try again!" / -->
+		<input type="button" id="checkanswer" class="coffee" value="Check answer!" /><br />
+		<a id="restart" href="javascript:void(0)">Restart</a> |
 		<a id="linkthis" href="javascript:void(0)">Link</a> |
 		<a id="linkquiz" href="javascript:void(0)">Quiz link</a><br />
 		<div id="examples"><strong>Examples:</strong>
