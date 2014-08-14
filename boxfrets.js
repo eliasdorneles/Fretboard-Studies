@@ -432,8 +432,13 @@ var ctrl_addDashNotegroups = function(idStr){
 			
 			$("#ngDashboard").append($abDiv); // add dragged notegroup to Dashboard
 			$("#ngDashboard").sortable({
-			stop: function( event, ui ) {mPlayer.reloadNotegroups($("#ngDashboard"))},
-			start: function( event, ui ) {ctl_stopPlayer();}
+			stop: function( event, ui ) {
+					mPlayer.reloadNotegroups($("#ngDashboard"));
+					update_link();
+				},
+			start: function( event, ui ) {
+					ctl_stopPlayer();
+				}
 			});
 			mPlayer.reloadNotegroups($("#ngDashboard"));
 			update_link();
@@ -976,8 +981,7 @@ jQuery(document).ready(function() {
 
 	
 	$('#dashSpeed').change(function(){
-		var timerSpeed = Math.round(1000 * 60 / $('#dashSpeed').val() );
-		mPlayer.setPlaySpeed(timerSpeed);
+		ctl_changeSpeed();
 	});
 	
 	// removed from view

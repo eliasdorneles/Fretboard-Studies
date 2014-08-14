@@ -61,8 +61,11 @@ var PlayerModel = {
 	"setPlaySpeed" : function(speed){
 			this["playSpeed"] = Number(speed);
 			if(this["playState"] == PS_PLAYING){
+				this.setPlaystate(PS_PAUSED);
 				clearInterval(this["looper"]);
-				this["looper"] = setInterval(function(){animateNotegroups();},Number(speed));
+				this.setLooper(setInterval(function(){animateNotegroups(true);},Number(speed)));
+				//this["looper"] = setInterval(function(){animateNotegroups();},Number(speed));
+				this.setPlaystate(PS_PLAYING);
 			}
 		}
 	,
@@ -96,7 +99,10 @@ var PlayerModel = {
 
 }
 
-
+var ctl_changeSpeed = function(){
+		var timerSpeed = Math.round(1000 * 60 / $('#dashSpeed').val() );
+		mPlayer.setPlaySpeed(timerSpeed);
+	}
 
 var ctl_stopPlayer = function(){
 		mPlayer.setPlaystate(PS_STOPPED);
