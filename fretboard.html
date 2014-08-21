@@ -10,18 +10,19 @@
          <link rel="stylesheet" href="smoothness/theme.css">
          <link rel="stylesheet" href="fretboard.css">
 
-        
+
         <script type="text/javascript" src="ScaleDictionary.js"></script>
         <script type="text/javascript" src="PlayerModel.js"></script>
 		<script type="text/javascript" src="BoxFrets.js"></script>
-        
+
 		<style>
 
 		</style>
     </head>
     <body>
+    <div id="main">
 	<input id="diagram_title" type="text" value="Click to add a title..." />
-	<div id="main">
+	<div id="fretboard_container">
 		<div id="message">&nbsp;</div>
 	    <table id="mainfretboard">
 		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
@@ -35,15 +36,15 @@
 
 
     <div class="h_ctrl_cnt">
-   
+
    <div id="checkanswerDiv" class="h_ctrl" style="margin-right:0px;">
     <input type="button" id="checkanswer" value="Check answer!" style="margin-right:12px;" />
     </div>
-    
+
     <div class= "h_ctrl">
     <input type="button" id="setRoot" style="width:64px;" name="setRoot" value="Set Root">
     </div>
-    
+
     <div class= "h_ctrl">
     <select name="selKey" id="selKey">
 <!--  		<option value="0">C</option>
@@ -61,7 +62,7 @@
         <option value="12">C&#9839;</option>
         <option value="13">F&#9839;</option>
         <option value="14">G&#9839;</option>-->
-        
+
         <option value="Cnatural">C</option>
         <option value="Dflat">D&#9837;</option>
   		<option value="Dnatural">D</option>
@@ -77,19 +78,19 @@
         <option value="Csharp">C&#9839;</option>
         <option value="Fsharp">F&#9839;</option>
         <option value="Gsharp">G&#9839;</option>
-        
+
 	</select>
 
 <!--    <select name="selScale" id="selScale">
 	</select>-->
     </div>
-    
+
     <div class= "h_ctrl">
     <input type="button" id="modeNoteInt" style="width:98px;" name="ShowNotes" value="Notes">
     </div>
-    
+
     <div class= "h_ctrl">
-    
+
     <input type="button" id="colorByInterval" style="width:98px;" name="intervalColor" value="Color Intervals">
     </div>
 
@@ -105,63 +106,63 @@
 		</div>
     </div>
     </div><!-- first button row end -->
-    
+
     <!-- second button row start -->
     <div class="h_ctrl_cnt">
     <div class= "h_ctrl">
-    
-    <input id="clear" type="button" value="Clear" class="blank" /> 
+
+    <input id="clear" type="button" value="Clear" class="blank" />
     </div>
     <div class= "h_ctrl">
-    
-    <input id="eraser" type="button" value="Eraser" class="blank" /> 
+
+    <input id="eraser" type="button" value="Eraser" class="blank" />
     </div>
-    
+
     <div class= "h_ctrl">
-    <input id="brush" type="button" value="Brush" class="blank" /> 
+    <input id="brush" type="button" value="Brush" class="blank" />
     </div>
     </div><!-- second button row end -->
-    
-    
+
+
    <div class="h_ctrl_cnt">
-    
+
     <div class="tabs-nohdr" id="notegroupsUnabridged" >
-    <!-- populated by javascript --->
+    <!-- populated by javascript -->
     </div>
-    
+
    	<div id="dashContainer">
     	<div id="dashControls">
            &nbsp;
         	<div style="float:left">
         	<input id="dashBack" type="button" value="<<"  />
-            <input id="dashPlayStop" type="button" value="Play"    /> 
+            <input id="dashPlayStop" type="button" value="Play"    />
             <input id="dashFwd" type="button" value=">>"   />
-         
+
             </div>
             <div style="float:right">
-            <input type="number" name="speed" id="dashSpeed" min="8" max="180" value="60" step="1" style="width:38px" /> 
-            </div> 
+            <input type="number" name="speed" id="dashSpeed" min="8" max="180" value="60" step="1" style="width:38px" />
+            </div>
         </div>
-        <div style="clear:both"></div>  
+        <div style="clear:both"></div>
        <div id="ngDashboard" class="ngExchange" >
 
        </div>
     </div>
-       
+
     </div>
-    <div style="clear:both"></div>  
-     
+    <div style="clear:both"></div>
+
 <!--       <div class="ui-droppable" id="remove-drag" style="width: 100%; height: 80px; background-color: #FF8B8B;">
             <div style="color: #fff; font-size: 20px; text-align: center; padding-top: 20px;">Remove
                 <div class="tip">Drop here</div>
             </div>
         </div>-->
-    
+
    <div style="clear:both"></div>
 
-    
+
     <div id="links" class="h_ctrl_cnt">
-    
+
 		<!-- input type="button" id="clean" value="Try again!" / -->
 		<a id="linkthis" href="javascript:void(0)">Link</a> |
 		<a id="linkquiz" href="javascript:void(0)">Quiz link</a> |
@@ -182,15 +183,17 @@
                 <a href="#strings=;;;;;&key=Cnatural&intColor=false&intNames=false&diagram_title=3-6-2-5-1%20for%20Ab%20Major&dash=Cnatural_ARP_MIN7,Fnatural_ARP_MIN7,Bflat_ARP_MIN,Eflat_ARP_DOM7,Aflat_ARP_MAJ">
                 3-6-2-5-1 in Ab Major</a>
                 </li>
-                
-                
+
+
                 <li><a href="#strings=3:13;2:15;3:15;2:15;;3:15&key=Gnatural&intColor=false&intNames=false&diagram_title=Gdim%20fingering">Gdim fingering</a></li>
 				<li><a href="#strings=0:4,2:3,5:3,7:18,10:3,12:3,14:3;0:18,3:3,5:3,7:3,10:3,12:18,15:3;2:3,4:18,7:3,9:3,11:3,14:3;0:4,2:3,4:3,7:3,9:18,12:3,14:3;0:4,2:18,5:3,7:3,9:3,12:3,14:18;0:4,2:3,5:3,7:18,10:3,12:3,14:3&key=Gnatural&intColor=false&intNames=false&diagram_title=B%20minor%20pentatonic">B minor pentatonic</a></li>
 				<li><a href="#strings=;4:15;4:15;4:15;;4:18&key=Cnatural&intColor=false&intNames=false&diagram_title=Abmin%20fingering">Abmin fingering</a></li>
-				
+
             </ul>
 		</div>
      </div>
+
+     </div><!--end #main -->
     </body>
 </html>
 <script>

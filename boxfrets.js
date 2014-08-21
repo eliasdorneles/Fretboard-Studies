@@ -4,7 +4,7 @@ var COLOR = "lightgreen";
 //var PALLETE_COLORS = ["orange", "green", "blue", "yellow", "lightgreen", "red", "transparent"]
 //var POSSIBLE_COLORS2 = ["orange", "green", "blue", "yellow", "lightgreen", "red", "i_root", "transparent"]
 var POSSIBLE_COLORS = [
-	"i_root", 
+	"i_root",
 	"i_flatnine",
 	"i_nine",
 	"i_flatthird",
@@ -17,12 +17,12 @@ var POSSIBLE_COLORS = [
 	"i_flatseventh",
 	"i_seventh",
 	"i_passing",
-	"orange", 
-	"green", 
-	"blue", 
-	"yellow", 
-	"lightgreen", 
-	"red", 
+	"orange",
+	"green",
+	"blue",
+	"yellow",
+	"lightgreen",
+	"red",
 	"black",
 	"white",
 	"transparent"];
@@ -180,11 +180,11 @@ var td_paint_or_clear = function(td){
 		{
 			var arrStringFret = getStringFret(td);
 			ctl_color_td_by_interval(arrStringFret[0],arrStringFret[1]);
-		} 
-		else 
-		{	
+		}
+		else
+		{
 			// repaint with new pallete color
-			td_paint(td, COLOR );	
+			td_paint(td, COLOR );
 		}
     }
 
@@ -206,9 +206,9 @@ var getFretcloneStrings = function(){
 						updateSetRootView();
 						var newNote = $(this).attr('notename');
 						// get safeName from note
-						ctl_change_key.setRoot(getKeyObjFromNoteName(newNote)); 
+						ctl_change_key.setRoot(getKeyObjFromNoteName(newNote));
 						td_clear(this);// will paint after
-						//var newKey = $("#selKey").val(getChromaticInt(newNote, CHROMFLAT));	
+						//var newKey = $("#selKey").val(getChromaticInt(newNote, CHROMFLAT));
 					}
 				    td_paint_or_clear(this, COLOR);
 				},
@@ -230,7 +230,7 @@ var getFretcloneStrings = function(){
 						td_paint(this, COLOR); // current palette color
 						update_link();
 					}
-				}	
+				}
 	    	});
 		}
     }
@@ -279,7 +279,7 @@ var check_answers = function(a_repr) {
 	}
 }
 var clear_fretboard = function(){
-	
+
 	for(var i = 0; i < GUITAR_STRINGS.length; i++){
 		for(var j = 0; j < GUITAR_STRINGS[i].length; j++){
 			td_clear(GUITAR_STRINGS[i][j].td);
@@ -299,7 +299,7 @@ var set_notes = function(){
 			var note_td = $(GUITAR_STRINGS[i][j].td);
 			var notespan = $(GUITAR_STRINGS[i][j].td).find('.note');
 			var note = pick_note(j, offsets[i]);
-			
+
 			notespan.attr('id','ns_'+i+'_'+j );// ns_(string)_(fret)
 			note_td.attr('id','nc_'+i+'_'+j );
 			notespan.attr('notename', note );
@@ -308,14 +308,14 @@ var set_notes = function(){
 			var chromFromC = (j + offsets[i]) % mFB.getChromNames().length;
 			note_td.attr('semiInts', chromFromC );
 			notespan.attr('semiInts', chromFromC );
-			
+
 		}
 	}
 }
 
 
 var set_notespans = function(){
-	
+
 	var offsets = [4, 11, 7, 2, 9, 4];
 	for(var i = 0; i < GUITAR_STRINGS.length; i++){
 		for(var j = 0; j < GUITAR_STRINGS[i].length; j++){
@@ -325,19 +325,19 @@ var set_notespans = function(){
 
 			var arrLen = mFB.getNGintnames().length;
 			var nsSemiInt = ((mFB.getNGintnames().length + Number(ns.attr("semiInts"))) - mFB.getKeyInt()) % mFB.getNGintnames().length;
-			
+
 			if(INTERVALMODE)
 			{
 				if (nsSemiInt == 0){
-					ns.html(mFB.getChromNames()[0]);		
+					ns.html(mFB.getChromNames()[0]);
 				}
 				else
 				{
-					ns.html(mFB.getNGintnames()[nsSemiInt]);	
+					ns.html(mFB.getNGintnames()[nsSemiInt]);
 				}
 
 			}
-			else 
+			else
 			{
 				ns.html(mFB.getChromNames()[nsSemiInt]);
 			}
@@ -345,8 +345,8 @@ var set_notespans = function(){
 			var isPainted = is_painted($('#nc_'+i+'_'+j));
 			if(COLORBYINTERVALS && is_painted($('#nc_'+i+'_'+j)) )
 			{
-				
-				ctl_color_td_by_interval(i,j); //send string, fret	
+
+				ctl_color_td_by_interval(i,j); //send string, fret
 			}
 		}
 	}
@@ -366,7 +366,7 @@ var ctrl_updateMessage = function(){
 	}
 
 var ctl_updateIntervalMode = function(boolNewMode){
-	
+
 		if(boolNewMode){
 			$('#modeNoteInt').attr('value', 'Intervals');
 			INTERVALMODE = true;
@@ -393,9 +393,9 @@ var ctrl_addDashNotegroups = function(idStr){
 			var ngType = arrID[1];
 			var ng = arrID[2]; // notegroup
 			var htmlTxt = getKeyObjFromSafeName(arrID[0]).name;
-			
+
 			var ngBoxClrClass;
-			
+
 			switch(ngType){
 				case "ARP":
 					htmlTxt += dictArps[ngType+'_'+ng].name;
@@ -408,12 +408,12 @@ var ctrl_addDashNotegroups = function(idStr){
 				case "CHD":
 					htmlTxt += ' '+dictChords[ngType+'_'+ng].name;
 					ngBoxClrClass="ngboxChd";
-					break;			
+					break;
 			}
 			var $abDiv = $("<div>", {class: "cNoteGroup "+ngBoxClrClass, notegroup: idStr}).html(htmlTxt);
 			$abDiv.dblclick(
 					// remove abridgedDiv on doubleclick
-					function(){ 
+					function(){
 					  ctl_stopPlayer();
 					  $(this).remove();
 					  update_link();
@@ -422,14 +422,14 @@ var ctrl_addDashNotegroups = function(idStr){
 					// set notegroups on abridged Div click
 				   function(){
 					//var abDivArrID = this.attributes["notegroup"].value.split('_');
-					set_notes_per_notegroup(arrID[0], arrID[1], arrID[2]);		
+					set_notes_per_notegroup(arrID[0], arrID[1], arrID[2]);
 				   }
 				);
-			
+
 			if(mPlayer.getPlaystate() == PS_PLAYING){
 				ctl_stopPlayer();
 			}
-			
+
 			$("#ngDashboard").append($abDiv); // add dragged notegroup to Dashboard
 			$("#ngDashboard").sortable({
 			stop: function( event, ui ) {
@@ -442,7 +442,7 @@ var ctrl_addDashNotegroups = function(idStr){
 			});
 			mPlayer.reloadNotegroups($("#ngDashboard"));
 			update_link();
-	
+
 	}
 var ctl_updateColorIntMode = function(boolNewMode){
 		if(boolNewMode){
@@ -461,18 +461,18 @@ var ctl_updateColorIntMode = function(boolNewMode){
 			update_link();
 		}
 	}
-	
+
 var ctl_color_td_by_interval = function(string, fret){
 		var nsSemiInt = ((mFB.getNGintnames().length + Number($('#ns_'+string+'_'+fret).attr("semiInts"))) - mFB.getKeyInt()) % mFB.getNGintnames().length;
 		var newColor = mFB.getNGintcolor()[Number(nsSemiInt)]; // need to be a number?
 		td_paint($('#nc_'+string+'_'+fret), newColor );
-	} 
+	}
 
 var ctl_change_key = {
 	"setRoot" : function(kObj){
 			mFB.setKey(kObj);
 			if($("#selKey").val() != kObj.safename){
-				$("#selKey").val(kObj.safename);	
+				$("#selKey").val(kObj.safename);
 			}
 			set_notespans();
 		},
@@ -480,7 +480,7 @@ var ctl_change_key = {
 			mFB.setKey(dictKeys[kSafeName]);
 			var selKeyVal = $("#selKey").val();
 			if(selKeyVal != kSafeName){
-				$("#selKey").val(kSafeName);	
+				$("#selKey").val(kSafeName);
 			}
 		},
 	"selKeyChange" : function(selKeyVal){
@@ -489,12 +489,12 @@ var ctl_change_key = {
 			set_notespans();
 			update_link();
 		}
-	
+
 	}
- 
+
 var set_notes_per_notegroup = function(keySafeName, ngType, ng){
 			// if color by intervals is off, turn on and save state
-			var paletteState = !COLORBYINTERVALS;				   
+			var paletteState = !COLORBYINTERVALS;
 			COLORBYINTERVALS = true;
 			ctl_change_key.keyChangeNotegroup(keySafeName);
 			var ng = ngType+'_'+ng;
@@ -515,7 +515,7 @@ var isPalleteColor = function(c){
 	}
 
 var getChromaticInt = function(noteStr, chromNamesScale){
-	
+
 	if(chromNamesScale == null){
 		chromNamesScale = mFB.getChromNames();
 	}
@@ -542,15 +542,15 @@ var getEnharmonic = function(noteStr){
 				enStr = acc[0]+"&#9839;";
 				noteStr = CHROMFLAT[getChromaticInt(enStr,CHROMSHARP)];
 				break;
-			default: 
+			default:
 				//natural
-				noteStr = noteStr.charAt(0);		
+				noteStr = noteStr.charAt(0);
 		}
-	} 
+	}
 
 
 	return noteStr;
-	
+
 }
 
 var getAccTypeStr = function(noteStr){
@@ -565,21 +565,21 @@ var getAccTypeStr = function(noteStr){
 				//sharp
 				accType = SHARPED;
 				break;
-			default: 
+			default:
 				//natural
-				accType= NATURAL;		
+				accType= NATURAL;
 		}
-		
+
 	return accType;
 }
 
-var getKeyObjFromNoteName = function(noteStr){	
+var getKeyObjFromNoteName = function(noteStr){
 		var intFromC = getKeyObjFromUnsafeName(noteStr).fromC
 		var newKeyHtmlName = mFB.getKeyObj().baseScale[intFromC];
 		return  getKeyObjFromUnsafeName(newKeyHtmlName);
 	}
 
-var getSafeNameFromNoteName = function(noteStr){	
+var getSafeNameFromNoteName = function(noteStr){
 		var intFromC = getKeyObjFromUnsafeName(noteStr).fromC
 		var newKeyHtmlName = mFB.getKeyObj().baseScale[intFromC];
 		return  getKeyObjFromUnsafeName(newKeyHtmlName).safename;
@@ -604,14 +604,14 @@ var getKeyObjFromUnsafeName = function(htmlStr){
 				break;
 			}
 		}
-		
+
 		if(keyObj == ""){
 			// likely a sharp key that needs to be a flat key = get Enharmonic
 			for(var i = 0; i < CHROMSHARP.length; i++){
 				if(htmlStr == CHROMSHARP[i]){
 					htmlStr = CHROMFLAT[i];
 					break;
-				}	
+				}
 			}
 
 			for(ko in dictKeys){
@@ -628,13 +628,13 @@ var getNotespanFromTD = function(td){
 		var arr = td.attr('id').split('_');
 		return $('#ns_'+arr[1]+'_'+arr[2]);
 	}
-	
+
 var getStringFret = function(el){
 		var aStringFret = el.attr('id').split('_');
 		aStringFret.shift();
 		return aStringFret;
 	}
-	
+
 var updateSetRootView = function(){
 		if(SETTINGROOT){
 			$("#setRoot").addClass( 'setRootArmed' );
@@ -642,7 +642,7 @@ var updateSetRootView = function(){
 			$("#setRoot").removeClass( 'setRootArmed' )
 		}
 	}
-	
+
 //var populateScaleMenu = function(){
 //		var scaleSel =  $('#selScale');
 //		var arrScales = dictScales;
@@ -650,7 +650,7 @@ var updateSetRootView = function(){
 //		scaleSel.append(
 //			$('<option></option>').val(val).html(text["name"])
 //				 );
-//		});	
+//		});
 //	}
 
 var populateNotegroupsUnabridged = function(){
@@ -660,7 +660,7 @@ var populateNotegroupsUnabridged = function(){
 	}
 	html += '</ul>';
 	$('#notegroupsUnabridged').append(html);
-	
+
 	html ="";
 	for(var key in dictKeys){
 		html += '<div id="tb_'+dictKeys[key].safename+'" class="tabs-nobg">';
@@ -671,8 +671,8 @@ var populateNotegroupsUnabridged = function(){
         html += '<li><a href="#tb_scales_'+dictKeys[key].safename+'">Scales</a></li>';
         html += '<li><a href="#tb_chords_'+dictKeys[key].safename+'">Chords</a></li>';
         html += '</ul>';
-		
-		// ~~~~~~ arpeggios 
+
+		// ~~~~~~ arpeggios
 		html += '<div id="tb_arppegios_'+dictKeys[key].safename+'" class="tabs-nobg ngExchange">';
 
 		// divs
@@ -683,9 +683,9 @@ var populateNotegroupsUnabridged = function(){
 			html += '</div>';
 		}
 
-		
+
         html += '</div>';
-		
+
 		// ~~~~~~ scales
 		html += '<div id="tb_scales_'+dictKeys[key].safename+'" class="tabs-nobg  ngExchange">';
 
@@ -695,11 +695,9 @@ var populateNotegroupsUnabridged = function(){
 			html += dictKeys[key].name +' '+ dictScales[ng].name;
 			html += '</div>';
 		}
-	
-		
+
 		html += '</div>';
-		
-		
+
 		// ~~~~~~ chords
 		html += '<div id="tb_chords_'+dictKeys[key].safename+'" class="tabs-nobg ngExchange">';
 		//html += dictKeys[key].name+' chords';
@@ -710,7 +708,6 @@ var populateNotegroupsUnabridged = function(){
 		html += '</div>';
 	}
 	$('#notegroupsUnabridged').append(html);
-	
 
  	};
 
@@ -731,13 +728,13 @@ var	makeUnabridgedDragDroppable = function(){
 		var arrID = this.id.split('_');
 		set_notes_per_notegroup(arrID[0], arrID[1], arrID[2]);
 		});
-	
+
 	$("#ngDashboard").droppable({
     accept: '.ngUnabDiv',
     activeClass: "drop-area",
     drop: function (e, ui) {
         if ($(ui.draggable)[0].id != "") {
-			// on dropping unabridged div
+			// on dropping unabridgedtd
             var x = ui.helper.clone();
 			var helperID = ui.helper.clone().context.id;
 			ui.helper.remove();
@@ -754,11 +751,11 @@ $("#remove-drag").droppable({
     hoverClass: "remove-drag-hover",
     accept: '.remove'
 });
-	
+
 }
-	
+
 var onDocReady = function(){
-	
+
 }
 
 jQuery(document).ready(function() {
@@ -769,21 +766,21 @@ jQuery(document).ready(function() {
 	for(var key in dictKeys){
 		$("#ngTab_"+dictKeys[key].safename).tabs();
 	}
-	
+
 	$("#notegroupsUnabridged2").tabs();
 
 	$( ".cNoteGroup" ).draggable({ addClasses: false });
-	
-	
+
+
 	$(gen_fret_boxes(19, 6)).insertAfter($('#mainfretboard'));
 	GUITAR_STRINGS = getFretcloneStrings();
 	set_notes();
-	
+
 	// add another row onto Fretclone to serve as fretpaint buttons
 	var newRow = function(){
 		var html ="<tr>"
 		var board_strings = $('#fretclone tr');
-    	
+
 		var children = board_strings[0].children;
 		for (var f = 0; f < children.length; f++){
 			html +='<td id="fretpaint_'+f+'" class="fretpainter"></td>';
@@ -792,21 +789,21 @@ jQuery(document).ready(function() {
 		return html;
 	}
 	$('#fretclone > tbody:last').append(newRow);
-	
+
 	//populateScaleMenu(); // removed from view
 
 	var url_params = get_url_parameters();
 	var loadFromUrl = function(){
 		if (is_defined(url_params['intColor'])){
 				if(url_params['intColor'] == "true"){
-	
+
 					ctl_updateColorIntMode(true);
-				} 
+				}
 			}
 		if (is_defined(url_params['intNames'])){
 				if(url_params['intNames'] == "true"){
 					ctl_updateIntervalMode(true);
-				} 
+				}
 			}
 		if (is_defined(url_params['key'])){
 				// key should use safename
@@ -815,7 +812,7 @@ jQuery(document).ready(function() {
 		if (is_defined(url_params['dash'])){
 				var arrNotgroups = url_params['dash'];
 				ctl_populateDash(arrNotgroups);
-			}	
+			}
 		if (is_defined(url_params['diagram_title'])){
 			$('#diagram_title').val(unescape(url_params['diagram_title']));
 		}
@@ -862,10 +859,10 @@ jQuery(document).ready(function() {
 				}
 		}
 
-		
+
 		for(var s = 0; s < GUITAR_STRINGS.length; s++){
 				if(fpainted){
-					td_clear($('#'+'nc_'+s+'_'+fret)); 
+					td_clear($('#'+'nc_'+s+'_'+fret));
 				} else{
 					var ns = $('#'+'nc_'+s+'_'+fret);
 					if(COLORBYINTERVALS){
@@ -874,9 +871,10 @@ jQuery(document).ready(function() {
 					{
 						td_paint($('#'+'nc_'+s+'_'+fret), COLOR);
 					}
-					
-				}	
+
+				}
 		}
+		update_link();
 
 	})
 
@@ -900,7 +898,7 @@ jQuery(document).ready(function() {
 		if (iteration>2) iteration=1
 		$(this).data('iteration',iteration)
 	});
-	
+
 	$('#eraser').click(function(){
 		var iteration=$(this).data('iteration')||1
 		switch ( iteration) {
@@ -920,23 +918,23 @@ jQuery(document).ready(function() {
 		if (iteration>2) iteration=1
 		$(this).data('iteration',iteration)
 	});
-	
 
-	
+
+
 	$('#clear').click(function(){
 		message.html('');
 		clear_fretboard(); update_link();
 	});
-	
+
 	$('#modeNoteInt').click(function(){
 		if(INTERVALMODE == true){
 				ctl_updateIntervalMode(false);
 			} else{
 				ctl_updateIntervalMode(true);
 			}
-		
+
 	});
-	
+
 	$('#colorByInterval').click(function(){
 		if(COLORBYINTERVALS){
 			ctl_updateColorIntMode(false);
@@ -944,7 +942,7 @@ jQuery(document).ready(function() {
 			ctl_updateColorIntMode(true);
 		}
 
-		
+
 	});
 
 	$('#setRoot').click(function(){
@@ -955,12 +953,12 @@ jQuery(document).ready(function() {
 		}
 		updateSetRootView();
 	});
-	
+
 	$('#selKey').change(function(){
 		ctl_change_key.selKeyChange($('#selKey').val());
 
 	});
-	
+
 	// dash player controls
 	$('#dashPlayStop').click(function(){
 		if (mPlayer.getPlaystate() == PS_PLAYING){
@@ -969,21 +967,21 @@ jQuery(document).ready(function() {
 			ctl_playPlayer();
 		}
 	});
-	
+
 	$('#dashBack').click(function(){
 			ctl_backPlayer();
-		
+
 	});
 
 	$('#dashFwd').click(function(){
 			ctl_fwdPlayer();
 	});
 
-	
+
 	$('#dashSpeed').change(function(){
 		ctl_changeSpeed();
 	});
-	
+
 	// removed from view
 //	$('#selScale').change(function(){
 //		var newScale = $('#selScale').val();
@@ -1001,10 +999,10 @@ jQuery(document).ready(function() {
 		clear_fretboard(); update_link();
 		loadFromUrl();
 	});
-	
 
-	
-	
+
+
+
 	// TODO: generate jTab
 	// TODO: show chord in standard notation
 });
