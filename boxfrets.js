@@ -800,14 +800,15 @@ jQuery(document).ready(function() {
 					ctl_updateColorIntMode(true);
 				}
 			}
+
+		if (is_defined(url_params['key'])){
+				// key should use safename
+				ctl_change_key.keyChangeNotegroup(url_params['key']);
+			}
 		if (is_defined(url_params['intNames'])){
 				if(url_params['intNames'] == "true"){
 					ctl_updateIntervalMode(true);
 				}
-			}
-		if (is_defined(url_params['key'])){
-				// key should use safename
-				ctl_change_key.keyChangeNotegroup(url_params['key']);
 			}
 		if (is_defined(url_params['dash'])){
 				var arrNotgroups = url_params['dash'];
