@@ -1,9 +1,7 @@
 /* code to handle manipulation */
 var GUITAR_STRINGS;
 var COLOR = "lightgreen";
-//var PALLETE_COLORS = ["orange", "green", "blue", "yellow", "lightgreen", "red", "transparent"]
-//var POSSIBLE_COLORS2 = ["orange", "green", "blue", "yellow", "lightgreen", "red", "i_root", "transparent"]
-var POSSIBLE_COLORS = [
+var INTERVAL_COLORS = [
 	"i_root",
 	"i_flatnine",
 	"i_nine",
@@ -17,15 +15,21 @@ var POSSIBLE_COLORS = [
 	"i_flatseventh",
 	"i_seventh",
 	"i_passing",
+	"white",
+	"black"
+	]
+
+var PALLETE_COLORS = [
 	"orange",
 	"green",
 	"blue",
 	"yellow",
 	"lightgreen",
 	"red",
-	"black",
-	"white",
-	"transparent"];
+	"transparent"
+	]
+
+var POSSIBLE_COLORS = INTERVAL_COLORS.concat(PALLETE_COLORS);// concat  interval and pallete colors
 var ERASER = false;
 var BRUSH = false;
 var SETTINGROOT = false;
@@ -416,13 +420,14 @@ var ctrl_addDashNotegroups = function(idStr){
 					function(){
 					  ctl_stopPlayer();
 					  $(this).remove();
-					  update_link();
+					  //update_link();
 					}
 				).click(
 					// set notegroups on abridged Div click
 				   function(){
 					//var abDivArrID = this.attributes["notegroup"].value.split('_');
 					set_notes_per_notegroup(arrID[0], arrID[1], arrID[2]);
+					//update_link();
 				   }
 				);
 
@@ -653,6 +658,14 @@ var updateSetRootView = function(){
 //		});
 //	}
 
+var populateColorPalleteChooser = function(){
+	html = "Palette:";
+	for(var i=0; i < PALLETE_COLORS.length; i++){
+		html += '<input type="button" value="&nbsp;" class="color_button '+PALLETE_COLORS[i]+'" />';
+	}
+	$('#colorchooser').append(html);
+
+}
 var populateNotegroupsUnabridged = function(){
 	var html = '<ul id="unabridgedKeyTabs">';
 	for (var key in dictKeys) {
@@ -727,7 +740,9 @@ var	makeUnabridgedDragDroppable = function(){
 	}).click(function(){
 		var arrID = this.id.split('_');
 		set_notes_per_notegroup(arrID[0], arrID[1], arrID[2]);
+		update_link();
 		});
+
 
 	$("#ngDashboard").droppable({
     accept: '.ngUnabDiv',
@@ -759,6 +774,9 @@ var onDocReady = function(){
 }
 
 jQuery(document).ready(function() {
+	//START
+
+	populateColorPalleteChooser();
 
 	populateNotegroupsUnabridged();
 	$("#notegroupsUnabridged").tabs();
@@ -924,7 +942,8 @@ jQuery(document).ready(function() {
 
 	$('#clear').click(function(){
 		message.html('');
-		clear_fretboard(); update_link();
+		clear_fretboard();
+		update_link();
 	});
 
 	$('#modeNoteInt').click(function(){
@@ -997,7 +1016,8 @@ jQuery(document).ready(function() {
 	// set up example links
 	$('#examples ul li a').click(function(){
 		url_params = get_url_parameters($(this).attr('href'));
-		clear_fretboard(); update_link();
+		clear_fretboard();
+		//update_link();
 		loadFromUrl();
 	});
 
