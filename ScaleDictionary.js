@@ -27,20 +27,20 @@ kGsharp = {"name" : "G&#9839;",  "safename" : "Gsharp","baseScale" : CHROMSHARP,
 
 // dict keys collects above objects
 var dictKeys = {
-	"Cnatural" : kC, 
-	"Dflat" : kDflat, 
-	"Dnatural" : kD, 
-	"Eflat" : kEflat, 
-	"Enatural" : kE, 
-	"Fnatural" : kF, 
-	"Gflat" : kGflat, 
-	"Gnatural" : kG, 
-	"Aflat" : kAflat, 
-	"Anatural" : kA, 
-	"Bflat" : kBflat, 
-	"Bnatural" : kB, 
-	"Csharp" : kCsharp, 
-	"Fsharp" : kFsharp, 
+	"Cnatural" : kC,
+	"Dflat" : kDflat,
+	"Dnatural" : kD,
+	"Eflat" : kEflat,
+	"Enatural" : kE,
+	"Fnatural" : kF,
+	"Gflat" : kGflat,
+	"Gnatural" : kG,
+	"Aflat" : kAflat,
+	"Anatural" : kA,
+	"Bflat" : kBflat,
+	"Bnatural" : kB,
+	"Csharp" : kCsharp,
+	"Fsharp" : kFsharp,
 	"Gsharp" : kGsharp };
 
 var INTS_FLATS = ['R', '&#9837;9', '9', '&#9837;3', '3', '11', '&#9837;5', '5', '&#9837;13', '13', '&#9837;7', '7'];
@@ -52,9 +52,9 @@ var INTS_SUPERLOCRIAN = ['R', '&#9837;9', '9', '&#9837;3', '&#9837;4', '11', '&#
 var _ROOT = {
 	'SEMI' : 0,
 	'INT' : 'R',
-	'CLR' : 'i__ROOT'	
+	'CLR' : 'i__ROOT'
 	}
-	
+
 var FLATNINE = {
 	'SEMI' : 1,
 	'INT' : '&#9837;9',
@@ -71,26 +71,26 @@ var SHARPNINE = {
 	'SEMI' : 3,
 	'INT' : '&#9839;11',
 	'CLR' : 'i_sharpnine'
-	}	
+	}
 
 var FLATTHREE = {
 	'SEMI' : 3,
 	'INT' : '&#9837;3',
 	'CLR' : 'i_third'
 	}
-	
+
 var THIRD = {
 	'SEMI' : 4,
 	'INT' : '3',
 	'CLR' : 'i_third'
-	}	
+	}
 
 var DIMELEVEN = {
 	'SEMI' : 4,
 	'INT' : '&#9837;11',
 	'CLR' : 'i_fourth'
 	}
-	
+
 var ELEVEN = {
 	'SEMI' : 5,
 	'INT' : '11',
@@ -114,7 +114,7 @@ var FIFTH = {
 	'INT' : '5',
 	'CLR' : 'i_fifth'
 	}
-	
+
 var AUGFIVE = {
 	'SEMI' : 8,
 	'INT' : '&#9839;5',
@@ -126,37 +126,37 @@ var FLATTHIRTEEN = {
 	'INT' : '&#9837;13',
 	'CLR' : 'i_sixth'
 	}
-	
+
 var THIRTEEN = {
 	'SEMI' : 9,
 	'INT' : '13',
 	'CLR' : 'i_sixth'
-	}	
+	}
 
 var AUGTHIRTEEN = {
 	'SEMI' : 10,
 	'INT' : '&#9839;13',
 	'CLR' : 'i_sixth'
-	}	
+	}
 
 var FLATSEVEN = {
 	'SEMI' : 10,
 	'INT' : '&#9837;7',
 	'CLR' : 'i_seventh'
-	}	
+	}
 
 var SEVENTH = {
 	'SEMI' : 11,
 	'INT' : '7',
 	'CLR' : 'i_seventh'
-	}	
-	
+	}
+
 var TX = {
 	// tone outside of scale, inherit semitone and int
 	'SEMI' : -1,
 	'INT' : '',
 	'CLR' : 'white'
-	}	
+	}
 
 var TI = {
 	// tone in scale, inherit semitone and int
@@ -164,8 +164,8 @@ var TI = {
 	'INT' : '',
 	'CLR' : 'black'
 	}
-	
-// Scale Formulas	
+
+// Scale Formulas
 var IF_IONIAN = [_ROOT, TX, TI, TX, THIRD, TI, TX, FIFTH, TX, TI, TX, SEVENTH];
 var IF_LYDIAN = [_ROOT, TX, TI, TX, THIRD, TX, SHARPELEVEN, FIFTH, TX, TI, TX, SEVENTH];
 var IF_MIXOLYDIAN = [_ROOT, TX, TI, TX, THIRD, TI, TX, FIFTH, TX, TI, FLATSEVEN, TX];
@@ -221,12 +221,12 @@ var SC_PENTDOM =  { "name" : "Dominant Pentatonic", "intnames": INTS_FLATS, "col
 
 
 var dictScales = {
-	"SC_MAJOR": SC_MAJOR, 
-	"SC_LYDIAN": SC_LYDIAN, 
-	"SC_MIXOLYDIAN": SC_MIXOLYDIAN, 
-	"SC_DORIAN": SC_DORIAN, 
-	"SC_AEOLIAN": SC_AEOLIAN, 
-	"SC_PHRYGIAN": SC_PHRYGIAN, 
+	"SC_MAJOR": SC_MAJOR,
+	"SC_LYDIAN": SC_LYDIAN,
+	"SC_MIXOLYDIAN": SC_MIXOLYDIAN,
+	"SC_DORIAN": SC_DORIAN,
+	"SC_AEOLIAN": SC_AEOLIAN,
+	"SC_PHRYGIAN": SC_PHRYGIAN,
 	"SC_LOCRIAN": SC_LOCRIAN,
 	"SC_DIMINISHED": SC_DIMINISHED,
 	"SC_PENTMIN": SC_PENTMIN,
@@ -243,7 +243,7 @@ var dictScales = {
 	};
 
 var ScaleModel = {
-	
+
 	"scale" : dictScales["SC_MAJOR"]
 	,
 	"setScale" : function(newScale){
@@ -263,14 +263,14 @@ var ScaleModel = {
 	"getScaleName" : function(){
 			var s = this["scale"];
 			return s["name"];
-		}		
-		
-	
-	};	
-	
+		}
 
 
-	
+	};
+
+
+
+
 //arps
 var INTCLR_MAJ = ["i_root", "white","white","white","i_third","white","white","i_fifth","white","white","white","white"];
 var INTCLR_MAJ7 = ["i_root", "white","white","white","i_third","white","white","i_fifth","white","white","white","i_seventh"];
@@ -279,7 +279,7 @@ var INTCLR_MIN = ["i_root", "white","white","i_third","white","white","white","i
 var INTCLR_MIN7 = ["i_root", "white","white","i_third","white","white","white","i_fifth","white","white","i_seventh","white"];
 var INTCLR_MIN7b5 = ["i_root", "white","white","i_third","white","white","i_fifth","white","white","white","i_seventh","white"];
 var INTCLR_DIM = ["i_root", "white","white","i_third","white","white","i_fifth","white","white","i_seventh","white","white"];
-	
+
 var ARP_MAJ =  { "name" : "maj", "intnames": INTS_FLATS, "color" : INTCLR_MAJ };
 var ARP_MAJ7 =  { "name" : "maj7", "intnames": INTS_SHARP4, "color" : INTCLR_MAJ7 };
 var ARP_DOM7 =  { "name" : "7", "intnames": INTS_SHARP4, "color" : INTCLR_DOM7 };
@@ -315,31 +315,31 @@ var FretboardModel = {
 	"ngType" : dictScales,
 
 	"getChromNames" : function(){
-			var cn = this["chromNames"];	
+			var cn = this["chromNames"];
 			return cn;
 		},
 	"setChromNames" : function(cn){
 		this["chromNames"] = cn;
 	},
 	"getKeyObj" : function(){
-			var kObj = this["key"];	
+			var kObj = this["key"];
 			return kObj;
 		},
 	"getKeyTextName" : function(){
 		// return text html name for CURRENT key
-			var kObj = this["key"];	
+			var kObj = this["key"];
 			return kObj["name"];
 		},
 
 	"getKeySafeName" : function(){
 		// returns safename for CURRENT key
-			var kObj= this["key"];	
+			var kObj= this["key"];
 			return kObj["safename"];
-		},	
-		
+		},
+
 	"getKeyInt" : function(){
 		// returns int for CURRENT key
-			var kObj = this["key"];	
+			var kObj = this["key"];
 			return kObj["fromC"];
 		},
 	"setKey" : function(kObj){
@@ -356,19 +356,19 @@ var FretboardModel = {
 			// chrom names array will start with KEY as root
 			this["chromNames"] = newscale;
 		},
-		
+
 	"getNotegroupDict" : function(){
 		// returns CURRENT ng dictionary
-			var d = this["ngType"];	
+			var d = this["ngType"];
 			return d;
-		},	
-	
+		},
+
 	"getNotegroup" : function(){
 			var dict = this["ngType"];
 			var ng = dict[this["ng"]];
 			return ng;
 		},
-	
+
 	"setNotegroup" : function(ng, typeDict){
 			if(arguments.length < 2){
 				arr = ng.split('_');
@@ -376,7 +376,7 @@ var FretboardModel = {
 					case "SC":
 						this["ngType"] = dictScales;
 						break;
-					case "ARP": 
+					case "ARP":
 						this["ngType"] = dictArps;
 						break;
 					case "CHD":
@@ -386,16 +386,16 @@ var FretboardModel = {
 			} else {
 				this["ngType"] = typeDict;
 			}
-			
+
 			this["ng"] = ng;
 		},
-		
+
 	"getNGname" : function(){
 			var dict = this["ngType"];
 			var ng = dict[this["ng"]];
 			return ng["name"];
 	},
-	
+
 	"getNGintcolor" : function(){
 			var dict = this["ngType"];
 			var ng = dict[this["ng"]];
@@ -406,5 +406,5 @@ var FretboardModel = {
 			var ng = dict[this["ng"]];
 			return ng["intnames"]; // returns array of html texts
 	},
-	
-};	
+
+};

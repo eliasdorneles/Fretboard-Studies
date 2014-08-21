@@ -808,10 +808,9 @@ jQuery(document).ready(function() {
 	}
 	$('#fretclone > tbody:last').append(newRow);
 
-	//populateScaleMenu(); // removed from view
-
 	var url_params = get_url_parameters();
 	var loadFromUrl = function(){
+
 		if (is_defined(url_params['intColor'])){
 				if(url_params['intColor'] == "true"){
 
@@ -819,10 +818,7 @@ jQuery(document).ready(function() {
 				}
 			}
 
-		if (is_defined(url_params['key'])){
-				// key should use safename
-				ctl_change_key.keyChangeNotegroup(url_params['key']);
-			}
+
 		if (is_defined(url_params['intNames'])){
 				if(url_params['intNames'] == "true"){
 					ctl_updateIntervalMode(true);
@@ -846,6 +842,10 @@ jQuery(document).ready(function() {
 			} else {
 				fill_from_repr(url_params['strings']);
 			}
+		}
+		if (is_defined(url_params['key'])){
+				// key should use safename
+				ctl_change_key.setRoot(getKeyObjFromSafeName(url_params['key']));
 		}
 	}
 	loadFromUrl();
