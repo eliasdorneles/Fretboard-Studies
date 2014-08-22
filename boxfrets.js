@@ -372,12 +372,12 @@ var ctrl_updateMessage = function(){
 var ctl_updateIntervalMode = function(boolNewMode){
 
 		if(boolNewMode){
-			$('#modeNoteInt').attr('value', 'Intervals');
+			$('#modeNoteInt').attr('value', 'Notes');
 			INTERVALMODE = true;
 			set_notespans();
 			update_link();
 		} else {
-			$('#modeNoteInt').attr('value', 'Notes');
+			$('#modeNoteInt').attr('value', 'Intervals');
 			INTERVALMODE = false;
 			set_notespans();
 			update_link();

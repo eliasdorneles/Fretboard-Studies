@@ -45,6 +45,8 @@ var dictKeys = {
 
 var INTS_FLATS = ['R', '&#9837;9', '9', '&#9837;3', '3', '11', '&#9837;5', '5', '&#9837;13', '13', '&#9837;7', '7'];
 var INTS_SHARP4 = ['R', '&#9837;9', '9', '&#9837;3', '3', '11', '&#9839;11', '5', '&#9837;13', '13', '&#9837;7', '7'];
+var INTS_DOM = ['R', '&#9837;9', '9', '&#9839;9', '3', '11', '&#9837;5', '5', '&#43;5', '13', '&#9837;7', '7'];
+
 var INTS_SHARP4AUG = ['R', '&#9837;9', '9', '&#9837;3', '3', '11', '&#9839;11', '5', '&#43;5', '13', '&#9837;7', '7'];
 var INTS_DIM = ['R', '&#9837;9', '9', '&#9837;3', '3', '11', '&#9839;4', '5', '&#43;5', '&#9837;&#9837;7', '&#9837;7', '7'];
 var INTS_SUPERLOCRIAN = ['R', '&#9837;9', '9', '&#9837;3', '&#9837;4', '11', '&#9837;5', '5', '&#9837;13', '13', '&#9837;7', '7'];
@@ -282,7 +284,7 @@ var INTCLR_DIM = ["i_root", "white","white","i_third","white","white","i_fifth",
 
 var ARP_MAJ =  { "name" : "maj", "intnames": INTS_FLATS, "color" : INTCLR_MAJ };
 var ARP_MAJ7 =  { "name" : "maj7", "intnames": INTS_SHARP4, "color" : INTCLR_MAJ7 };
-var ARP_DOM7 =  { "name" : "7", "intnames": INTS_SHARP4, "color" : INTCLR_DOM7 };
+var ARP_DOM7 =  { "name" : "7", "intnames": INTS_DOM, "color" : INTCLR_DOM7 };
 var ARP_MIN =  { "name" : "min", "intnames": INTS_FLATS, "color" : INTCLR_MIN };
 var ARP_MIN7 =  { "name" : "min7", "intnames": INTS_FLATS, "color" : INTCLR_MIN7 };
 var ARP_MIN7b5 =  { "name" : "min7&#9837;5", "intnames": INTS_FLATS, "color" : INTCLR_MIN7b5 };
