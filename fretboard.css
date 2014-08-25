@@ -3,9 +3,10 @@
 
 * { margin:0; padding:0; border-spacing:0; }
 body { font-family:sans-serif; font-size:100%; }
+table {table-layout: fixed; }
 table#mainfretboard { position:absolute; top:120px; left:69px; border:1px solid red; }
 /*table#mainfretboard tr td { border:1px solid black; font-size: 28px; width:46px; height:34px; text-align:center; }*/
-table#mainfretboard tr td { border:1px solid black; font-size: 28px; width:66px; height:34px; text-align:center; }
+table#mainfretboard tr td { border:1px solid black; display:inline-block; font-size: 28px; width:66px; height:34px; text-align:center; }
 /* fretclone sits at z of 1 over main fretboard */
 table#fretclone { position:absolute; top:100px; left:-5px; border-spacing:8px; }
 /*table#fretclone tr td { margin: 0 2px; display:inline-block; border:2px solid transparent; background-color:transparent; font-size:18px; font-weight:bold; width:40px;height:24px; text-align:center; z-index:1; border-radius: 5px; }*/
@@ -55,8 +56,8 @@ a:hover { color: #005580; text-decoration: underline; }
 
 table#fretclone tr .fretpainter {background-color:#DADADA !important; border-color:#FFF !important; height:6px !important; border-radius:0px !important;}
 
-div#main {width: 1356px;}
-div#fretboard_container { height:280px; margin:10px; width: 1308px; }
+div#main {width: 100%; min-width: 1356px; }
+div#fretboard_container { height:280px; margin:10px; width: 1308px; white-space:nowrap; }
 #diagram_title { font-size:25px; font-weight:bold; margin:15px; display:block; padding:4px; border:0; width:100%; }
 
 div.h_ctrl_cnt{ padding:10px; margin:0px 10px 0px 10px;  }
