@@ -1,6 +1,55 @@
 /* code to handle manipulation */
+
+// OVERVIEW:
+// This code is quite a jumble, but hopefully this outline will give direction.
+// There are now basically three 'model-controller-views' to be aware of and an 'uber-model'
+//  which are just vars holding states -- really it is connected to the FretboardModel.
+//  The Models, controllers and such are not discreetly encapsulated, unfortunately. Just a 'road-map'.
+//
+// The Fretboard MCV paints the Fretboard at the top of the UI.
+// The FretboardModel tracks how to paints notes with appropriate text based on:
+// -color by interval vs color by pallete
+// -text of interval or text of note-name
+// -interval color is governed by KEY
+//
+// Below the fretboard are grey buttons which paint or erase all notes in that fret
+//
+// The UI buttons below the fretboard change these states.
+// When 'brush' is 'on' moused-Over notes are painted according to state
+// When 'eraser' is 'on' moused-Over notes are erased according to state
+// Clicking set root button turns on until a fret note is chosen, then turns off
+// The interval and color buttons select the color and text mode for painted notes
+// the color button opens a color pallete which sets color for newly painted notes
+// The Key pulldown is an alternative to set root button,
+// 		sets key in uber model and recolors/renames painted notes if required
+//
+// The div to the left under the UI buttons is the container for 'unabridged' notegroups -- scales, arpeggios, etc.
+// Tabbing allows collections of notegroups sorted by key, etc.
+// The colored divs are buttons serving as "notegroup" objects.
+// Clicking a notegroup recolors/renames the painted fret notes
+//     and changes states governing how new notes will be painted in the Uber-Model/FretboardModel
+// The unabridged notegroups can be dragged to the "dashboard" to the right on the UI.
+// At this point notegroups are "abridged" notegroups and are added to the PlayerModel
+//
+// The PlayerModel governs the playable dashboard to the right of the unabridged notegroup dictionary
+// The abridged notegroups can be rearranged and deleted with a double click.
+// Single-click of abridged notegroups repaints the fretboard like unabridged notegroups.
+// The play button cycles through the abridged notegroups in the dashboard, repainting the FB accordingly
+//
+// Below the unabridged dictionary and abridged dashboard player are the links and quizzes.
+//
+// A link provides an html link with a snapshot of the app.  Anytime the dashboard player or Fretboard is changed,
+// a new link must be created with update_link
+//
+// The quiz link creates the same snapshot, except the painted notes are not painted, but stored as answers.
+// When a quiz link is used, the user paints the notes and the "check answer" button (only available in this instance)
+//   will color the user's painted notes as good or bad (red)
+//
+// The 'New Interval Quiz' will randomly paint a new interval for the user to gues the relationship.
+
+
 var GUITAR_STRINGS;
-var COLOR = "lightgreen";
+
 var INTERVAL_COLORS = [
 	"i_root",
 	"i_flatnine",
@@ -30,18 +79,28 @@ var PALLETE_COLORS = [
 	]
 
 var POSSIBLE_COLORS = INTERVAL_COLORS.concat(PALLETE_COLORS);// concat  interval and pallete colors
-var ERASER = false;
-var BRUSH = false;
-var SETTINGROOT = false;
-var INTERVALMODE = false;
-var COLORBYINTERVALS = false;
 
+// ###################
+// UBER-MODEL STATES
+// The capitalized vars below represent the 'Uber-Model' governing entire app
+// generally a collection of 'states'
+// ideally these should be cordoned off in a discreet model, but all other models need access to these states
+// States include Key, color mode, eraser on, brush on, etc
 
-var KEY = 0;
+var ERASER = false; // state of erase mode is on
+var BRUSH = false; // state of brush mode is on
+var SETTINGROOT = false; // state of setting the root with set root button
+var INTERVALMODE = false; // state of paint intervals as opposed to note-names
+var COLORBYINTERVALS = false; // state of color scheme according to interval vs. pallate selection
+var COLOR = "lightgreen"; // current pallete color for painting new notes
 
-//var mScale = ScaleModel;
+var KEY = 0; // current key to inform painted note text, values
+
+// fretboard model to hold states
 var mFB = FretboardModel;
 
+// player model to hold states for player -- 'playable' user-selected dashboard of notegroups to paint fretboard with
+// holds the 'abridged' notegroup div objects
 var mPlayer = PlayerModel;
 
 var gen_fret_boxes = function(size, num_strings){
@@ -105,6 +164,7 @@ var uri_diagram_repr = function(guitarStrings){
     return arr.join(";");
 }
 
+// get the notegroups in dashboard for url params for link
 var getArrNotegroupsInDash = function(){
 		var str =""
 		var dash = $('#ngDashboard').children(".cNoteGroup");
@@ -358,6 +418,9 @@ var set_notespans = function(){
 
 }
 
+// ##############
+// controllers -- these should be used for broadest functionality to ensure model updates,
+// should be point-of-entry for bindings of UI buttons
 var ctrl_updateMessage = function(){
 		if(COLORBYINTERVALS){
 		var msg = "Painting notes for <strong>"+mFB.getKeyTextName();
@@ -391,6 +454,7 @@ var ctl_populateDash = function(str){
 		}
 	}
 
+// add a notegroup to dashboard, governed by player model, the abridged, user-selected dashboard of notegroups
 var ctrl_addDashNotegroups = function(idStr){
 			var arrID = idStr.split('_');
 			var key = arrID[0];
@@ -497,6 +561,49 @@ var ctl_change_key = {
 
 	}
 
+var ctl_newIntQuiz = function(){
+	// clear FB
+	clear_fretboard();
+	// set IntervalMode state to false and ColorByIntervals to False
+	COLORBYINTERVALS = false;
+	INTERVALMODE = false;
+	var lowFret = 0;
+	var highFret = GUITAR_STRINGS[0].length;
+	var rngFrets= 6;// the range of frets from root can be set here
+	var rngLo =1;
+	var rngHi =1;
+	// get two randmon notes on FB
+	var rootString = Math.floor((Math.random() * GUITAR_STRINGS.length) );
+	var intString= Math.floor((Math.random() * GUITAR_STRINGS.length) );
+	var rootFret=-1;
+	var intFret=-1;
+
+	while (!(rootFret >= lowFret && rootFret <= highFret)){
+		var rootFret =  Math.floor(Math.random() * highFret );
+	}
+
+	while (!(intFret >= lowFret && intFret <= highFret && rootFret != intFret) ){
+			var intFret =  Math.floor(Math.random() * highFret );
+			if(intFret <= (rootFret - rngFrets) || intFret >= (rootFret + rngFrets)){
+				// out of range; invalid
+				intFret = -1;
+			}
+	}
+
+	var newRootNoteName = $('#'+'ns_'+rootString+'_'+rootFret).attr('notename');
+	// get safeName from note
+
+	ctl_change_key.setRoot(getKeyObjFromNoteName(newRootNoteName));
+
+	td_paint('#'+'nc_'+rootString+'_'+rootFret, "red");
+	$('#'+'ns_'+intString+'_'+intFret).text(' ');// remove text in notecontainer's notespan, setting interval will return text
+	td_paint('#'+'nc_'+intString+'_'+intFret, "lightgreen");
+
+}
+
+
+// more utilities
+//
 var set_notes_per_notegroup = function(keySafeName, ngType, ng){
 			// if color by intervals is off, turn on and save state
 			var paletteState = !COLORBYINTERVALS;
@@ -648,15 +755,6 @@ var updateSetRootView = function(){
 		}
 	}
 
-//var populateScaleMenu = function(){
-//		var scaleSel =  $('#selScale');
-//		var arrScales = dictScales;
-//		$.each(arrScales, function(val, text) {
-//		scaleSel.append(
-//			$('<option></option>').val(val).html(text["name"])
-//				 );
-//		});
-//	}
 
 var populateColorPalleteChooser = function(){
 	html = "Palette:";
@@ -724,6 +822,15 @@ var populateNotegroupsUnabridged = function(){
 
  	};
 
+// Unabridged divs are the notegroup div objects in the left hand div under the fretboard
+// with all the tabs for each key.  These are all the scales and arpeggios, unabridged.
+// These become draggable over to the right hand div under the fretboard which is governed by
+// PlayerModel
+// Dragging notegroups to the 'Abridged' PlayerModel allows a user-selected 'dashboard' to quickly
+// jump between notegroups.  Functionality for player model includes automatically cycling through them
+// at a chosen speed.
+// 'Notegroups' are objects which provide instructions on how to paint the fretboard (color and text).
+
 var	makeUnabridgedDragDroppable = function(){
 	var x = null;
 	//Make element draggable
@@ -776,6 +883,7 @@ var onDocReady = function(){
 jQuery(document).ready(function() {
 	//START
 
+// set up UI
 	populateColorPalleteChooser();
 
 	populateNotegroupsUnabridged();
@@ -785,11 +893,13 @@ jQuery(document).ready(function() {
 		$("#ngTab_"+dictKeys[key].safename).tabs();
 	}
 
+	// generate tabs for all Unabridged notegroups
 	$("#notegroupsUnabridged2").tabs();
 
 	$( ".cNoteGroup" ).draggable({ addClasses: false });
 
 
+	// make fretboard
 	$(gen_fret_boxes(19, 6)).insertAfter($('#mainfretboard'));
 	GUITAR_STRINGS = getFretcloneStrings();
 	set_notes();
@@ -808,9 +918,11 @@ jQuery(document).ready(function() {
 	}
 	$('#fretclone > tbody:last').append(newRow);
 
+// get any url parameters and adjust model(s) appropriately
 	var url_params = get_url_parameters();
 	var loadFromUrl = function(){
 
+// interval color or pallete color switched by url params
 		if (is_defined(url_params['intColor'])){
 				if(url_params['intColor'] == "true"){
 
@@ -818,12 +930,13 @@ jQuery(document).ready(function() {
 				}
 			}
 
-
+// interval names or note names switched by url params
 		if (is_defined(url_params['intNames'])){
 				if(url_params['intNames'] == "true"){
 					ctl_updateIntervalMode(true);
 				}
 			}
+// per url params, put notegroups in abridged dashboard playermodel area
 		if (is_defined(url_params['dash'])){
 				var arrNotgroups = url_params['dash'];
 				ctl_populateDash(arrNotgroups);
@@ -843,8 +956,10 @@ jQuery(document).ready(function() {
 				fill_from_repr(url_params['strings']);
 			}
 		}
+
+// per url params, set key
 		if (is_defined(url_params['key'])){
-				// key should use safename
+				// key should use safename, eg 'Cnatural'
 				ctl_change_key.setRoot(getKeyObjFromSafeName(url_params['key']));
 		}
 	}
@@ -859,6 +974,7 @@ jQuery(document).ready(function() {
 	    .keydown(update_link);
 	$('#diagram_title').click(function(){ this.select(); });
 
+ //################# Button Bindings
 	// set up color buttons according each element's class
 	$('.color_button').click(function(){
 		COLOR = $(this).attr('class').split(' ')[1];
@@ -878,7 +994,7 @@ jQuery(document).ready(function() {
 				}
 		}
 
-
+// respond to color by intervals setting true or false by repainting fretboard
 		for(var s = 0; s < GUITAR_STRINGS.length; s++){
 				if(fpainted){
 					td_clear($('#'+'nc_'+s+'_'+fret));
@@ -893,11 +1009,14 @@ jQuery(document).ready(function() {
 
 				}
 		}
+		// create new link
 		update_link();
 
 	})
 
 	// set up eraser brush and clear buttons:
+
+	// bind brush button functionality -- paints notes based on note color and interval onMouseOver
 	$('#brush').click(function(){
 		var iteration=$(this).data('iteration')||1
 		switch ( iteration) {
@@ -918,6 +1037,7 @@ jQuery(document).ready(function() {
 		$(this).data('iteration',iteration)
 	});
 
+// bind eraser button functionality -- erases fret notes moused-over
 	$('#eraser').click(function(){
 		var iteration=$(this).data('iteration')||1
 		switch ( iteration) {
@@ -938,14 +1058,15 @@ jQuery(document).ready(function() {
 		$(this).data('iteration',iteration)
 	});
 
-
-
+// bind 'clear' button functionality -- clears all notes from fretboard
 	$('#clear').click(function(){
 		message.html('');
 		clear_fretboard();
 		update_link();
 	});
 
+// bind button for 'Interval/Notes' -- sets Fretboard Model state to paint fretboard notes with text
+// of intervals or note-names
 	$('#modeNoteInt').click(function(){
 		if(INTERVALMODE == true){
 				ctl_updateIntervalMode(false);
@@ -955,6 +1076,8 @@ jQuery(document).ready(function() {
 
 	});
 
+// bind button for 'Interval/Notes' -- set Fretboard Model state to paint fretboard notes with interval colors or
+// selected pallate color
 	$('#colorByInterval').click(function(){
 		if(COLORBYINTERVALS){
 			ctl_updateColorIntMode(false);
@@ -965,6 +1088,8 @@ jQuery(document).ready(function() {
 
 	});
 
+// Bind set root button -- when on, next fret note clicked will be new Key in Fretboard Model, then button reverts to off
+//
 	$('#setRoot').click(function(){
 		if(!SETTINGROOT){
 			SETTINGROOT=true;
@@ -979,7 +1104,7 @@ jQuery(document).ready(function() {
 
 	});
 
-	// dash player controls
+	// dash player controls -- for Abridged Player Model
 	$('#dashPlayStop').click(function(){
 		if (mPlayer.getPlaystate() == PS_PLAYING){
 			ctl_stopPlayer();
@@ -1002,16 +1127,10 @@ jQuery(document).ready(function() {
 		ctl_changeSpeed();
 	});
 
-	// removed from view
-//	$('#selScale').change(function(){
-//		var newScale = $('#selScale').val();
-//		//var key = $('#selKey').val();
-//		mFB.setNotegroup(newScale, dictScales);
-////		mScale.setScale(newScale);
-////		A_INTERVAL_COLOR = mScale.getIntColorArr();
-////		A_INTERVAL_NAMES = mScale.getIntNamesArr();
-// 		set_notespans();
-//	});
+  // bind 'interval quiz' button to functionality -- each click generates new interval, with root colored red
+  $('#intervalQuiz').click(function(){
+  		ctl_newIntQuiz();
+  })
 
 	// set up example links
 	$('#examples ul li a').click(function(){

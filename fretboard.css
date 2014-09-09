@@ -63,6 +63,7 @@ div#fretboard_container { height:280px; margin:10px; width: 1308px; white-space:
 div.h_ctrl_cnt{ padding:10px; margin:0px 10px 0px 10px;  }
 div.h_ctrl   { display:inline; margin-right: 12px; }
 
+div.h_ctrl .quizButton {padding:2px; border-radius: 5px; margin-left: 8px; background-color: white; border: #b5b5b5 solid 1px; }
 
 
 .setRootArmed { background-color:rgb(147,32,32); color: #FFF;}
