@@ -1,10 +1,11 @@
 /* code to handle manipulation */
 
 // OVERVIEW:
-// This code is quite a jumble, but hopefully this outline will give direction.
+// Hopefully this outline will give direction.  I tried following some OOP and MCV principles best I could
+// with Javascript. The Models, controllers and such are not discreetly encapsulated; just a 'road-map'.
 // There are now basically three 'model-controller-views' to be aware of and an 'uber-model'
-//  which are just vars holding states -- really it is connected to the FretboardModel.
-//  The Models, controllers and such are not discreetly encapsulated, unfortunately. Just a 'road-map'.
+// Perhaps uber-model would be better encapsulated in a Panel Model, in any case, it
+//  is just capitalized vars holding states.
 //
 // The Fretboard MCV paints the Fretboard at the top of the UI.
 // The FretboardModel tracks how to paints notes with appropriate text based on:
@@ -12,7 +13,7 @@
 // -text of interval or text of note-name
 // -interval color is governed by KEY
 //
-// Below the fretboard are grey buttons which paint or erase all notes in that fret
+// Below the fretboard are grey buttons (fretpainters) which paint or erase all notes in that fret
 //
 // The UI buttons below the fretboard change these states.
 // When 'brush' is 'on' moused-Over notes are painted according to state
@@ -23,7 +24,7 @@
 // The Key pulldown is an alternative to set root button,
 // 		sets key in uber model and recolors/renames painted notes if required
 //
-// The div to the left under the UI buttons is the container for 'unabridged' notegroups -- scales, arpeggios, etc.
+// The div to the left under the UI buttons is the 'Dictionary' for 'unabridged' notegroups -- scales, arpeggios, etc.
 // Tabbing allows collections of notegroups sorted by key, etc.
 // The colored divs are buttons serving as "notegroup" objects.
 // Clicking a notegroup recolors/renames the painted fret notes
@@ -36,7 +37,7 @@
 // Single-click of abridged notegroups repaints the fretboard like unabridged notegroups.
 // The play button cycles through the abridged notegroups in the dashboard, repainting the FB accordingly
 //
-// Below the unabridged dictionary and abridged dashboard player are the links and quizzes.
+// Also in the 'panel' below the fretboard are links and quizzes.
 //
 // A link provides an html link with a snapshot of the app.  Anytime the dashboard player or Fretboard is changed,
 // a new link must be created with update_link
@@ -50,8 +51,8 @@
 // constants
 var CHECKANSWER = 'Check Answer!';
 var HELP_TEXT = "HEre is some help";
-var GUITAR_STRINGS;
 
+var GUITAR_STRINGS; // will be array of strings
 var INTERVAL_COLORS = [
 	"i_root",
 	"i_flatnine",
@@ -182,6 +183,8 @@ var getArrNotegroupsInDash = function(){
 		str = str.replace(/,+$/, ""); // eliminate last comma
 		return str;
 	}
+
+	//generate URL based on snapshot of fretboard and dashboard player
 var create_link_from_fretboard = function(){
     var href = window.location.href;
     if (href.indexOf('#') > 0){
@@ -200,11 +203,13 @@ var create_link_from_fretboard = function(){
     return href;
 }
 
+// update link should be called whenever view changes
 var update_link = function(){
 	    $('#linkthis').attr('href', create_link_from_fretboard());
 	    $('#linkquiz').attr('href', create_link_from_fretboard() + "&q=y");
 }
-// handle url parameters
+
+// handler to get url parameters
 function get_url_parameters(){
     var query = arguments.length > 0 ? arguments[0] : window.location.href;
     var params = {};
@@ -218,6 +223,8 @@ function get_url_parameters(){
     }
     return params;
 }
+
+// paint fretboard based on URL params for strings/frets
 function fill_from_repr(repr){
     var a_rep = repr.split(';');
     var match_color = arguments.length > 1 ? arguments[1] : null;
@@ -658,10 +665,6 @@ var set_notes_per_notegroup = function(keySafeName, ngType, ng){
 			set_notespans();
 			ctl_updateQuizzingInterval(false);
 			COLORBYINTERVALS = !paletteState; // keep pallete if open
-			//var msg = "Painting notes for <strong>"+mFB.getKeyTextName();
-//			if(ngType != "ARP"){msg += " ";}
-//			msg += mFB.getNotegroup().name+"</strong>";
-//			$('#message').html(msg);
 }
 
 var isPalleteColor = function(c){
@@ -671,6 +674,7 @@ var isPalleteColor = function(c){
 		return false;
 	}
 
+// get step integer in a scale
 var getChromaticInt = function(noteStr, chromNamesScale){
 
 	if(chromNamesScale == null){
@@ -683,7 +687,7 @@ var getChromaticInt = function(noteStr, chromNamesScale){
 }
 
 
-
+// return safename enharmonic
 var getEnharmonic = function(noteStr){
 	// make sure more than 1 chars
 	if(noteStr.length > 1){
@@ -736,12 +740,14 @@ var getKeyObjFromNoteName = function(noteStr){
 		return  getKeyObjFromUnsafeName(newKeyHtmlName);
 	}
 
+// safename eplicitly spells flat, natural or sharp with root
 var getSafeNameFromNoteName = function(noteStr){
 		var intFromC = getKeyObjFromUnsafeName(noteStr).fromC
 		var newKeyHtmlName = mFB.getKeyObj().baseScale[intFromC];
 		return  getKeyObjFromUnsafeName(newKeyHtmlName).safename;
 	}
 
+// keyObj is a key object with various names, steps from C
 var getKeyObjFromSafeName = function(safenameStr){
 		var keyObj = "";
 		for(ko in dictKeys){
@@ -781,6 +787,7 @@ var getKeyObjFromUnsafeName = function(htmlStr){
 		return keyObj;
 	}
 
+// the notespan is a span with note text inside at td notecontainer
 var getNotespanFromTD = function(td){
 		var arr = td.attr('id').split('_');
 		return $('#ns_'+arr[1]+'_'+arr[2]);
