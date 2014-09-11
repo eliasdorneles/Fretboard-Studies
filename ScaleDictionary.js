@@ -24,6 +24,7 @@ kB = {"name" : "B",  "safename" : "Bnatural", "baseScale" : CHROMFLAT, "fromC" :
 kCsharp = {"name" : "C&#9839;",  "safename" : "Csharp", "baseScale" : CHROMSHARP, "fromC" : 1};
 kFsharp = {"name" : "F&#9839;",  "safename" : "Fsharp", "baseScale" : CHROMSHARP, "fromC" : 6};
 kGsharp = {"name" : "G&#9839;",  "safename" : "Gsharp","baseScale" : CHROMSHARP, "fromC" : 8};
+kAsharp = {"name" : "A&#9839;",  "safename" : "Asharp","baseScale" : CHROMSHARP, "fromC" : 10};
 
 // dict keys collects above objects
 var dictKeys = {
@@ -41,7 +42,8 @@ var dictKeys = {
 	"Bnatural" : kB,
 	"Csharp" : kCsharp,
 	"Fsharp" : kFsharp,
-	"Gsharp" : kGsharp };
+	"Gsharp" : kGsharp,
+	"Asharp" : kAsharp};
 
 var INTS_FLATS = ['R', '&#9837;9', '9', '&#9837;3', '3', '11', '&#9837;5', '5', '&#9837;13', '13', '&#9837;7', '7'];
 var INTS_SHARP4 = ['R', '&#9837;9', '9', '&#9837;3', '3', '11', '&#9839;11', '5', '&#9837;13', '13', '&#9837;7', '7'];
@@ -390,6 +392,10 @@ var FretboardModel = {
 			}
 
 			this["ng"] = ng;
+
+			if(QUIZZINGINTERVAL){
+				ctl_updateQuizzingInterval(false);
+			}
 		},
 
 	"getNGname" : function(){

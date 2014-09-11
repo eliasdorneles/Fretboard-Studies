@@ -13,7 +13,6 @@
 
         <script type="text/javascript" src="ScaleDictionary.js"></script>
         <script type="text/javascript" src="PlayerModel.js"></script>
-        <script type="text/javascript" src="IntervalQuiz.js"></script>
 		<script type="text/javascript" src="BoxFrets.js"></script>
 
 		<style>
@@ -22,9 +21,47 @@
     </head>
     <body>
     <div id="main">
+    <div>
 	<input id="diagram_title" type="text" value="Click to add a title..." />
+    <input id="btnHelp" type="button" value="?" />
+    </div>
+    <div id="helpText" title="Instructions" >
+        <ul style="">
+            <li>Click on the <strong>Fretboard</strong> to display notes.</li>
+            <li>Click on any painted <strong>Note</strong> again to remove.</li>
+            <li>Click <strong>Brush</strong> to activate painting notes by moving mouse on fretboard.</li>
+            <li>Click <strong>Erase</strong> to activate erasing notes by moving mouse on fretboard.</li>
+            <li>Click <strong>Clear</strong> to erase all notes on fretboard.</li>
+            <li>Click on <strong>Fretpainters</strong> (gray bars below frets) to show/hide all notes in fret.</li>
+            <li>Click a color in the <strong>Color Palette</strong> to paint notes with a different color.</li>
+            <li>Click on <strong>Color Intervals</strong> to re-paint visible notes so the root, third, fifth and seventh are colored black, orange, blue, green and purple.</li>
+            <li>Use the <strong>Key pull-down</strong> starting with 'C' to change the root note.</li>
+            <li>Click <strong>Set Root</strong> and the next clicked note becomes the key root note.</li>
+            <li>Click <strong>Palette Color</strong> to reopen color pallete.
+            <li>Click <strong>Interval</strong> button to show interval names of notes.</li>
+            <li>Click <strong>Notes</strong> button to return to showing names of notes.</li>
+            <li>Use tabs in the Notegroup <strong>Dictionary</strong> (below fretboard on left) to find a scale or arpeggio view.</li>
+            <li>To view the painted notes relative to an arpeggio or scale, click a colored <Strong>Notegroup</Strong> button in the tabbed <strong>Dictionary</strong>.</li>
+            <li>Drag a <strong>Notegroup</strong> from the <strong>Dictionary</strong> on the left to the <strong>Dashboard/Player</strong> on the right to add a Notegroup to the Dashboard/Player.</li>
+            <li>Drag <strong>Notegroups</strong> in the <strong>Dashboard/Player</strong> to re-arrange.</li>
+            <li>Click a <strong>Notegroup</strong> in the <strong>Dashboard/Player</strong> or <strong>Dictionary</strong> to re-paint notes on the <strong>Fretboard</strong> according to selection.</li>
+            <li>Double-click a <Strong>Notegroup</Strong> in the <strong>Dashboard/Player</strong> to remove it.</li>
+            <li>Cycle through the sequence of <Strong>Notegroups</Strong> in the <strong>Dashboard/Player</strong> with the <strong>&lt;&lt;</strong> and <strong>&gt;&gt;</strong> buttons.</li>
+            <li>Click <strong>Play</strong> to automatically repaint visible Notes on the <strong>Fretboard</strong> according to the sequence of <strong>Notegroups</strong> in the <strong>Dashboard/Player</strong>.</li>
+            <li>Use the <strong>Speed</strong> spinner (defaulted at 60) to change play speed.</li>
+            <li>Click <strong>Stop</strong> to stop the automatic re-painting with <strong>Notegroups</strong> in the <strong>Dashboard/Player</strong>.</li>
+            <li>Type where it says <strong>Click to Add Title</strong> to add title for a <strong>Link</strong> to current view.</li>
+            <li>Click the <strong>Link</strong> link below the Notegroup Dictionary to view a URL recreating the current view.  Save the URL for others or future reference.</li>
+            <li>Click the <strong>Quiz</strong> link to view a URL for a quiz featuring a blank Fretboard.  Testees viewing Quiz links can click all notes matching the Page Title.  Clicking the <strong>Check Answer!</strong> button (only available with Quiz URLs) will highlight 'correct' notes in green and 'wrong' notes in red, per the view created by the tester.</li>
+            <li>Click the <strong>Reset</strong> link to get a fresh URL.</li>
+            <li>Click the <strong>Random Interval</strong> button to view two random notes, with the root colored in red.  Guess the related interval of the blank green note and click the 'Check Answer' button to view the interval.  The intervals are based on the last Notegroup chosen, ie, after clicking a 'Symmetrical Diminished' Notegroup, a double-flat 7 will appear in place of a Major 13.</li>
 
-	<div id="fretboard_container" style="width: 1400;">
+
+        </ul>
+    </div>
+
+<div>
+	<div id="fretboard_container" style="width: 1400;" >
 		<div id="message">&nbsp;</div>
 	    <table id="mainfretboard">
 		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
@@ -32,9 +69,11 @@
 		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td></tr>
 		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
 		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+
 		<!--</tr>-->
         </table>
 	</div>
+</div><br/>
 
 
 
@@ -70,6 +109,7 @@
         <option value="Csharp">C&#9839;</option>
         <option value="Fsharp">F&#9839;</option>
         <option value="Gsharp">G&#9839;</option>
+        <option value="Asharp">A&#9839;</option>
 
 	</select>
 
@@ -105,11 +145,17 @@
         <div class= "h_ctrl">
         <input type="button" id="intervalQuiz" class="quizButton" style="width:132px;" name="intervalQuiz" value="Random Interval">
         </div>
+        <div class="h_ctrl" style="font-size:12px;">
+            <a id="linkthis" class="quizLink"  href="javascript:void(0)">Link</a>
+            <a id="linkquiz" class="quizLink"  href="javascript:void(0)">Quiz link</a>
+            <a id="resetLink" href="fretboard.html" class="quizLink">Reset</a>
+        </div>
     </div><!-- second button row end -->
 
 
-   <div class="h_ctrl_cnt">
+   <div class="h_ctrl_cnt" style="margin:0; padding:10px 0 10px 0;">
 
+    <!-- Notegroups dictionary -->
     <div class="tabs-nohdr" id="notegroupsUnabridged" >
     <!-- populated by javascript -->
     </div>
@@ -145,15 +191,12 @@
    <div style="clear:both"></div>
 
 
-    <div id="links" class="h_ctrl_cnt">
+    <div id="link_examples" class="h_ctrl_cnt">
 
 		<!-- input type="button" id="clean" value="Try again!" / -->
-		<a id="linkthis" href="javascript:void(0)">Link</a> |
-		<a id="linkquiz" href="javascript:void(0)">Quiz link</a> |
-        <a href="fretboard.html">Reset</a>
-        <br />
 
-		<div id="examples"><strong>Examples:</strong>
+
+		<div id="examples"><strong>Link Examples:</strong>
         <!-- (hiE){[fret,color], [fret,color]};(B){...};(G){...};(D){...};(A){...};(lowE){...}&diagram_title=title  -->
 			<ul>
 				<li><a href="#strings=6:16,18:16;11:16;3:16,15:16;8:16;1:16,13:16;6:16,18:16&key=Cnatural&intColor=false&intNames=false&diagram_title=Bb%20octaves"

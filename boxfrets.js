@@ -47,7 +47,9 @@
 //
 // The 'New Interval Quiz' will randomly paint a new interval for the user to gues the relationship.
 
-
+// constants
+var CHECKANSWER = 'Check Answer!';
+var HELP_TEXT = "HEre is some help";
 var GUITAR_STRINGS;
 
 var INTERVAL_COLORS = [
@@ -90,6 +92,7 @@ var POSSIBLE_COLORS = INTERVAL_COLORS.concat(PALLETE_COLORS);// concat  interval
 var ERASER = false; // state of erase mode is on
 var BRUSH = false; // state of brush mode is on
 var SETTINGROOT = false; // state of setting the root with set root button
+var QUIZZINGINTERVAL = false // state where interval quiz is awaiting check answer
 var INTERVALMODE = false; // state of paint intervals as opposed to note-names
 var COLORBYINTERVALS = false; // state of color scheme according to interval vs. pallate selection
 var COLOR = "lightgreen"; // current pallete color for painting new notes
@@ -122,9 +125,11 @@ var td_paint = function(td, newColor){
 	td.removeClass(POSSIBLE_COLORS.join(" "));
 	td.addClass(color);
 }
+
 var td_clear = function(td){
     td_paint(td, 'transparent');
 }
+
 var is_painted = function(td){
 	var isPainted = !$(td).hasClass('transparent');
     return !$(td).hasClass('transparent');
@@ -349,6 +354,9 @@ var clear_fretboard = function(){
 			td_clear(GUITAR_STRINGS[i][j].td);
 		}
 	}
+			if(QUIZZINGINTERVAL){
+				ctl_updateQuizzingInterval(false);
+			}
 	ctrl_updateMessage();
 }
 var pick_note = function(position, offset){
@@ -432,9 +440,9 @@ var ctrl_updateMessage = function(){
 		}
 	}
 
-var ctl_updateIntervalMode = function(boolNewMode){
+var ctl_updateIntervalMode = function(isIntervalMode){
 
-		if(boolNewMode){
+		if(isIntervalMode){
 			$('#modeNoteInt').attr('value', 'Notes');
 			INTERVALMODE = true;
 			set_notespans();
@@ -444,6 +452,10 @@ var ctl_updateIntervalMode = function(boolNewMode){
 			INTERVALMODE = false;
 			set_notespans();
 			update_link();
+		}
+
+		if(QUIZZINGINTERVAL){
+				ctl_updateQuizzingInterval(false);
 		}
 	}
 
@@ -561,6 +573,18 @@ var ctl_change_key = {
 
 	}
 
+var ctl_updateQuizzingInterval = function(stQuizzing){
+		QUIZZINGINTERVAL = stQuizzing;
+		// actions from change in QUIZZINGINTERVAL state from clicking Random Interval on UI
+		if(stQuizzing){
+			ctl_newIntQuiz();
+				// redo button text
+			$("#intervalQuiz").attr('value', CHECKANSWER );
+		}else{
+				// redo button text
+			$("#intervalQuiz").attr('value','Random Interval');
+		}
+	}
 var ctl_newIntQuiz = function(){
 	// clear FB
 	clear_fretboard();
@@ -589,14 +613,34 @@ var ctl_newIntQuiz = function(){
 				intFret = -1;
 			}
 	}
-
-	var newRootNoteName = $('#'+'ns_'+rootString+'_'+rootFret).attr('notename');
 	// get safeName from note
+	var newRootNoteName = $('#'+'ns_'+rootString+'_'+rootFret).attr('notename');
+	//var newRootNoteName="A&#9837;";
+
+	// if(newRootNoteName.length>1){
+	// 	// accidental
+	// 	// accidentals (eg, Csharp or Cflat) will depend on last notegroup.
+	// 	// flip coin on all accidentals
+	// 	var acc = getAccTypeStr(newRootNoteName);
+
+	// 	if(Math.floor(Math.random() * 2 )==1){
+	// 		// switch accidental
+	// 		// switch accidental only if room on fretboard and in key Dictionary
+
+	// 	} else{
+	// 		 // keep accidental
+
+	// 	}
+	// } else {
+	// 	newRootNoteName = newRootNoteName.charAt(0)+"natural";
+	// }
 
 	ctl_change_key.setRoot(getKeyObjFromNoteName(newRootNoteName));
-
+		// remove text in notecontainer's notespan, setting interval will return text
+	$('#'+'ns_'+rootString+'_'+rootFret).text(' ');
 	td_paint('#'+'nc_'+rootString+'_'+rootFret, "red");
-	$('#'+'ns_'+intString+'_'+intFret).text(' ');// remove text in notecontainer's notespan, setting interval will return text
+
+	$('#'+'ns_'+intString+'_'+intFret).text(' ');
 	td_paint('#'+'nc_'+intString+'_'+intFret, "lightgreen");
 
 }
@@ -612,6 +656,7 @@ var set_notes_per_notegroup = function(keySafeName, ngType, ng){
 			var ng = ngType+'_'+ng;
 			mFB.setNotegroup(ng);
 			set_notespans();
+			ctl_updateQuizzingInterval(false);
 			COLORBYINTERVALS = !paletteState; // keep pallete if open
 			//var msg = "Painting notes for <strong>"+mFB.getKeyTextName();
 //			if(ngType != "ARP"){msg += " ";}
@@ -751,7 +796,10 @@ var updateSetRootView = function(){
 		if(SETTINGROOT){
 			$("#setRoot").addClass( 'setRootArmed' );
 		}else{
-			$("#setRoot").removeClass( 'setRootArmed' )
+			$("#setRoot").removeClass( 'setRootArmed' );
+			if(QUIZZINGINTERVAL){
+				ctl_updateQuizzingInterval(false);
+			}
 		}
 	}
 
@@ -1006,13 +1054,30 @@ jQuery(document).ready(function() {
 					{
 						td_paint($('#'+'nc_'+s+'_'+fret), COLOR);
 					}
-
 				}
 		}
 		// create new link
 		update_link();
 
 	})
+
+ $(function() {
+			$( "#helpText" ).dialog({
+				autoOpen: false
+			},{
+				width: 640
+			},{
+				dialogClass:".helpInstructions",
+			});
+	});
+
+
+// bind help button to show help dialog
+	$('#btnHelp').click(function(){
+			$( "#helpText" ).dialog( "open" );
+	});
+
+
 
 	// set up eraser brush and clear buttons:
 
@@ -1062,18 +1127,21 @@ jQuery(document).ready(function() {
 	$('#clear').click(function(){
 		message.html('');
 		clear_fretboard();
+		ctl_updateQuizzingInterval(false);
 		update_link();
 	});
 
 // bind button for 'Interval/Notes' -- sets Fretboard Model state to paint fretboard notes with text
 // of intervals or note-names
 	$('#modeNoteInt').click(function(){
-		if(INTERVALMODE == true){
-				ctl_updateIntervalMode(false);
-			} else{
-				ctl_updateIntervalMode(true);
-			}
-
+		INTERVALMODE = !INTERVALMODE;
+		ctl_updateIntervalMode(INTERVALMODE);
+		// if(INTERVALMODE == true){
+		// 	ctl_updateIntervalMode(false);
+		// } else{
+		// 	ctl_updateIntervalMode(true);
+		// }
+		ctl_updateQuizzingInterval(false);
 	});
 
 // bind button for 'Interval/Notes' -- set Fretboard Model state to paint fretboard notes with interval colors or
@@ -1085,6 +1153,7 @@ jQuery(document).ready(function() {
 			ctl_updateColorIntMode(true);
 		}
 
+		ctl_updateQuizzingInterval(false);
 
 	});
 
@@ -1101,7 +1170,7 @@ jQuery(document).ready(function() {
 
 	$('#selKey').change(function(){
 		ctl_change_key.selKeyChange($('#selKey').val());
-
+	    ctl_updateQuizzingInterval(false);
 	});
 
 	// dash player controls -- for Abridged Player Model
@@ -1128,8 +1197,17 @@ jQuery(document).ready(function() {
 	});
 
   // bind 'interval quiz' button to functionality -- each click generates new interval, with root colored red
+  // button will read "check answer" until new paint note or clear note.
   $('#intervalQuiz').click(function(){
-  		ctl_newIntQuiz();
+			if($('#intervalQuiz').val() == CHECKANSWER){
+				QUIZZINGINTERVAL = false;
+				ctl_updateQuizzingInterval(QUIZZINGINTERVAL);
+				ctl_updateIntervalMode(true);
+			} else {
+				ctl_updateIntervalMode(false);
+	  		QUIZZINGINTERVAL = !QUIZZINGINTERVAL;
+		  	ctl_updateQuizzingInterval(QUIZZINGINTERVAL);
+		  }
   })
 
 	// set up example links

@@ -57,13 +57,14 @@ a:hover { color: #005580; text-decoration: underline; }
 table#fretclone tr .fretpainter {background-color:#DADADA !important; border-color:#FFF !important; height:6px !important; border-radius:0px !important;}
 
 div#main {width: 100%; min-width: 1356px; }
-div#fretboard_container { height:280px; margin:10px; width: 1308px; white-space:nowrap; }
-#diagram_title { font-size:25px; font-weight:bold; margin:15px; display:block; padding:4px; border:0; width:100%; }
+div#fretboard_container { height:340px; margin:10px; width: 1400; white-space:nowrap; }
+#diagram_title { font-size:25px; font-weight:bold; margin:15px; display:block; padding:4px; border:0; width:auto; float:left; }
 
 div.h_ctrl_cnt{ padding:10px; margin:0px 10px 0px 10px;  }
 div.h_ctrl   { display:inline; margin-right: 12px; }
 
-div.h_ctrl .quizButton {padding:2px; border-radius: 5px; margin-left: 8px; background-color: white; border: #b5b5b5 solid 1px; }
+div.h_ctrl .quizButton { border-radius: 5px; margin-left: 8px; background-color: white; border: #b5b5b5 solid 1px; }
+div.h_ctrl .quizLink {padding:2px 8px 2px 8px;  margin-left: 8px; background-color: white; border: #b5b5b5 solid 1px; }
 
 
 .setRootArmed { background-color:rgb(147,32,32); color: #FFF;}
@@ -72,12 +73,12 @@ div.h_ctrl .quizButton {padding:2px; border-radius: 5px; margin-left: 8px; backg
 
 input.color_button { width:40px; border-radius: 5px; margin-left: 8px; }
 
-#colorchooser {  display:inline; };
+#colorchooser {  display:inline; }
+
+#btnHelp {float:right; padding:3px; width: 24px; height: 24px; font-weight:bold; border-radius: 5px; margin-left: 8px; background-color: white; border: #b5b5b5 solid 1px; }
 
 
-
-
-
+/*.helpText li {list-style-type: none; font-weight:normal;}*/
 #form_controls { padding:10px; }
 
 #checkanswer { display:none; }
@@ -116,17 +117,17 @@ input.color_button { width:40px; border-radius: 5px; margin-left: 8px; }
 /* must be under tabs-nohdr */
 div#notegroupsUnabridged  {
 	font-size:12px;
-	width: 650px;
+	width: 660px;
 	display:inline-block;
 	float:left;
 }
 
-div#notegroupsUnabridged2  {
+/*div#notegroupsUnabridged2  {
 	font-size:12px;
-	width: 650px;
+	width: 660px;
 	display:inline-block;
 	float:left;
-}
+}*/
 
 
 #notegroupsKeysTab a{
@@ -147,6 +148,7 @@ div#notegroupsUnabridged2  {
 	height:24px;
 	}
 #dashControls input { padding:2px;}
+
 #ngDashboard {
 	border:#aaa thin solid;
 	width: 588px;
@@ -250,11 +252,20 @@ div .ngboxChd{
 
 /* end drag drop classes */
 
+/* jQuery dialog for help popup */
+div.ui-dialog-titlebar.ui-widget-header {background:none repeat scroll 0% 0% rgba(51, 83, 114, 1); color:white; padding:2px 6px 2px 6px; font-size: 16px}
+div#helpText.ui-dialog.ui-dialog-content {
+    font-family: Verdana,Arial,sans-serif;
+    font-size: .8em;
+    font-weight: normal;
+}
+div#helpText.ui-dialog-content li{list-style-type:circle; font-weight:normal; font-weight:normal; font-size: 12px; padding-bottom: 7px;  }
+/* end jQuery dialog for help popup */
 
 div .playing{
-		//color:red;
+		/*color:red;*/
 		border:rgb(255,0,0) thin solid;
-		//text-decoration:underline;
-		//background-color: rgb(255,102,153);
+		/*//text-decoration:underline;
+		//background-color: rgb(255,102,153);*/
 	}
 /*@media print { #form_controls { display:none; } }*/
