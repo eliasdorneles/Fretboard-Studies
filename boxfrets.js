@@ -600,7 +600,7 @@ var ctl_newIntQuiz = function(){
 	INTERVALMODE = false;
 	var lowFret = 0;
 	var highFret = GUITAR_STRINGS[0].length;
-	var rngFrets= 6;// the range of frets from root can be set here
+	var rngFrets= 5;// the range of frets from root can be set here
 	var rngLo =1;
 	var rngHi =1;
 	// get two randmon notes on FB
@@ -644,7 +644,7 @@ var ctl_newIntQuiz = function(){
 
 	ctl_change_key.setRoot(getKeyObjFromNoteName(newRootNoteName));
 		// remove text in notecontainer's notespan, setting interval will return text
-	$('#'+'ns_'+rootString+'_'+rootFret).text(' ');
+	$('#'+'ns_'+rootString+'_'+rootFret).text('R');
 	td_paint('#'+'nc_'+rootString+'_'+rootFret, "red");
 
 	$('#'+'ns_'+intString+'_'+intFret).text(' ');
