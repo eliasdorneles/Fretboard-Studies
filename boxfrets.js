@@ -596,7 +596,7 @@ var ctl_newIntQuiz = function(){
 	// clear FB
 	clear_fretboard();
 	// set IntervalMode state to false and ColorByIntervals to False
-	COLORBYINTERVALS = false;
+	//COLORBYINTERVALS = false;
 	INTERVALMODE = false;
 	var lowFret = 0;
 	var highFret = GUITAR_STRINGS[0].length;
