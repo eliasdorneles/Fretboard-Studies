@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html>
     <head>
         <title>Fretboard Studies</title>
         <meta charset='utf-8' />
-		<!--<script type="text/javascript" src="jquery-1.4.4.min.js"></script>-->
+        <!--<script type="text/javascript" src="jquery-1.4.4.min.js"></script>-->
         <script type="text/javascript" src="jquery-1.11.1.js"></script>
         <script type="text/javascript" src="jquery-ui.min.js"></script>
         <link rel="stylesheet" href="smoothness/jquery-ui.css">
@@ -13,17 +14,18 @@
 
         <script type="text/javascript" src="ScaleDictionary.js"></script>
         <script type="text/javascript" src="PlayerModel.js"></script>
-		<script type="text/javascript" src="BoxFrets.js"></script>
+        <script type="text/javascript" src="BoxFrets.js"></script>
 
-		<style>
+        <style>
 
-		</style>
+        </style>
     </head>
     <body>
     <div id="main">
     <div>
-	<input id="diagram_title" type="text" value="Click to add a title..." />
-    <input id="btnHelp" type="button" value="?" />
+
+
+
     </div>
     <div id="helpText" title="Instructions" >
         <ul style="">
@@ -61,18 +63,23 @@
     </div>
 
 <div>
-	<div id="fretboard_container" style="width: 1400;" >
-		<div id="message">&nbsp;</div>
-	    <table id="mainfretboard">
-		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td></tr>
-		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+    <div id="fretboard_container" style="width: 1380;" >
 
-		<!--</tr>-->
+    <div class="fb_messagebar" >
+        <input id="diagram_title" type="text" value="Click to add a title..." />
+        <input id="btnHelp" type="button" value="?" />
+        <div id="message" >&nbsp;</div>
+    </div>
+        <table id="mainfretboard">
+        <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+        <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+        <tr><td>&nbsp;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td></tr>
+        <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+        <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+
+        <!--</tr>-->
         </table>
-	</div>
+    </div>
 </div><br/>
 
 
@@ -96,7 +103,7 @@
     <select name="selKey" id="selKey">
         <option value="Cnatural">C</option>
         <option value="Dflat">D&#9837;</option>
-  		<option value="Dnatural">D</option>
+        <option value="Dnatural">D</option>
         <option value="Eflat">E&#9837;</option>
         <option value="Enatural">E</option>
         <option value="Fnatural">F</option>
@@ -111,10 +118,10 @@
         <option value="Gsharp">G&#9839;</option>
         <option value="Asharp">A&#9839;</option>
 
-	</select>
+    </select>
 
 <!--    <select name="selScale" id="selScale">
-	</select>-->
+    </select>-->
     </div>
 
     <div class= "h_ctrl">
@@ -126,10 +133,10 @@
     <input type="button" id="colorByInterval" style="width:98px;" name="intervalColor" value="Color Intervals">
     </div>
 
-	<div class="h_ctrl">
-    	<div id="colorchooser">
+    <div class="h_ctrl">
+        <div id="colorchooser">
         <!-- generated by js -->
-		</div>
+        </div>
     </div>
     </div><!-- first button row end -->
 
@@ -160,11 +167,11 @@
     <!-- populated by javascript -->
     </div>
 
-   	<div id="dashContainer">
-    	<div id="dashControls">
+    <div id="dashContainer">
+        <div id="dashControls">
            &nbsp;
-        	<div style="float:left">
-        	<input id="dashBack" type="button" value="<<"  />
+            <div style="float:left">
+            <input id="dashBack" type="button" value="<<"  />
             <input id="dashPlayStop" type="button" value="Play"    />
             <input id="dashFwd" type="button" value=">>"   />
 
@@ -193,17 +200,17 @@
 
     <div id="link_examples" class="h_ctrl_cnt">
 
-		<!-- input type="button" id="clean" value="Try again!" / -->
+        <!-- input type="button" id="clean" value="Try again!" / -->
 
 
-		<div id="examples"><strong>Link Examples:</strong>
+        <div id="examples"><strong>Link Examples:</strong>
         <!-- (hiE){[fret,color], [fret,color]};(B){...};(G){...};(D){...};(A){...};(lowE){...}&diagram_title=title  -->
-			<ul>
-				<li><a href="#strings=6:16,18:16;11:16;3:16,15:16;8:16;1:16,13:16;6:16,18:16&key=Cnatural&intColor=false&intNames=false&diagram_title=Bb%20octaves"
+            <ul>
+                <li><a href="#strings=6:16,18:16;11:16;3:16,15:16;8:16;1:16,13:16;6:16,18:16&key=Cnatural&intColor=false&intNames=false&diagram_title=Bb%20octaves"
                 >Bb octaves</a></li>
-				<li><a href="#strings=0:17,3:17,8:17,12:17,15:17;1:17,5:17,8:17,13:17;0:17,5:17,9:17,12:17;2:17,5:17,10:17,14:17;3:17,7:17,10:17,15:17;0:17,3:17,8:17,12:17,15:17&key=Cnatural&intColor=false&intNames=true&diagram_title=C%20major%20along%20the%20fretboard"
+                <li><a href="#strings=0:17,3:17,8:17,12:17,15:17;1:17,5:17,8:17,13:17;0:17,5:17,9:17,12:17;2:17,5:17,10:17,14:17;3:17,7:17,10:17,15:17;0:17,3:17,8:17,12:17,15:17&key=Cnatural&intColor=false&intNames=true&diagram_title=C%20major%20along%20the%20fretboard"
                 >C major all along the fretboard</a></li>
-				<li><a href="#strings=3:7,4:13,5:13,6:13,7:11;3:13,4:13,5:4,6:13,7:13;3:13,4:11,5:0,6:13,7:13;3:13,4:13,5:7,6:13,7:13;3:0,4:13,5:13,6:13,7:4;3:7,4:13,5:13,6:13,7:11&key=Cnatural&intColor=true&intNames=false&diagram_title=C%20Major%20ii-V-I&dash=Dnatural_ARP_MIN7,Gnatural_ARP_DOM7,Cnatural_ARP_MAJ7,Cnatural_ARP_MAJ7_MAJ7"
+                <li><a href="#strings=3:7,4:13,5:13,6:13,7:11;3:13,4:13,5:4,6:13,7:13;3:13,4:11,5:0,6:13,7:13;3:13,4:13,5:7,6:13,7:13;3:0,4:13,5:13,6:13,7:4;3:7,4:13,5:13,6:13,7:11&key=Cnatural&intColor=true&intNames=false&diagram_title=C%20Major%20ii-V-I&dash=Dnatural_ARP_MIN7,Gnatural_ARP_DOM7,Cnatural_ARP_MAJ7,Cnatural_ARP_MAJ7_MAJ7"
                 >2-5-1 in C Major</a>
                 </li>
                 <li><a href="#strings=3:14,4:4,5:13,6:14,7:13;3:13,4:11,5:13,6:0,7:13;3:14,4:13,5:7,6:14,7:13;3:0,4:13,5:14,6:4,7:13;3:7,4:14,5:13,6:11,7:13;3:14,4:4,5:13,6:14,7:13&key=Fnatural&intColor=true&intNames=false&diagram_title=F%20Minor%202-5-1&dash=Gnatural_SC_LOCRIAN,Cnatural_SC_MIXOLYDIAN,Fnatural_SC_DORIAN,Fnatural_SC_DORIAN"
@@ -217,9 +224,9 @@
 
                 <li><a href="#strings=3:19;2:19;3:19;2:20;;&key=Gnatural&intColor=false&intNames=false&diagram_title=Edim7%20Fingering"
                 >Edim7 fingering</a></li>
-				<li><a href="#strings=0:14,2:7,5:11,7:0,10:4,12:14,14:7,17:11;0:0,3:4,5:14,7:7,10:11,12:0,15:4,17:14;2:11,4:0,7:4,9:14,11:7,14:11,16:0;0:4,2:14,4:7,7:11,9:0,12:4,14:14,16:7;0:11,2:0,5:4,7:14,9:7,12:11,14:0,17:4;0:14,2:7,5:11,10:4,12:14,14:7,17:11&key=Bnatural&intColor=false&intNames=false&diagram_title=B%20Minor%20Pentatonic"
+                <li><a href="#strings=0:14,2:7,5:11,7:0,10:4,12:14,14:7,17:11;0:0,3:4,5:14,7:7,10:11,12:0,15:4,17:14;2:11,4:0,7:4,9:14,11:7,14:11,16:0;0:4,2:14,4:7,7:11,9:0,12:4,14:14,16:7;0:11,2:0,5:4,7:14,9:7,12:11,14:0,17:4;0:14,2:7,5:11,10:4,12:14,14:7,17:11&key=Bnatural&intColor=false&intNames=false&diagram_title=B%20Minor%20Pentatonic"
                 >B minor pentatonic</a></li>
-				<li><a href="#strings=;5:15;5:15;5:15;;5:20&key=Anatural&intColor=false&intNames=true&diagram_title=A-7%20Fingering"
+                <li><a href="#strings=;5:15;5:15;5:15;;5:20&key=Anatural&intColor=false&intNames=true&diagram_title=A-7%20Fingering"
                 >A-7 fingering</a></li>
 
                 <li><a href="#strings=2:16,5:19,9:16,12:19,14:16;2:16,5:19,7:16,10:19,14:16;2:16,6:19,9:16,11:19,14:16;2:16,4:19,7:16,11:19,14:16;;&key=Fsharp&intColor=false&intNames=false&diagram_title=A%20Major%206th%20%3D%20F%23%20Minor%207th%20%3A%20b3%20of%20Min7%20%3D%20relative%20Maj%206%2C%2013%20of%20Maj6%20%3D%20relative%20Min6">
@@ -227,7 +234,7 @@
                 </li>
 
             </ul>
-		</div>
+        </div>
      </div>
 
      </div><!--end #main -->
@@ -235,6 +242,6 @@
 </html>
 <script>
  $( document ).ready(function() {
- 	var dr = onDocReady();
+    var dr = onDocReady();
 });
 </script>

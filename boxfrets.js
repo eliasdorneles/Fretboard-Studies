@@ -833,10 +833,10 @@ var populateNotegroupsUnabridged = function(){
 		//populateKeyWithUnabridgedNotegroups();
 		html += '<div id="ngTab_'+dictKeys[key].safename+'" class="tabs-nohdr">';
 		html += '<ul  >';
+				html += '<li><a href="#tb_scales_'+dictKeys[key].safename+'">Scales</a></li>';
         html += '<li><a href="#tb_arppegios_'+dictKeys[key].safename+'">Arpeggios</a></li>';
-        html += '<li><a href="#tb_scales_'+dictKeys[key].safename+'">Scales</a></li>';
         html += '<li><a href="#tb_chords_'+dictKeys[key].safename+'">Chords</a></li>';
-        html += '</ul>';
+    html += '</ul>';
 
 		// ~~~~~~ arpeggios
 		html += '<div id="tb_arppegios_'+dictKeys[key].safename+'" class="tabs-nobg ngExchange">';

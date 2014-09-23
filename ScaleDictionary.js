@@ -200,6 +200,7 @@ var INTCLR_LYDAUG = ["i_root", "white","black","white","i_third","white","black"
 var INTCLR_PENTMIN = ["i_root", "white","white","i_third","white","black","white","i_fifth","white","white","i_seventh","white"];
 var INTCLR_PENTMAJ = ["i_root", "white","black","white","i_third","white","white","i_fifth","white","black","white","white"];
 var INTCLR_PENTDOM = ["i_root", "white","black","white","i_third","white","white","i_fifth","white","white","black","white"];
+var INTCLR_PENTMINMEL = ["i_root", "white","black","i_third","white","white","white","i_fifth","white","black","white","white"];
 
 
 var SC_MAJOR =  { "name" : "Ionian", "intnames": INTS_FLATS, "color" : INTCLR_IONIAN };
@@ -222,6 +223,7 @@ var SC_MINJAZZ =  { "name" : "Jazz Minor", "intnames": INTS_FLATS, "color" : INT
 var SC_PENTMIN =  { "name" : "Minor Pentatonic", "intnames": INTS_FLATS, "color" : INTCLR_PENTMIN };
 var SC_PENTMAJ =  { "name" : "Major Pentatonic", "intnames": INTS_FLATS, "color" : INTCLR_PENTMAJ };
 var SC_PENTDOM =  { "name" : "Dominant Pentatonic", "intnames": INTS_FLATS, "color" : INTCLR_PENTDOM };
+var SC_PENTMELMIN =  { "name" : "Pentatonic Melodic Minor", "intnames": INTS_FLATS, "color" : INTCLR_PENTMINMEL };
 
 
 var dictScales = {
@@ -243,6 +245,7 @@ var dictScales = {
 	"SC_PHRYGDOM": SC_PHRYGDOM,
 	"SC_LYDIANAUG": SC_LYDIANAUG,
 	"SC_MINNAT": SC_MINNAT,
+	"SC_PENTMELMIN": SC_PENTMELMIN,
 	//"SC_MINJAZZ": SC_MINJAZZ
 	};
 
