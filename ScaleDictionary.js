@@ -5,6 +5,9 @@ var FLATTED = -1;
 var NATURAL = 0;
 var SHARPED = 1;
 
+var SCALE = "SC"; // constant
+var ARP = "ARP"; // constant
+
 var CHROMFLAT = ['C', 'D&#9837;', 'D', 'E&#9837;', 'E', 'F', 'G&#9837;', 'G', 'A&#9837;', 'A', 'B&#9837;', 'B'];
 var CHROMSHARP = ['C', 'C&#9839;', 'D', 'D&#9839;', 'E', 'F', 'F&#9839;', 'G', 'G&#9839;', 'A', 'A&#9839;', 'B'];
 
@@ -203,27 +206,27 @@ var INTCLR_PENTDOM = ["i_root", "white","black","white","i_third","white","white
 var INTCLR_PENTMINMEL = ["i_root", "white","black","i_third","white","white","white","i_fifth","white","black","white","white"];
 
 
-var SC_MAJOR =  { "name" : "Ionian", "intnames": INTS_FLATS, "color" : INTCLR_IONIAN };
-var SC_LYDIAN =  { "name" : "Lydian", "intnames": INTS_SHARP4, "color" : INTCLR_LYDIAN };
-var SC_MIXOLYDIAN =  { "name" : "Mixolydian", "intnames": INTS_FLATS, "color" : INTCLR_MIXOLYDIAN };
-var SC_DORIAN =  { "name" : "Dorian", "intnames": INTS_FLATS, "color" : INTCLR_DORIAN };
-var SC_AEOLIAN =  { "name" : "Aeolian", "intnames": INTS_FLATS, "color" : INTCLR_AEOLIAN };
-var SC_PHRYGIAN =  { "name" : "Phrygian", "intnames": INTS_FLATS, "color" : INTCLR_PHRYGIAN };
-var SC_LOCRIAN =  { "name" : "Locrian", "intnames": INTS_FLATS, "color" : INTCLR_LOCRIAN };
-var SC_DIMINISHED =  { "name" : "Symmetrical Diminished", "intnames": INTS_DIM, "color" : INTCLR_SYMDIM };
-var SC_MINHARM =  { "name" : "Harmonic Minor", "intnames": INTS_FLATS, "color" : INTCLR_MINHARM };
-var SC_MINMEL =  { "name" : "Melodic Minor", "intnames": INTS_FLATS, "color" : INTCLR_MINMEL };
-var SC_ALTERED =  { "name" : "Altered", "intnames": INTS_SUPERLOCRIAN, "color" : INTCLR_ALTERED };
-var SC_LYDIANDOM =  { "name" : "Lydian Dominant", "intnames": INTS_SHARP4, "color" : INTCLR_LYDDOM };
-var SC_PHRYGDOM =  { "name" : "Phrygian Dominant", "intnames": INTS_FLATS, "color" : INTCLR_PHRYGDOM };
-var SC_LYDIANAUG =  { "name" : "Lydian Augmented", "intnames": INTS_SHARP4AUG, "color" : INTCLR_LYDAUG };
-var SC_MINNAT =  { "name" : "Natural Minor", "intnames": INTS_FLATS, "color" : INTCLR_AEOLIAN };
-var SC_MINJAZZ =  { "name" : "Jazz Minor", "intnames": INTS_FLATS, "color" : INTCLR_MINMEL };
+var SC_MAJOR =  { "ngtype": SCALE, "varname" : "MAJOR", "name" : "Ionian", "intnames": INTS_FLATS, "color" : INTCLR_IONIAN };
+var SC_LYDIAN =  { "ngtype": SCALE, "varname" : "LYDIAN", "name" : "Lydian", "intnames": INTS_SHARP4, "color" : INTCLR_LYDIAN };
+var SC_MIXOLYDIAN =  { "ngtype": SCALE, "varname" : "MIXOLYDIAN", "name" : "Mixolydian", "intnames": INTS_FLATS, "color" : INTCLR_MIXOLYDIAN };
+var SC_DORIAN =  { "ngtype": SCALE,"varname" : "DORIAN", "name" : "Dorian", "intnames": INTS_FLATS, "color" : INTCLR_DORIAN };
+var SC_AEOLIAN =  { "ngtype": SCALE, "varname" : "AEOLIAN", "name" : "Aeolian", "intnames": INTS_FLATS, "color" : INTCLR_AEOLIAN };
+var SC_PHRYGIAN =  { "ngtype": SCALE, "varname" : "PHRYGIAN", "name" : "Phrygian", "intnames": INTS_FLATS, "color" : INTCLR_PHRYGIAN };
+var SC_LOCRIAN =  { "ngtype": SCALE, "varname" : "LOCRIAN","name" : "Locrian", "intnames": INTS_FLATS, "color" : INTCLR_LOCRIAN };
+var SC_DIMINISHED =  { "ngtype": SCALE, "varname" : "DIMINISHED", "name" : "Symmetrical Diminished", "intnames": INTS_DIM, "color" : INTCLR_SYMDIM };
+var SC_MINHARM =  { "ngtype": SCALE, "varname" : "MINHARM", "name" : "Harmonic Minor", "intnames": INTS_FLATS, "color" : INTCLR_MINHARM };
+var SC_MINMEL =  { "ngtype": SCALE, "varname" : "MINMEL", "name" : "Melodic Minor", "intnames": INTS_FLATS, "color" : INTCLR_MINMEL };
+var SC_ALTERED =  { "ngtype": SCALE, "varname" : "ALTERED", "name" : "Altered", "intnames": INTS_SUPERLOCRIAN, "color" : INTCLR_ALTERED };
+var SC_LYDIANDOM =  { "ngtype": SCALE, "varname" : "LYDIANDOM", "name" : "Lydian Dominant", "intnames": INTS_SHARP4, "color" : INTCLR_LYDDOM };
+var SC_PHRYGDOM =  { "ngtype": SCALE, "varname" : "PHRYGDOM", "name" : "Phrygian Dominant", "intnames": INTS_FLATS, "color" : INTCLR_PHRYGDOM };
+var SC_LYDIANAUG =  { "ngtype": SCALE, "varname" : "LYDIANAUG", "name" : "Lydian Augmented", "intnames": INTS_SHARP4AUG, "color" : INTCLR_LYDAUG };
+var SC_MINNAT =  { "ngtype": SCALE, "varname" : "MINNAT", "name" : "Natural Minor", "intnames": INTS_FLATS, "color" : INTCLR_AEOLIAN };
+var SC_MINJAZZ =  { "ngtype": SCALE, "varname" : "MINJAZZ", "name" : "Jazz Minor", "intnames": INTS_FLATS, "color" : INTCLR_MINMEL };
 
-var SC_PENTMIN =  { "name" : "Minor Pentatonic", "intnames": INTS_FLATS, "color" : INTCLR_PENTMIN };
-var SC_PENTMAJ =  { "name" : "Major Pentatonic", "intnames": INTS_FLATS, "color" : INTCLR_PENTMAJ };
-var SC_PENTDOM =  { "name" : "Dominant Pentatonic", "intnames": INTS_FLATS, "color" : INTCLR_PENTDOM };
-var SC_PENTMELMIN =  { "name" : "Pentatonic Melodic Minor", "intnames": INTS_FLATS, "color" : INTCLR_PENTMINMEL };
+var SC_PENTMIN =  { "ngtype": SCALE, "varname" : "PENTMIN", "name" : "Minor Pentatonic", "intnames": INTS_FLATS, "color" : INTCLR_PENTMIN };
+var SC_PENTMAJ =  { "ngtype": SCALE, "varname" : "PENTMAJ", "name" : "Major Pentatonic", "intnames": INTS_FLATS, "color" : INTCLR_PENTMAJ };
+var SC_PENTDOM =  { "ngtype": SCALE, "varname" : "PENTDOM", "name" : "Dominant Pentatonic", "intnames": INTS_FLATS, "color" : INTCLR_PENTDOM };
+var SC_PENTMELMIN =  { "ngtype": SCALE, "varname" : "PENTMELMIN", "name" : "Pentatonic Melodic Minor", "intnames": INTS_FLATS, "color" : INTCLR_PENTMINMEL };
 
 
 var dictScales = {
@@ -287,13 +290,13 @@ var INTCLR_MIN7 = ["i_root", "white","white","i_third","white","white","white","
 var INTCLR_MIN7b5 = ["i_root", "white","white","i_third","white","white","i_fifth","white","white","white","i_seventh","white"];
 var INTCLR_DIM = ["i_root", "white","white","i_third","white","white","i_fifth","white","white","i_seventh","white","white"];
 
-var ARP_MAJ =  { "name" : "maj", "intnames": INTS_FLATS, "color" : INTCLR_MAJ };
-var ARP_MAJ7 =  { "name" : "maj7", "intnames": INTS_SHARP4, "color" : INTCLR_MAJ7 };
-var ARP_DOM7 =  { "name" : "7", "intnames": INTS_DOM, "color" : INTCLR_DOM7 };
-var ARP_MIN =  { "name" : "min", "intnames": INTS_FLATS, "color" : INTCLR_MIN };
-var ARP_MIN7 =  { "name" : "min7", "intnames": INTS_FLATS, "color" : INTCLR_MIN7 };
-var ARP_MIN7b5 =  { "name" : "min7&#9837;5", "intnames": INTS_FLATS, "color" : INTCLR_MIN7b5 };
-var ARP_DIM =  { "name" : "dim", "intnames": INTS_DIM, "color" : INTCLR_DIM };
+var ARP_MAJ =  { "ngtype": ARP, "varname" : "MAJ", "name" : "maj", "intnames": INTS_FLATS, "color" : INTCLR_MAJ };
+var ARP_MAJ7 =  { "ngtype": ARP, "varname" : "MAJ7", "name" : "maj7", "intnames": INTS_SHARP4, "color" : INTCLR_MAJ7 };
+var ARP_DOM7 =  { "ngtype": ARP, "varname" : "DOM7", "name" : "7", "intnames": INTS_DOM, "color" : INTCLR_DOM7 };
+var ARP_MIN =  { "ngtype": ARP, "varname" : "MIN", "name" : "min", "intnames": INTS_FLATS, "color" : INTCLR_MIN };
+var ARP_MIN7 =  { "ngtype": ARP, "varname" : "MIN7", "name" : "min7", "intnames": INTS_FLATS, "color" : INTCLR_MIN7 };
+var ARP_MIN7b5 =  { "ngtype": ARP, "varname" : "MIN7b5", "name" : "min7&#9837;5", "intnames": INTS_FLATS, "color" : INTCLR_MIN7b5 };
+var ARP_DIM =  { "ngtype": ARP, "varname" : "DIM", "name" : "dim", "intnames": INTS_DIM, "color" : INTCLR_DIM };
 
 
 var dictArps = {
@@ -396,7 +399,7 @@ var FretboardModel = {
 
 			this["ng"] = ng;
 
-			if(QUIZZINGINTERVAL){
+			if(QUIZZING == ST_QUIZZING_INTERVAL){
 				ctl_updateQuizzingInterval(false);
 			}
 		},
