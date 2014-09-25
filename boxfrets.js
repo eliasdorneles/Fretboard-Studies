@@ -1126,7 +1126,7 @@ jQuery(document).ready(function() {
 				autoOpen: false
 			},{
 				width: 640,
-				height: 640
+				height: 372
 
 			},{
 				dialogClass:".helpInstructions",
