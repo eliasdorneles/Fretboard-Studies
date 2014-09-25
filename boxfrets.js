@@ -49,8 +49,9 @@
 // The 'New Interval Quiz' will randomly paint a new interval for the user to gues the relationship.
 
 // constants
+//
+
 var CHECKANSWER = 'Check Answer!';
-var HELP_TEXT = "HEre is some help";
 
 var GUITAR_STRINGS; // will be array of strings
 var INTERVAL_COLORS = [
@@ -666,7 +667,7 @@ var ctl_newIntQuiz = function(){
 
 var ctl_newRandRoot = function(){
 		clear_fretboard();
-		INTERVALMODE = false;
+		//INTERVALMODE = false;
 		//get random scale
 		// get randonm note on FB
 		var note = get_random_stringFret(); // 0 = string, 1 = fret
@@ -1135,6 +1136,7 @@ jQuery(document).ready(function() {
 
 // bind help button to show help dialog
 	$('#btnHelp').click(function(){
+		$( "#helpText" ).html(HELP_TEXT);
 			$( "#helpText" ).dialog( "open" );
 	});
 
