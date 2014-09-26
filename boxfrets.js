@@ -1279,10 +1279,8 @@ jQuery(document).ready(function() {
   	if($('#intervalQuiz').val() == CHECKANSWER){
 				// stop quiz
 				ctl_updateQuizzing(ST_QUIZZING_NONE);
-				ctl_updateIntervalMode(true);
 			} else {
 				// start interval quiz
-				ctl_updateIntervalMode(false);
 		  	ctl_updateQuizzing(ST_QUIZZING_RANDOMROOT);
 		  }
   })
