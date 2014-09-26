@@ -1276,13 +1276,8 @@ jQuery(document).ready(function() {
 // bind 'random note quiz' to functionality -- each click generates a random root note and loads a scale
 // where you can guess the rest
   $('#randomRootQuiz').click(function(){
-  	if($('#intervalQuiz').val() == CHECKANSWER){
-				// stop quiz
-				ctl_updateQuizzing(ST_QUIZZING_NONE);
-			} else {
-				// start interval quiz
-		  	ctl_updateQuizzing(ST_QUIZZING_RANDOMROOT);
-		  }
+  	ctl_updateQuizzing(ST_QUIZZING_NONE);
+  	ctl_updateQuizzing(ST_QUIZZING_RANDOMROOT);
   })
 
 	// set up example links
