@@ -7,6 +7,8 @@
         <!--<script type="text/javascript" src="jquery-1.4.4.min.js"></script>-->
         <script type="text/javascript" src="jquery-1.11.1.js"></script>
         <script type="text/javascript" src="jquery-ui.min.js"></script>
+        <script type="text/javascript" src="jquery-cookie/jquery.cookie.js"></script>
+        <script type="text/javascript" src="jquery.storage.js-master/jquery.storage.js"></script>
         <link rel="stylesheet" href="smoothness/jquery-ui.css">
          <link rel="stylesheet" href="smoothness/theme.css">
          <link rel="stylesheet" href="fretboard.css">
@@ -14,6 +16,7 @@
         <script type="text/javascript" src="HelpText.js"></script>
         <script type="text/javascript" src="ScaleDictionary.js"></script>
         <script type="text/javascript" src="PlayerModel.js"></script>
+        <script type="text/javascript" src="PrefModel.js"></script>
         <script type="text/javascript" src="BoxFrets.js"></script>
 
         <style>
@@ -22,21 +25,68 @@
     </head>
     <body>
     <div id="main">
-    <div>
 
-
-
-    </div>
+    <!-- help pop-up -->
     <div id="helpText" title="Instructions" >
         <!-- populated with JS -->
     </div>
+
+<!-- preferences pop-up -->
+    <div id="prefWin" title="Preferences" >
+    <div class="tabs-nohdr" id="prefTabs" >
+        <ul>
+            <li><a href="#tabColoring">Coloring</a></li>
+            <li><a href="#tabsRandInt">Random Interval</a></li>
+            <li><a href="#tabsRandRoot">Random Root</a></li>
+        </ul>
+        <div id="tabColoring" class="prefTabs">
+            <input type="radio" name="colorStyle" value="A"> Style A<br>
+            <input type="radio" name="colorStyle" value="B"> Style B</div>
+        <div id="tabsRandInt"  class="prefTabs">
+            <p>stuff</p>
+        </div>
+        <div id="tabsRandRoot"  class="prefTabs">
+            <div style="margin: 0 0 12px 0">
+            <span class="pref_hSpan">
+                <label for="spRR_LoFret">Low fret:</label>
+                <input id="spRR_LoFret" name="value" style="width:28px">
+            </span>
+            <span class="pref_hSpan">
+                <label for="spRR_HiFret">Hi fret:</label>
+                <input id="spRR_HiFret" name="value" style="width:28px">
+            </span>
+            </div>
+            <div style="margin: 0 0 12px 0">
+            <span class="pref_hSpan">
+                <label for="spRR_LoStr">Low String:</label>
+                <input id="spRR_LoStr" name="value" style="width:28px">
+            </span>
+            <span class="pref_hSpan">
+                <label for="spRR_HiStr">Hi String:</label>
+                <input id="spRR_HiStr" name="value" style="width:28px">
+            </span>
+            </div>
+
+            <h3>Notegroups to Test</h3>
+            <p><div id="RR_scaleOptionsDiv">
+                    <!-- <input type="checkbox" name="Ionian" value="Ionian"> Ionian<br>
+                    <input type="checkbox" name="Dorian" value="Dorian"> Dorian<br> -->
+                </div>
+            </p>
+            </div>
+        </div>
+
+    </div>
+    </div>
+    <!-- END preferences pop-up -->
 
 <div>
     <div id="fretboard_container" style="width: 1380;" >
 
     <div class="fb_messagebar" >
         <input id="diagram_title" type="text" value="Click to add a title..." />
-        <input id="btnHelp" type="button" value="?" />
+        <span id="btnPref" type="button" ></span>
+        <span id="btnHelp" type="button"></span>
         <div id="message" >&nbsp;</div>
     </div>
         <table id="mainfretboard">

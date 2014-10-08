@@ -52,7 +52,8 @@
 //
 
 var CHECKANSWER = 'Check Answer!';
-
+var GTR_FRETS = 19;
+var GTR_STRINGS = 6;
 var GUITAR_STRINGS; // will be array of strings
 var INTERVAL_COLORS = [
 	"i_root",
@@ -667,17 +668,53 @@ var ctl_newIntQuiz = function(){
 
 var ctl_newRandRoot = function(){
 		clear_fretboard();
-		//INTERVALMODE = false;
-		//get random scale
-		// get randonm note on FB
-		var note = get_random_stringFret(); // 0 = string, 1 = fret
-		td_paint('#'+'nc_'+note[0]+'_'+note[1], "red");
-		var sKey = getKeyObjFromNoteName($('#'+'nc_'+note[0]+'_'+note[1]).attr('notename')).safename;
-		var ng = get_random_scale_notegroup_key() // gets random dictionary key from scaleDict
-		arrNg =  ng.split('_');
+		// random string, fret according to mPrefs
+		var lowFret = mPref.aPrefs.rrq_LoFret;
+		var highFret = mPref.aPrefs.rrq_HiFret;
+		var lowString = mPref.aPrefs.rrq_LoStr -1;
+		var highString = mPref.aPrefs.rrq_HiStr -1;
+		var stringFret= [-1, -1];// random string/fret
+		while(!(stringFret[0] >= lowString && stringFret[0] <= highString)){
+			stringFret[0] = Math.floor((Math.random() * GUITAR_STRINGS.length) );// string
+		}
+		while (!(stringFret[1] >= lowFret && stringFret[1] <= highFret)){
+			stringFret[1] =  Math.floor(Math.random() * highFret );
+		}
+		td_paint('#'+'nc_'+stringFret[0]+'_'+stringFret[1], "red");
+		var sKey = getKeyObjFromNoteName($('#'+'nc_'+stringFret[0]+'_'+stringFret[1]).attr('notename')).safename;
+
+		// get random dictionary notegroup key that is in user preferences
+		checkedNG =[];// notegroups checked in preferences
+		for(ng in mPref.aPrefs.rrq_Notegroups){
+			if(mPref.aPrefs.rrq_Notegroups[ng][1]){
+				checkedNG.push(mPref.aPrefs.rrq_Notegroups[ng][0]);
+			}
+		}
+		var arrNg =  checkedNG[Math.floor((Math.random() * checkedNG.length))].split('_');
 		set_notes_per_notegroup(sKey, arrNg[0] , arrNg[1])
 }
 
+	// check boxes according to Pref model
+var	ctl_updateRRQprefView = function(){
+		for (var ng in mPref.aPrefs.rrq_Notegroups){
+		//0: scale name, 1: t/f checked in prefs
+		if(mPref.aPrefs.rrq_Notegroups[ng][1]){
+		// control eg 'prefRRQ_SC_DORIAN'
+			$('#prefRRQ_'+mPref.aPrefs.rrq_Notegroups[ng][0]).prop('checked', true);
+		}else{
+			$('#prefRRQ_'+mPref.aPrefs.rrq_Notegroups[ng][0]).prop('checked', false);
+		}
+	}
+};
+
+	 	//when dialog is closed, update the Pref model with data in popup form controls
+var ctl_updatePrefs = function(){
+		//RandomRootQuiz
+		mPref.rrq_LoFret = $("#spRR_LoFret").spinner( "value" );
+		mPref.rrq_HiFret = $("#spRR_HiFret").spinner( "value" );
+		mPref.writePrefCookie();
+
+};
 
 // more utilities
 //
@@ -924,6 +961,25 @@ var populateNotegroupsUnabridged = function(){
 
  	};
 
+var populateNotegroupsRandRootTab = function(){
+	var itemsPerCol =7;
+	var colItem=0;
+	html="";
+	html+='<span class="RR_scaleOptionsCol">';
+	for (var ng in mPref.aPrefs.rrq_Notegroups){
+		colItem = colItem+1;
+		if(colItem > itemsPerCol){
+			html+='</span><span class="RR_scaleOptionsCol">';
+			colItem = 1;
+		}
+		ng = dictScales[mPref.aPrefs.rrq_Notegroups[ng][0]]; // 0 is name, 1 is t/f for checked box
+		html += '<input type="checkbox" id="prefRRQ_'+ng.ngtype+'_'+ng.varname+'" name="'+ng.ngtype+'_'+ng.varname+'" value="'+ng.ngtype+'_'+ng.varname+'"> '+ng.name+'<br>';
+	}
+	html+='<span class="RR_scaleOptionsCol">';
+	$("#RR_scaleOptionsDiv").append(html);
+};
+
+
 // Unabridged divs are the notegroup div objects in the left hand div under the fretboard
 // with all the tabs for each key.  These are all the scales and arpeggios, unabridged.
 // These become draggable over to the right hand div under the fretboard which is governed by
@@ -1001,8 +1057,10 @@ jQuery(document).ready(function() {
 	$( ".cNoteGroup" ).draggable({ addClasses: false });
 
 
+
 	// make fretboard
-	$(gen_fret_boxes(19, 6)).insertAfter($('#mainfretboard'));
+
+	$(gen_fret_boxes(GTR_FRETS, GTR_STRINGS)).insertAfter($('#mainfretboard'));
 	GUITAR_STRINGS = getFretcloneStrings();
 	set_notes();
 
@@ -1019,6 +1077,51 @@ jQuery(document).ready(function() {
 		return html;
 	}
 	$('#fretclone > tbody:last').append(newRow);
+
+
+	// instantiate prefsModel -- for user preferences to govern and be saved as cookie or storage
+	mPref = PrefModel;
+	mPref.init(dictScales, GUITAR_STRINGS[0].length, GUITAR_STRINGS.length); // notegroups array, maxFrets, maxStrings
+
+
+	// make tabs in popup
+	$("#prefTabs").tabs();
+
+	// set up RandomRoot quiz prefs
+	var spRR_LoFret = $( "#spRR_LoFret" ).spinner({
+               min: mPref.aPrefs.rrq_LoFret,
+               max: mPref.aPrefs.rrq_HiFret,
+               value: mPref.aPrefs.rrq_LoFret
+            });
+	var spRR_HiFret = $("#spRR_HiFret").spinner({
+               min: mPref.aPrefs.rrq_LoFret,
+               max: mPref.aPrefs.rrq_HiFret,
+               value: mPref.aPrefs.rrq_HiFret
+            });
+	var spRR_LoStr = $("#spRR_LoStr").spinner({
+               min: mPref.aPrefs.rrq_LoStr,
+               max: mPref.aPrefs.rrq_HiStr,
+               value: mPref.aPrefs.rrq_LoStr
+            });
+	var spRR_HiStr = $("#spRR_HiStr").spinner({
+               min: mPref.aPrefs.rrq_LoStr,
+               max: mPref.aPrefs.rrq_HiStr,
+               value: mPref.aPrefs.rrq_HiStr,
+            });
+
+// set up prefs per user cookie or default
+	mPref.retrieveUserPrefs();
+
+	spRR_LoFret.spinner("value",mPref.aPrefs.rrq_LoFret);
+	spRR_HiFret.spinner("value",mPref.aPrefs.rrq_HiFret);
+	spRR_LoStr.spinner("value",mPref.aPrefs.rrq_LoStr);
+	spRR_HiStr.spinner("value",mPref.aPrefs.rrq_HiStr);
+
+	// dynamically insert notegroup checkboxes
+	populateNotegroupsRandRootTab();
+	// check boxes according to Pref model
+	ctl_updateRRQprefView();
+
 
 // get any url parameters and adjust model(s) appropriately
 	var url_params = get_url_parameters();
@@ -1135,12 +1238,56 @@ jQuery(document).ready(function() {
 
 
 // bind help button to show help dialog
-	$('#btnHelp').click(function(){
+	$('#btnHelp').button({
+		text: false,
+		icons:
+      {
+          primary: "ui-icon-help"
+      }
+	}).click(function(){
 		$( "#helpText" ).html(HELP_TEXT);
 			$( "#helpText" ).dialog( "open" );
 	});
 
+// preferences dialog
+ $(function() {
+			$( "#prefWin" ).dialog({
+				autoOpen: false,
+				modal: true,
+				//closeOnEscape: false,
+				//open: function(event, ui) { $(".ui-dialog-titlebar-close", $(this).parent()).hide(); },
+				buttons:{
+					'Save and Close':function(){
+						//save prefs PrefModel and then write cookie
+						ctl_updatePrefs();
 
+						 $(this).dialog('close');
+					}
+				}
+			},{
+				width: 640,
+				height: 472
+
+			},{
+				dialogClass:".helpInstructions",
+			});
+	});
+
+// bind pref button to show preferences dialog
+	$('#btnPref').button({
+		text: false,
+		icons:
+      {
+          primary: "ui-icon-gear"
+      }
+	}).click(function(){
+			$( "#prefWin" ).dialog( "open" );
+	});
+
+	//  $('#prefWin').bind('dialogclose', function(event) {
+	//  	//when dialog is closed, update the Pref model with data in popup form controls
+ //    ctl_updatePrefs();
+ // });
 
 	// set up eraser brush and clear buttons:
 

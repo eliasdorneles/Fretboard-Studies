@@ -71,8 +71,8 @@ div#fretboard_container
       width:1289px;
       }
 #message {float:right; display: inline; padding-top: 6px;}
-#btnHelp {float:right; padding:3px; width: 24px; height: 24px; font-weight:bold; border-radius: 5px; margin-left: 24px; background-color: white; border: #b5b5b5 solid 1px; }
-
+#btnHelp {float:right; width: 16px; height:16px; padding:0; margin-left: 4px; }
+#btnPref {float:right; width: 16px; height:16px; padding:0; margin-left: 4px; }
 #diagram_title { font-size:25px; font-weight:bold; margin:0 0 0 15px; display:block; padding:4px; border:0; width:auto; float:left; }
 
 div.h_ctrl_cnt{ padding:10px; margin:0px 10px 0px 10px;  }
@@ -124,6 +124,24 @@ input.color_button { width:40px; border-radius: 5px; margin-left: 8px; }
 }
 .tabs-nohdr .ui-tabs-anchor{
   font-weight:normal;
+}
+
+.prefTabs{
+  font-size: 11px;
+}
+
+.prefTabs .pref_hSpan{
+  margin: 0 16px 0 0;
+}
+
+.prefTabs h3 {
+  margin-bottom: 6px;
+}
+
+.prefTabs .RR_scaleOptionsCol{
+  display:block;
+  float: left;
+  margin-right: 12px;
 }
 /* must be under tabs-nohdr */
 div#notegroupsUnabridged  {

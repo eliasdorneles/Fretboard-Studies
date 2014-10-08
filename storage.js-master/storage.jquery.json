@@ -1,0 +1,38 @@
+{
+	"name":"storage",
+	"version":"2.0.0",
+	"title":"Storage.js",
+	"author":{
+		"name" : "Ethan Kramer",
+		"url" : "http://ek.alphaschildren.org"
+	},
+	"licenses" : [
+		{
+			"type" : "MIT",
+			"url" : "https://github.com/ekdevdes/storage.js/2.0.0/LICENSE.txt"
+		}
+	],
+	"dependencies" : {
+		"jquery" : ">=1.5"
+	},
+	"keywords" :[
+		"html5",
+		"local",
+		"page",
+		"edit",
+		"inline",
+		"storage",
+		"editing",
+		"jquery",
+		"javascript"
+	],
+	"bugs": "https://github.com/ekdevdes/storage.js/issues",
+    "homepage": "https://github.com/ekdevdes/storage-js",
+    "docs": "https://ethankr.com/projects/storagejs",
+	"maintainers" : [
+		{
+			"name" : "Ethan Kramer",
+			"url" : "http://ethankr.com"
+		}
+	]
+}
