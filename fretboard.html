@@ -8,7 +8,7 @@
         <script type="text/javascript" src="jquery-1.11.1.js"></script>
         <script type="text/javascript" src="jquery-ui.min.js"></script>
         <script type="text/javascript" src="jquery-cookie/jquery.cookie.js"></script>
-        <script type="text/javascript" src="jquery.storage.js-master/jquery.storage.js"></script>
+        <script type="text/javascript" src="storage-js/jquery.storage.js"></script>
         <link rel="stylesheet" href="smoothness/jquery-ui.css">
          <link rel="stylesheet" href="smoothness/theme.css">
          <link rel="stylesheet" href="fretboard.css">
@@ -35,24 +35,49 @@
     <div id="prefWin" title="Preferences" >
     <div class="tabs-nohdr" id="prefTabs" >
         <ul>
+            <li><a href="#tabInit">General</a></li>
             <li><a href="#tabColoring">Coloring</a></li>
             <li><a href="#tabsRandInt">Random Interval</a></li>
             <li><a href="#tabsRandRoot">Random Root</a></li>
         </ul>
+        <div id="tabInit" class="prefTabs">
+        <input type="button" id="btnResetDefaults" style="width:98px;" name="resetDefaults" value="Reset Defaults">
+        </div>
         <div id="tabColoring" class="prefTabs">
             <input type="radio" name="colorStyle" value="A"> Style A<br>
-            <input type="radio" name="colorStyle" value="B"> Style B</div>
+            <input type="radio" name="colorStyle" value="B"> Style B
+        </div>
         <div id="tabsRandInt"  class="prefTabs">
-            <p>stuff</p>
+            <div style="margin: 0 0 12px 0">
+            <span class="pref_hSpan">
+                <label for="spRIQ_LoFret">Root Low Fret:</label>
+                <input id="spRIQ_LoFret" name="value" style="width:28px">
+            </span>
+            <span class="pref_hSpan">
+                <label for="spRIQ_HiFret">Root Hi Fret:</label>
+                <input id="spRIQ_HiFret" name="value" style="width:28px">
+            </span>
+            </div>
+
+            <div style="margin: 0 0 12px 0">
+            <span class="pref_hSpan">
+                <label for="spRIQ_FretDepth">Frets Apart:</label>
+                <input id="spRIQ_FretDepth" name="value" style="width:28px">
+            </span>
+            <span class="pref_hSpan">
+                <label for="spRIQ_StrDepth">Strings Apart:</label>
+                <input id="spRIQ_StrDepth" name="value" style="width:28px">
+            </span>
+            </div>
         </div>
         <div id="tabsRandRoot"  class="prefTabs">
             <div style="margin: 0 0 12px 0">
             <span class="pref_hSpan">
-                <label for="spRR_LoFret">Low fret:</label>
+                <label for="spRR_LoFret">Low Fret:</label>
                 <input id="spRR_LoFret" name="value" style="width:28px">
             </span>
             <span class="pref_hSpan">
-                <label for="spRR_HiFret">Hi fret:</label>
+                <label for="spRR_HiFret">Hi Fret:</label>
                 <input id="spRR_HiFret" name="value" style="width:28px">
             </span>
             </div>

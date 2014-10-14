@@ -695,7 +695,7 @@ var ctl_newRandRoot = function(){
 }
 
 	// check boxes according to Pref model
-var	ctl_updateRRQprefView = function(){
+var	ctl_updateRRQnotegroupsToPrefModel = function(){
 		for (var ng in mPref.aPrefs.rrq_Notegroups){
 		//0: scale name, 1: t/f checked in prefs
 		if(mPref.aPrefs.rrq_Notegroups[ng][1]){
@@ -707,6 +707,21 @@ var	ctl_updateRRQprefView = function(){
 	}
 };
 
+var ctl_setPrefFormToPrefModel = function(){
+
+	$( "#spRIQ_LoFret" ).spinner("value",mPref.aPrefs.riq_LoFret);
+	$( "#spRIQ_HiFret" ).spinner("value",mPref.aPrefs.riq_HiFret);
+	$( "#spRIQ_StrDepth" ).spinner("value",mPref.aPrefs.riq_StrDepth);
+	$( "#spRIQ_FretDepth" ).spinner("value",mPref.aPrefs.riq_FretDepth);
+
+	$( "#spRR_LoFret" ).spinner("value",mPref.aPrefs.rrq_LoFret);
+	$( "#spRR_HiFret" ).spinner("value",mPref.aPrefs.rrq_HiFret);
+	$( "#spRR_LoStr" ).spinner("value",mPref.aPrefs.rrq_LoStr);
+	$( "#spRR_HiStr" ).spinner("value",mPref.aPrefs.rrq_HiStr);
+	ctl_updateRRQnotegroupsToPrefModel();
+
+
+}
 	 	//when dialog is closed, update the Pref model with data in popup form controls
 var ctl_updatePrefs = function(){
 		//RandomRootQuiz
@@ -715,6 +730,17 @@ var ctl_updatePrefs = function(){
 		mPref.writePrefCookie();
 
 };
+	// returns preferences to defaults and rewrites cookie
+var ctl_resetDefaultPrefs = function(){
+	mPref.removePrefCookie();
+	var testRemoveCookie = fs_userPrefs =(this.is_chrome)?$.localStorage('fs_userPrefs'):$.cookie('fs_userPrefs');
+	mPref.init(dictScales, GUITAR_STRINGS[0].length, GUITAR_STRINGS.length);
+	mPref.checkAllNotegroups();
+	ctl_setPrefFormToPrefModel();
+	//ctl_updateRRQprefView();
+	mPref.writePrefCookie();
+
+}
 
 // more utilities
 //
@@ -975,9 +1001,33 @@ var populateNotegroupsRandRootTab = function(){
 		ng = dictScales[mPref.aPrefs.rrq_Notegroups[ng][0]]; // 0 is name, 1 is t/f for checked box
 		html += '<input type="checkbox" id="prefRRQ_'+ng.ngtype+'_'+ng.varname+'" name="'+ng.ngtype+'_'+ng.varname+'" value="'+ng.ngtype+'_'+ng.varname+'"> '+ng.name+'<br>';
 	}
-	html+='<span class="RR_scaleOptionsCol">';
+	//html+='<span class="RR_scaleOptionsCol">';
+	html+='</span>';
 	$("#RR_scaleOptionsDiv").append(html);
+	// attach function that makes sure at least one ng selection is checked.
+	for (var ng in mPref.aPrefs.rrq_Notegroups){
+		$('#prefRRQ_'+mPref.aPrefs.rrq_Notegroups[ng][0]).click(function(){
+			oneRRQalwaysChecked(this);
+		});
+   		// if($('#prefRRQ_'+mPref.aPrefs.rrq_Notegroups[ng][0]).is(':checked')){
+     //    mPref.aPrefs.rrq_Notegroups[ng][1] = true;
+     //  } else{
+     //    mPref.aPrefs.rrq_Notegroups[ng][1] = false;
+     //  }
+    }
 };
+
+var oneRRQalwaysChecked = function(lastClicked){
+		var checkedNGs =0;
+	  for (var ng in mPref.aPrefs.rrq_Notegroups){
+	  if($('#prefRRQ_'+mPref.aPrefs.rrq_Notegroups[ng][0]).is(':checked')){
+	    	checkedNGs++;
+	  	}
+		}
+	  if (checkedNGs == 0){
+		$(lastClicked).prop('checked', true);
+		}
+}
 
 
 // Unabridged divs are the notegroup div objects in the left hand div under the fretboard
@@ -1087,40 +1137,89 @@ jQuery(document).ready(function() {
 	// make tabs in popup
 	$("#prefTabs").tabs();
 
-	// set up RandomRoot quiz prefs
+// set up Random Interval quiz prefs
+  var spRI_LoFret = $( "#spRIQ_LoFret" ).spinner({
+               min: mPref.aPrefs.riq_LoFret,
+               max: mPref.aPrefs.riq_HiFret,
+               value: mPref.aPrefs.riq_LoFret,
+               change: function( event, ui ) {
+               	if(this.value > $("#spRIQ_HiFret").spinner( "value" )){
+               		$("#spRIQ_HiFret").spinner( "value", this.value );
+               	}
+               },
+            });
+	var spRI_HiFret = $( "#spRIQ_HiFret" ).spinner({
+               min: mPref.aPrefs.riq_LoFret,
+               max: mPref.aPrefs.riq_HiFret,
+               value: mPref.aPrefs.riq_HiFret,
+               change: function( event, ui ) {
+               	if(this.value < $("#spRIQ_LoFret").spinner( "value" )){
+               		$("#spRIQ_LoFret").spinner( "value", this.value );
+               	}
+               },
+            });
+
+	var spRI_StrDepth = $( "#spRIQ_StrDepth" ).spinner({
+               min: mPref.aPrefs.riq_LoStr,
+               max: mPref.aPrefs.riq_HiStr - 1,
+               value: mPref.aPrefs.riq_StrDepth
+            });
+	var spRI_FretDepth = $( "#spRIQ_FretDepth" ).spinner({
+               min: 1,
+               max: mPref.aPrefs.riq_HiFret - 1,
+               value: mPref.aPrefs.riq_FretDepth
+            });
+	// set up Random Root quiz prefs
 	var spRR_LoFret = $( "#spRR_LoFret" ).spinner({
                min: mPref.aPrefs.rrq_LoFret,
                max: mPref.aPrefs.rrq_HiFret,
-               value: mPref.aPrefs.rrq_LoFret
+               value: mPref.aPrefs.rrq_LoFret,
+               change: function( event, ui ) {
+               	if(this.value > $("#spRR_HiFret").spinner( "value" )){
+               		$("#spRR_HiFret").spinner( "value", this.value );
+               	}
+               },
             });
 	var spRR_HiFret = $("#spRR_HiFret").spinner({
                min: mPref.aPrefs.rrq_LoFret,
                max: mPref.aPrefs.rrq_HiFret,
-               value: mPref.aPrefs.rrq_HiFret
+               value: mPref.aPrefs.rrq_HiFret,
+               change: function( event, ui ) {
+               	if(this.value < $("#spRR_LoFret").spinner( "value" )){
+               		$("#spRR_LoFret").spinner( "value", this.value );
+               	}
+               },
             });
 	var spRR_LoStr = $("#spRR_LoStr").spinner({
                min: mPref.aPrefs.rrq_LoStr,
                max: mPref.aPrefs.rrq_HiStr,
-               value: mPref.aPrefs.rrq_LoStr
+               value: mPref.aPrefs.rrq_LoStr,
+               change: function( event, ui ) {
+               	if(this.value > $("#spRR_HiStr").spinner( "value" )){
+               		$("#spRR_HiStr").spinner( "value", this.value );
+               	}
+               },
             });
 	var spRR_HiStr = $("#spRR_HiStr").spinner({
                min: mPref.aPrefs.rrq_LoStr,
                max: mPref.aPrefs.rrq_HiStr,
                value: mPref.aPrefs.rrq_HiStr,
+               change: function( event, ui ) {
+               	if(this.value < $("#spRR_LoStr").spinner( "value" )){
+               		$("#spRR_LoStr").spinner( "value", this.value );
+               	}
+               },
             });
 
 // set up prefs per user cookie or default
 	mPref.retrieveUserPrefs();
 
-	spRR_LoFret.spinner("value",mPref.aPrefs.rrq_LoFret);
-	spRR_HiFret.spinner("value",mPref.aPrefs.rrq_HiFret);
-	spRR_LoStr.spinner("value",mPref.aPrefs.rrq_LoStr);
-	spRR_HiStr.spinner("value",mPref.aPrefs.rrq_HiStr);
 
 	// dynamically insert notegroup checkboxes
 	populateNotegroupsRandRootTab();
 	// check boxes according to Pref model
-	ctl_updateRRQprefView();
+	ctl_setPrefFormToPrefModel();
+	//ctl_updateRRQprefView();
 
 
 // get any url parameters and adjust model(s) appropriately
@@ -1367,6 +1466,7 @@ jQuery(document).ready(function() {
 
 	});
 
+
 // Bind set root button -- when on, next fret note clicked will be new Key in Fretboard Model, then button reverts to off
 //
 	$('#setRoot').click(function(){
@@ -1435,6 +1535,10 @@ jQuery(document).ready(function() {
 		loadFromUrl();
 	});
 
+	// reset defaults in preferences/general
+	$('#btnResetDefaults').click(function(){
+		ctl_resetDefaultPrefs();
+	});
 
 
 
