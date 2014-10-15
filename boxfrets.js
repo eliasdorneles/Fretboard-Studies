@@ -631,28 +631,49 @@ var ctl_newIntQuiz = function(){
 	// set IntervalMode state to false and ColorByIntervals to False
 	//COLORBYINTERVALS = false;
 	INTERVALMODE = false;
-	var lowFret = 0;
-	var highFret = GUITAR_STRINGS[0].length;
-	var rngFrets= 5;// the range of frets from root can be set here
+	var lowFret = mPref.aPrefs.riq_LoFret;
+	var highFret = mPref.aPrefs.riq_HiFret;
+	var rngFrets = mPref.aPrefs.riq_FretDepth;
+	var rngStr = mPref.aPrefs.riq_StrDepth;// the range of frets from root can be set here
 	var rngLo =1;
 	var rngHi =1;
 	// get two randmon notes on FB
 	var rootString = Math.floor((Math.random() * GUITAR_STRINGS.length) );
-	var intString= Math.floor((Math.random() * GUITAR_STRINGS.length) );
-	var rootFret=-1;
-	var intFret=-1;
+	var intString = Math.floor((Math.random() * GUITAR_STRINGS.length) );
+	var rootFret =randomIntFromInterval(lowFret, highFret);
 
-	while (!(rootFret >= lowFret && rootFret <= highFret)){
-		var rootFret =  Math.floor(Math.random() * highFret );
+	var strMin;
+	var strMax;
+
+	while(Math.abs(intString - rootString) > rngStr ){
+		intString = randomIntFromInterval(0, GUITAR_STRINGS.length);
 	}
 
-	while (!(intFret >= lowFret && intFret <= highFret && rootFret != intFret) ){
-			var intFret =  Math.floor(Math.random() * highFret );
-			if(intFret <= (rootFret - rngFrets) || intFret >= (rootFret + rngFrets)){
-				// out of range; invalid
-				intFret = -1;
-			}
+	var intFretMin;
+	var intFretMax;
+	(rootFret - rngFrets < lowFret)?intFretMin = lowFret:intFretMin = rootFret - rngFrets;
+	(rootFret + rngFrets > highFret)?intFretMax = highFret:intFretMax = rootFret + rngFrets;
+	intFret = randomIntFromInterval(intFretMin, intFretMax);
+
+	while ((intString == rootString && rootFret == intFret) || (intFret < lowFret) || (intFret > highFret)){
+		intFret = randomIntFromInterval(intFretMin, intFretMax);
 	}
+
+
+
+	// while (!(intFret >= lowFret && intFret <= highFret && rootFret != intFret) ){
+	// 		intFret =  Math.floor(Math.random() * highFret +1 )  ;
+	// 		if(intFret - rngFrets < rootFret || intFret + rngFrets > rootFret ){
+	// 			// out of range; invalid
+	// 			intFret = -1;
+	// 		}
+	// }
+
+	// while (!((Math.abs(intStr - rootString)) <= rngStr )){
+	// 	var rootString = Math.floor((Math.random() * GUITAR_STRINGS.length) );
+	// 	var intString= Math.floor((Math.random() * GUITAR_STRINGS.length) );
+	// }
+
 	// get safeName from note
 	var newRootNoteName = $('#'+'ns_'+rootString+'_'+rootFret).attr('notename');
 
@@ -733,8 +754,8 @@ var ctl_updatePrefs = function(){
 	// returns preferences to defaults and rewrites cookie
 var ctl_resetDefaultPrefs = function(){
 	mPref.removePrefCookie();
-	var testRemoveCookie = fs_userPrefs =(this.is_chrome)?$.localStorage('fs_userPrefs'):$.cookie('fs_userPrefs');
-	mPref.init(dictScales, GUITAR_STRINGS[0].length, GUITAR_STRINGS.length);
+	//var testRemoveCookie = fs_userPrefs =(this.is_chrome)?$.localStorage('fs_userPrefs'):$.cookie('fs_userPrefs');
+	mPref.init(dictScales, GUITAR_STRINGS[0].length, GUITAR_STRINGS.length); // should set initialized prefs
 	mPref.checkAllNotegroups();
 	ctl_setPrefFormToPrefModel();
 	//ctl_updateRRQprefView();
@@ -1017,6 +1038,11 @@ var populateNotegroupsRandRootTab = function(){
     }
 };
 
+var randomIntFromInterval = function(min,max)
+{
+    return Math.floor(Math.random()*(max-min+1)+min);
+}
+
 var oneRRQalwaysChecked = function(lastClicked){
 		var checkedNGs =0;
 	  for (var ng in mPref.aPrefs.rrq_Notegroups){
@@ -1137,56 +1163,82 @@ jQuery(document).ready(function() {
 	// make tabs in popup
 	$("#prefTabs").tabs();
 
+// setup Start UI prefs
+switch(mPref.aPrefs.startNoteLabel){
+	case "note":
+		$('input[name=sp_Label][value=note]').prop("checked",true);
+		break;
+	case "int":
+		$('input[name=sp_Label][value=int]').prop("checked",true);
+		break;
+	default:
+		$('input[name=sp_Label][value=note]').prop("checked",true);
+		break;
+}
+
+switch(mPref.aPrefs.startNoteColor){
+	case "note":
+		$('input[name=sp_Color][value=pallete]').prop("checked",true);
+		break;
+	case "int":
+		$('input[name=sp_Color][value=interval]').prop("checked",true);
+		break;
+	default:
+		$('input[name=sp_Color][value=pallete]').prop("checked",true);
+		break;
+}
+
+$('input[name=sp_Color][value=pallete]').prop("checked",true);
 // set up Random Interval quiz prefs
   var spRI_LoFret = $( "#spRIQ_LoFret" ).spinner({
                min: mPref.aPrefs.riq_LoFret,
-               max: mPref.aPrefs.riq_HiFret,
+               max: mPref.aPrefs.riq_HiFret -1,
                value: mPref.aPrefs.riq_LoFret,
                change: function( event, ui ) {
-               	if(this.value > $("#spRIQ_HiFret").spinner( "value" )){
-               		$("#spRIQ_HiFret").spinner( "value", this.value );
+               	if(this.value >= $("#spRIQ_HiFret").spinner( "value" )){
+               		$( "#spRIQ_LoFret" ).spinner("value", $("#spRIQ_HiFret").spinner( "value" ) - 1);
                	}
                },
             });
 	var spRI_HiFret = $( "#spRIQ_HiFret" ).spinner({
-               min: mPref.aPrefs.riq_LoFret,
+               min: mPref.aPrefs.riq_LoFret + 1,
                max: mPref.aPrefs.riq_HiFret,
                value: mPref.aPrefs.riq_HiFret,
                change: function( event, ui ) {
-               	if(this.value < $("#spRIQ_LoFret").spinner( "value" )){
-               		$("#spRIQ_LoFret").spinner( "value", this.value );
+               	if(this.value <= $("#spRIQ_LoFret").spinner( "value" )){
+               		$( "#spRIQ_HiFret" ).spinner("value", $("#spRIQ_LoFret").spinner( "value" ) + 1 );
                	}
                },
             });
 
 	var spRI_StrDepth = $( "#spRIQ_StrDepth" ).spinner({
-               min: mPref.aPrefs.riq_LoStr,
+               min: 0,
                max: mPref.aPrefs.riq_HiStr - 1,
                value: mPref.aPrefs.riq_StrDepth
             });
 	var spRI_FretDepth = $( "#spRIQ_FretDepth" ).spinner({
                min: 1,
                max: mPref.aPrefs.riq_HiFret - 1,
-               value: mPref.aPrefs.riq_FretDepth
+               value: mPref.aPrefs.riq_FretDepth,
             });
 	// set up Random Root quiz prefs
 	var spRR_LoFret = $( "#spRR_LoFret" ).spinner({
                min: mPref.aPrefs.rrq_LoFret,
-               max: mPref.aPrefs.rrq_HiFret,
+               max: mPref.aPrefs.rrq_HiFret -1,
                value: mPref.aPrefs.rrq_LoFret,
                change: function( event, ui ) {
-               	if(this.value > $("#spRR_HiFret").spinner( "value" )){
-               		$("#spRR_HiFret").spinner( "value", this.value );
+               	if(this.value >= $("#spRR_HiFret").spinner( "value" )){
+               		$( "#spRR_LoFret" ).spinner("value", $("#spRR_HiFret").spinner( "value" ) +1);
                	}
                },
             });
 	var spRR_HiFret = $("#spRR_HiFret").spinner({
-               min: mPref.aPrefs.rrq_LoFret,
+               min: mPref.aPrefs.rrq_LoFret +1,
                max: mPref.aPrefs.rrq_HiFret,
                value: mPref.aPrefs.rrq_HiFret,
                change: function( event, ui ) {
-               	if(this.value < $("#spRR_LoFret").spinner( "value" )){
-               		$("#spRR_LoFret").spinner( "value", this.value );
+               	if(this.value <= $("#spRR_LoFret").spinner("value")){
+               		$("#spRR_HiFret").spinner( "value", $("#spRR_LoFret").spinner("value") - 1 );
                	}
                },
             });
@@ -1540,8 +1592,17 @@ jQuery(document).ready(function() {
 		ctl_resetDefaultPrefs();
 	});
 
-
-
+	// set start UI per Pref Model
+	if(mPref.aPrefs.startNoteLabel != "note" ){
+		// assumes we are not in interval mode
+		$('#modeNoteInt').click();
+		$('input[name=sp_Label][value=int]').prop("checked",true); // set radio button in pref tab
+	}
+	if(mPref.aPrefs.startNoteColor != "pallete" ){
+		// assumes we are not in color by interval mode
+		$('#colorByInterval').click();
+		$('input[name=sp_Color][value=interval]').prop("checked",true);// set in pref tab
+	}
 	// TODO: generate jTab
 	// TODO: show chord in standard notation
 });

@@ -1,5 +1,5 @@
-var INTSCHEME_A = "A";// constant
-var INTSCHEME_B = "B";// constant
+// var INTSCHEME_A = "A";// constant
+// var INTSCHEME_B = "B";// constant
 
 var PrefModel = {
 
@@ -13,9 +13,10 @@ var PrefModel = {
   // ,
   notegroups: []
   ,
-  aPrefs :
+  aDefaultPrefs :
       {
-        intScheme : INTSCHEME_A,
+        startNoteLabel: "note",
+        startNoteColor: "pallete",
         riq_LoFret : 0,
         riq_HiFret :19,
         riq_StrDepth : 5,
@@ -26,12 +27,17 @@ var PrefModel = {
         rrq_HiStr: 6,
         rrq_Notegroups : [],
       },
+  aPrefs :
+      {
+      },
   usingUserPrefs:false
       ,
   is_chrome :false
       ,
   init : function(aNotegroups, maxFret, maxString){
-    this.aPrefs.rrq_HiFret = this.aPrefs.riq_HiFret = maxFret;
+    this.aPrefs = $.extend({},this.aDefaultPrefs);
+
+    this.aPrefs.rrq_HiFret = this.aPrefs.riq_HiFret = maxFret-1;
     this.aPrefs.rrq_HiStr = this.aPrefs.riq_HiStr = maxString;
     // local chrome will not save cookies
     this.is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
@@ -47,6 +53,11 @@ var PrefModel = {
   writePrefCookie : function(){
     // put form values in mPref.aPrefs and save to cookie, or local storage if chrome
 
+    // start UI
+    mPref.aPrefs.startNoteLabel =$( 'input[name=sp_Label]:checked' ).val();
+    mPref.aPrefs.startNoteColor =$( 'input[name=sp_Color]:checked' ).val();
+
+    //interval quiz
     mPref.aPrefs.riq_LoFret =  $('#spRIQ_LoFret').spinner( "value" );
     mPref.aPrefs.riq_HiFret =  $('#spRIQ_HiFret').spinner( "value" );
     mPref.aPrefs.riq_StrDepth =  $('#spRIQ_StrDepth').spinner( "value" );
@@ -75,15 +86,6 @@ var PrefModel = {
       $.cookie('fs_userPrefs', this.aPrefs);
     }
 
-    var testStorage;
-    // test cookie
-    if(this.is_chrome){
-        testStorage = $.localStorage('fs_userPrefs');
-      }else{
-        testStorage = $.cookie('fs_userPrefs')
-      }
-    //fs_userPrefs =(this.is_chrome)?$.localStorage('fs_userPrefs'):$.cookie('fs_userPrefs');
-    alert('wrote: '+testStorage);
   }
   ,
   retrieveUserPrefs : function(){

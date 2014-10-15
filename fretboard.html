@@ -35,8 +35,8 @@
     <div id="prefWin" title="Preferences" >
     <div class="tabs-nohdr" id="prefTabs" >
         <ul>
-            <li><a href="#tabInit">General</a></li>
-            <li><a href="#tabColoring">Coloring</a></li>
+            <li><a href="#tabInit">Defaults</a></li>
+            <li><a href="#tabColoring">Start</a></li>
             <li><a href="#tabsRandInt">Random Interval</a></li>
             <li><a href="#tabsRandRoot">Random Root</a></li>
         </ul>
@@ -44,8 +44,18 @@
         <input type="button" id="btnResetDefaults" style="width:98px;" name="resetDefaults" value="Reset Defaults">
         </div>
         <div id="tabColoring" class="prefTabs">
-            <input type="radio" name="colorStyle" value="A"> Style A<br>
-            <input type="radio" name="colorStyle" value="B"> Style B
+
+        <h3>Note Labels</h3>
+        <div style="margin: 0 0 12px 0" id="sp_Label">
+            <input type="radio" name="sp_Label" value="note" > Label Notes with Notenames<br>
+            <input type="radio" name="sp_Label" value="int" > Label Notes as Intervals
+        </div>
+
+        <h3>Note Coloring</h3>
+        <div style="margin: 0 0 12px 0" id="sp_Color">
+            <input type="radio" name="sp_Color" value="pallete" > Pallete Color<br>
+            <input type="radio" name="sp_Color" value="interval" > Interval Color
+        </div>
         </div>
         <div id="tabsRandInt"  class="prefTabs">
             <div style="margin: 0 0 12px 0">
