@@ -56,130 +56,139 @@ var INTS_SHARP4AUG = ['R', '&#9837;9', '9', '&#9837;3', '3', '11', '&#9839;11', 
 var INTS_DIM = ['R', '&#9837;9', '9', '&#9837;3', '3', '11', '&#9839;4', '5', '&#43;5', '&#9837;&#9837;7', '&#9837;7', '7'];
 var INTS_SUPERLOCRIAN = ['R', '&#9837;9', '9', '&#9837;3', '&#9837;4', '11', '&#9837;5', '5', '&#9837;13', '13', '&#9837;7', '7'];
 
-var _ROOT = {
+var dictInt = {
+'ROOT': {
 	'SEMI' : 0,
 	'INT' : 'R',
 	'CLR' : 'i__ROOT'
-	}
+},
 
-var FLATNINE = {
+'FLATNINE' : {
 	'SEMI' : 1,
 	'INT' : '&#9837;9',
 	'CLR' : 'i_flatnine'
-	}
+},
 
-var NINE = {
+'NINE' : {
 	'SEMI' : 2,
 	'INT' : '9',
 	'CLR' : 'i_flatnine'
-	}
+},
 
-var SHARPNINE = {
+'SHARPNINE' : {
 	'SEMI' : 3,
 	'INT' : '&#9839;11',
 	'CLR' : 'i_sharpnine'
-	}
+},
 
-var FLATTHREE = {
+'FLATTHREE' : {
 	'SEMI' : 3,
 	'INT' : '&#9837;3',
 	'CLR' : 'i_third'
-	}
+},
 
-var THIRD = {
+'THIRD' : {
 	'SEMI' : 4,
 	'INT' : '3',
 	'CLR' : 'i_third'
-	}
+},
 
-var DIMELEVEN = {
+'DIMELEVEN' : {
 	'SEMI' : 4,
 	'INT' : '&#9837;11',
 	'CLR' : 'i_fourth'
-	}
+},
 
-var ELEVEN = {
+'ELEVEN' : {
 	'SEMI' : 5,
 	'INT' : '11',
 	'CLR' : 'i_fourth'
-	}
+},
 
-var SHARPELEVEN = {
+'SHARPELEVEN' : {
 	'SEMI' : 6,
 	'INT' : '&#9839;11',
 	'CLR' : 'i_fourth'
-	}
+},
 
-var FLATFIVE = {
+'FLATFIVE' : {
 	'SEMI' : 6,
 	'INT' : '&#9837;5',
 	'CLR' : 'i_fifth'
-	}
+},
 
-var FIFTH = {
+'FIFTH' : {
 	'SEMI' : 7,
 	'INT' : '5',
 	'CLR' : 'i_fifth'
-	}
+},
 
-var AUGFIVE = {
+'AUGFIVE' : {
 	'SEMI' : 8,
 	'INT' : '&#9839;5',
 	'CLR' : 'i_fifth'
-	}
+},
 
-var FLATTHIRTEEN = {
+'FLATTHIRTEEN' : {
 	'SEMI' : 8,
 	'INT' : '&#9837;13',
 	'CLR' : 'i_sixth'
-	}
+},
 
-var THIRTEEN = {
+'THIRTEEN' : {
 	'SEMI' : 9,
 	'INT' : '13',
 	'CLR' : 'i_sixth'
-	}
+},
 
-var AUGTHIRTEEN = {
+'AUGTHIRTEEN' : {
 	'SEMI' : 10,
 	'INT' : '&#9839;13',
 	'CLR' : 'i_sixth'
-	}
+},
 
-var FLATSEVEN = {
+'FLATSEVEN' : {
 	'SEMI' : 10,
 	'INT' : '&#9837;7',
 	'CLR' : 'i_seventh'
-	}
+},
 
-var SEVENTH = {
+'SEVENTH' : {
 	'SEMI' : 11,
 	'INT' : '7',
 	'CLR' : 'i_seventh'
-	}
+},
 
-var TX = {
+'TX' : {
 	// tone outside of scale, inherit semitone and int
 	'SEMI' : -1,
 	'INT' : '',
 	'CLR' : 'white'
-	}
+},
 
-var TI = {
+'TI' : {
 	// tone in scale, inherit semitone and int
 	'SEMI' : -1,
 	'INT' : '',
 	'CLR' : 'black'
-	}
+},
+
+'TP' : {
+	// passing tone in scale, inherit semitone and int
+	'SEMI' : -1,
+	'INT' : '',
+	'CLR' : 'i_passing'
+}
+}
 
 // Scale Formulas
-var IF_IONIAN = [_ROOT, TX, TI, TX, THIRD, TI, TX, FIFTH, TX, TI, TX, SEVENTH];
-var IF_LYDIAN = [_ROOT, TX, TI, TX, THIRD, TX, SHARPELEVEN, FIFTH, TX, TI, TX, SEVENTH];
-var IF_MIXOLYDIAN = [_ROOT, TX, TI, TX, THIRD, TI, TX, FIFTH, TX, TI, FLATSEVEN, TX];
-var IF_DORIAN = [_ROOT, TX, TI, FLATTHREE, TX, TI, TX, FIFTH, TX, TI, FLATSEVEN, TX];
-var IF_AEOLIAN = [_ROOT, TX, TI, FLATTHREE, TX, TI, TX, FIFTH, FLATTHIRTEEN, TX, FLATSEVEN, TX];
-var IF_PHRYGIAN = [_ROOT, FLATNINE, TX, FLATTHREE, TX, TI, TX, FIFTH, FLATTHIRTEEN, TX, FLATSEVEN, TX];
-var IF_LOCRIAN = [_ROOT, FLATNINE, TX, FLATTHREE, TX, TI, FLATFIVE, TX, FLATTHIRTEEN, TX, FLATSEVEN, TX];
+var IF_IONIAN = [dictInt._ROOT, dictInt.TX, dictInt.TI, dictInt.TX, dictInt.THIRD, dictInt.TI, dictInt.TX, dictInt.FIFTH, dictInt.TX, dictInt.TI, dictInt.TX, dictInt.SEVENTH];
+var IF_LYDIAN = [dictInt._ROOT, dictInt.TX, dictInt.TI, dictInt.TX, dictInt.THIRD, dictInt.TX, dictInt.SHARPELEVEN, dictInt.FIFTH, dictInt.TX, dictInt.TI, dictInt.TX, dictInt.SEVENTH];
+var IF_MIXOLYDIAN = [dictInt._ROOT, dictInt.TX, dictInt.TI, dictInt.TX, dictInt.THIRD, dictInt.TI, dictInt.TX, dictInt.FIFTH, dictInt.TX, dictInt.TI, dictInt.FLATSEVEN, dictInt.TX];
+var IF_DORIAN = [dictInt._ROOT, dictInt.TX, dictInt.TI, dictInt.FLATTHREE, dictInt.TX, dictInt.TI, dictInt.TX, dictInt.FIFTH, dictInt.TX, dictInt.TI, dictInt.FLATSEVEN, dictInt.TX];
+var IF_AEOLIAN = [dictInt._ROOT, dictInt.TX, dictInt.TI, dictInt.FLATTHREE, dictInt.TX, dictInt.TI, dictInt.TX, dictInt.FIFTH, dictInt.FLATTHIRTEEN, dictInt.TX, dictInt.FLATSEVEN, dictInt.TX];
+var IF_PHRYGIAN = [dictInt._ROOT, dictInt.FLATNINE, dictInt.TX, dictInt.FLATTHREE, dictInt.TX, dictInt.TI, dictInt.TX, dictInt.FIFTH, dictInt.FLATTHIRTEEN, dictInt.TX, dictInt.FLATSEVEN, dictInt.TX];
+var IF_LOCRIAN = [dictInt._ROOT, dictInt.FLATNINE, dictInt.TX, dictInt.FLATTHREE, dictInt.TX, dictInt.TI, dictInt.FLATFIVE, dictInt.TX, dictInt.FLATTHIRTEEN, dictInt.TX, dictInt.FLATSEVEN, dictInt.TX];
 
 
 // scales
