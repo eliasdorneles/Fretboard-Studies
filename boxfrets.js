@@ -200,6 +200,7 @@ var create_link_from_fretboard = function(){
     href += '#';
     href += "strings=" + uri_diagram_repr(GUITAR_STRINGS);
 	href += "&key="+mFB.getKeyObj().safename;
+	href +="&ng="+mFB.getNotegroup().varname;
 	href += "&intColor="+COLORBYINTERVALS;
 	href += "&intNames="+INTERVALMODE;
     href += "&diagram_title=" + escape($('#diagram_title').val());
@@ -446,6 +447,7 @@ var set_notespans = function(){
 var ctrl_updateMessage = function(){
 		if(COLORBYINTERVALS){
 		var msg = "Painting notes for <strong>"+mFB.getKeyTextName();
+		// update link url
 		if(mFB.getNotegroupDict() != dictArps){msg += " ";}
 		msg += mFB.getNotegroup().name+"</strong>";
 		$('#message').html(msg);
@@ -1278,20 +1280,6 @@ $('input[name=sp_Color][value=pallete]').prop("checked",true);
 	var url_params = get_url_parameters();
 	var loadFromUrl = function(){
 
-// interval color or pallete color switched by url params
-		if (is_defined(url_params['intColor'])){
-				if(url_params['intColor'] == "true"){
-
-					ctl_updateColorIntMode(true);
-				}
-			}
-
-// interval names or note names switched by url params
-		if (is_defined(url_params['intNames'])){
-				if(url_params['intNames'] == "true"){
-					ctl_updateIntervalMode(true);
-				}
-			}
 // per url params, put notegroups in abridged dashboard playermodel area
 		if (is_defined(url_params['dash'])){
 				var arrNotgroups = url_params['dash'];
@@ -1323,6 +1311,31 @@ $('input[name=sp_Color][value=pallete]').prop("checked",true);
 				// key should use safename, eg 'Cnatural'
 				ctl_change_key.setRoot(getKeyObjFromSafeName(url_params['key']));
 		}
+
+		// Change painting as Notegroup (scale or arp) by url params
+		if (is_defined(url_params['ng'])){
+			// check for valid notegroup and add to validNG
+				var validNG = false;
+				var keys =[];
+				for (var key in Notegroups) {
+				  if (Notegroups.hasOwnProperty(key)) {
+				    keys.push(key);
+				  }
+				}
+				for (var i = 0; i < keys.length; i++){
+					if(url_params['ng'] == keys[i]){
+							validNG =Notegroups[url_params['ng']];
+							var s = validNG;
+					}
+				}
+
+				if(validNG){
+					// set notegroup in fretboard model to notegroup from URL
+					set_notes_per_notegroup(mFB.getKeySafeName(), validNG.ngtype, validNG.varname);
+					//mFB.setNotegroup(validNG, validNG.ngtype);
+					//ctrl_updateMessage();
+				}
+			}
 	}
 	loadFromUrl();
 	update_link();
@@ -1594,15 +1607,36 @@ $('input[name=sp_Color][value=pallete]').prop("checked",true);
 
 	// set start UI per Pref Model
 	if(mPref.aPrefs.startNoteLabel != "note" ){
-		// assumes we are not in interval mode
-		$('#modeNoteInt').click();
-		$('input[name=sp_Label][value=int]').prop("checked",true); // set radio button in pref tab
+		if(!INTERVALMODE){
+			// assumes we are not in interval mode
+			$('#modeNoteInt').click();
+			$('input[name=sp_Label][value=int]').prop("checked",true); // set radio button in pref tab
+		}
 	}
 	if(mPref.aPrefs.startNoteColor != "pallete" ){
-		// assumes we are not in color by interval mode
-		$('#colorByInterval').click();
-		$('input[name=sp_Color][value=interval]').prop("checked",true);// set in pref tab
+		if(!COLORBYINTERVALS){
+			// assumes we are not in color by interval mode
+			$('#colorByInterval').click();
+			$('input[name=sp_Color][value=interval]').prop("checked",true);// set in pref tab
+		}
 	}
+
+	// interval color or pallete color switched by url params
+		if (is_defined(url_params['intColor'])){
+				if(url_params['intColor'] == "true"){
+
+					ctl_updateColorIntMode(true);
+				}
+			}
+
+// interval names or note names switched by url params
+		if (is_defined(url_params['intNames'])){
+				if(url_params['intNames'] == "true"){
+					ctl_updateIntervalMode(true);
+				}
+			}
+
+
 	// TODO: generate jTab
 	// TODO: show chord in standard notation
 });
