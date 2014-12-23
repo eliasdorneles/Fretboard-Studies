@@ -130,7 +130,7 @@ var dictInt = {
 
 'AUGFIVE' : {
 	'SEMI' : 8,
-	'INT' : '&#9839;5',
+	'INT' : '&#43;5',
 	'CLR' : 'i_fifth'
 },
 
@@ -148,7 +148,7 @@ var dictInt = {
 
 'AUGTHIRTEEN' : {
 	'SEMI' : 10,
-	'INT' : '&#9839;13',
+	'INT' : '&#43;13',
 	'CLR' : 'i_sixth'
 },
 
@@ -198,7 +198,7 @@ var INTS_DOM = [dictInt.ROOT.INT, dictInt.FLATNINE.INT, dictInt.NINE.INT, dictIn
 
 var INTS_SHARP4AUG = [dictInt.ROOT.INT, dictInt.FLATNINE.INT, dictInt.NINE.INT, dictInt.FLATTHREE.INT, dictInt.THIRD.INT, dictInt.ELEVEN.INT, dictInt.SHARPELEVEN.INT, dictInt.FIFTH.INT, dictInt.AUGFIVE.INT, dictInt.THIRTEEN.INT, dictInt.FLATSEVEN.INT, dictInt.SEVENTH.INT];
 var INTS_DIM = [dictInt.ROOT.INT, dictInt.FLATNINE.INT, dictInt.NINE.INT, dictInt.FLATTHREE.INT, dictInt.THIRD.INT, dictInt.ELEVEN.INT, dictInt.FLATFIVE.INT, dictInt.FIFTH.INT, dictInt.AUGFIVE.INT, dictInt.DBLFLATSEVEN.INT, dictInt.FLATSEVEN.INT, dictInt.SEVENTH.INT];
-var INTS_SUPERLOCRIAN = [dictInt.ROOT.INT, dictInt.FLATNINE.INT, dictInt.NINE.INT, dictInt.FLATTHREE.INT, dictInt.DIMELEVEN.INT, dictInt.ELEVEN.INT, dictInt.FLATFIVE.INT, dictInt.FIFTH.INT, dictInt.FLATTHIRTEEN.INT, dictInt.THIRTEEN.INT, dictInt.FLATSEVEN.INT, dictInt.SEVENTH.INT];
+var INTS_SUPERLOCRIAN = [dictInt.ROOT.INT, dictInt.FLATNINE.INT, dictInt.NINE.INT, dictInt.SHARPNINE.INT, dictInt.DIMELEVEN.INT, dictInt.ELEVEN.INT, dictInt.FLATFIVE.INT, dictInt.FIFTH.INT, dictInt.AUGFIVE.INT, dictInt.THIRTEEN.INT, dictInt.FLATSEVEN.INT, dictInt.SEVENTH.INT];
 
 
 
