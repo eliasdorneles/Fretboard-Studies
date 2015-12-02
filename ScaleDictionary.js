@@ -49,18 +49,6 @@ var dictKeys = {
 	"Asharp" : kAsharp};
 
 
-
-// old
-//var INTS_FLATS = ['R', '&#9837;9', '9', '&#9837;3', '3', '11', '&#9837;5', '5', '&#9837;13', '13', '&#9837;7', '7'];
-//var INTS_SHARP4 = ['R', '&#9837;9', '9', '&#9837;3', '3', '11', '&#9839;11', '5', '&#9837;13', '13', '&#9837;7', '7'];
-//var INTS_DOM = ['R', '&#9837;9', '9', '&#9839;9', '3', '11', '&#9837;5', '5', '&#43;5', '13', '&#9837;7', '7'];
-
-//var INTS_SHARP4AUG = ['R', '&#9837;9', '9', '&#9837;3', '3', '11', '&#9839;11', '5', '&#43;5', '13', '&#9837;7', '7'];
-//var INTS_DIM = ['R', '&#9837;9', '9', '&#9837;3', '3', '11', '&#9837;5', '5', '&#43;5', '&#9837;&#9837;7', '&#9837;7', '7'];
-//var INTS_SUPERLOCRIAN = ['R', '&#9837;9', '9', '&#9837;3', '&#9837;4', '11', '&#9837;5', '5', '&#9837;13', '13', '&#9837;7', '7'];
-
-
-
 var dictInt = {
 'ROOT': {
 	'SEMI' : 0,
@@ -130,7 +118,7 @@ var dictInt = {
 
 'AUGFIVE' : {
 	'SEMI' : 8,
-	'INT' : '&#43;5',
+	'INT' : '&#9839;5',
 	'CLR' : 'i_fifth'
 },
 
@@ -148,7 +136,7 @@ var dictInt = {
 
 'AUGTHIRTEEN' : {
 	'SEMI' : 10,
-	'INT' : '&#43;13',
+	'INT' : '&#9839;13',
 	'CLR' : 'i_sixth'
 },
 
@@ -195,6 +183,7 @@ var dictInt = {
 var INTS_FLATS = [dictInt.ROOT.INT, dictInt.FLATNINE.INT, dictInt.NINE.INT, dictInt.FLATTHREE.INT, dictInt.THIRD.INT, dictInt.ELEVEN.INT, dictInt.FLATFIVE.INT, dictInt.FIFTH.INT, dictInt.FLATTHIRTEEN.INT, dictInt.THIRTEEN.INT, dictInt.FLATSEVEN.INT, dictInt.SEVENTH.INT];
 var INTS_SHARP4 = [dictInt.ROOT.INT, dictInt.FLATNINE.INT, dictInt.NINE.INT, dictInt.FLATTHREE.INT, dictInt.THIRD.INT, dictInt.ELEVEN.INT, dictInt.SHARPELEVEN.INT, dictInt.FIFTH.INT, dictInt.FLATTHIRTEEN.INT, dictInt.THIRTEEN.INT, dictInt.FLATSEVEN.INT, dictInt.SEVENTH.INT];
 var INTS_DOM = [dictInt.ROOT.INT, dictInt.FLATNINE.INT, dictInt.NINE.INT, dictInt.SHARPNINE.INT, dictInt.THIRD.INT, dictInt.ELEVEN.INT, dictInt.FLATFIVE.INT, dictInt.FIFTH.INT, dictInt.AUGFIVE.INT, dictInt.THIRTEEN.INT, dictInt.FLATSEVEN.INT, dictInt.SEVENTH.INT];
+var INTS_SHARP456 = [dictInt.ROOT.INT, dictInt.FLATNINE.INT, dictInt.NINE.INT, dictInt.SHARPNINE.INT, dictInt.THIRD.INT, dictInt.ELEVEN.INT, dictInt.SHARPELEVEN.INT, dictInt.FIFTH.INT, dictInt.AUGFIVE.INT, dictInt.THIRTEEN.INT, dictInt.AUGTHIRTEEN.INT, dictInt.SEVENTH.INT];
 
 var INTS_SHARP4AUG = [dictInt.ROOT.INT, dictInt.FLATNINE.INT, dictInt.NINE.INT, dictInt.FLATTHREE.INT, dictInt.THIRD.INT, dictInt.ELEVEN.INT, dictInt.SHARPELEVEN.INT, dictInt.FIFTH.INT, dictInt.AUGFIVE.INT, dictInt.THIRTEEN.INT, dictInt.FLATSEVEN.INT, dictInt.SEVENTH.INT];
 var INTS_DIM = [dictInt.ROOT.INT, dictInt.FLATNINE.INT, dictInt.NINE.INT, dictInt.FLATTHREE.INT, dictInt.THIRD.INT, dictInt.ELEVEN.INT, dictInt.FLATFIVE.INT, dictInt.FIFTH.INT, dictInt.AUGFIVE.INT, dictInt.DBLFLATSEVEN.INT, dictInt.FLATSEVEN.INT, dictInt.SEVENTH.INT];
@@ -234,6 +223,7 @@ var INTCLR_PENTMIN = ["i_root", "white","white","i_third","white","black","white
 var INTCLR_PENTMAJ = ["i_root", "white","black","white","i_third","white","white","i_fifth","white","black","white","white"];
 var INTCLR_PENTDOM = ["i_root", "white","black","white","i_third","white","white","i_fifth","white","white","black","white"];
 var INTCLR_PENTMINMEL = ["i_root", "white","black","i_third","white","white","white","i_fifth","white","black","white","white"];
+var INTCLR_WHOLETONE = ["i_root", "white","black","white","i_third","white","black","white","i_fifth","white","i_seventh","white"];
 
 var SC_MAJOR =  { "ngtype": SCALE, "varname" : "MAJOR", "name" : "Ionian", "intnames": INTS_FLATS, "color" : INTCLR_IONIAN };
 var SC_LYDIAN =  { "ngtype": SCALE, "varname" : "LYDIAN", "name" : "Lydian", "intnames": INTS_SHARP4, "color" : INTCLR_LYDIAN };
@@ -256,6 +246,7 @@ var SC_PENTMIN =  { "ngtype": SCALE, "varname" : "PENTMIN", "name" : "Minor Pent
 var SC_PENTMAJ =  { "ngtype": SCALE, "varname" : "PENTMAJ", "name" : "Major Pentatonic", "intnames": INTS_FLATS, "color" : INTCLR_PENTMAJ };
 var SC_PENTDOM =  { "ngtype": SCALE, "varname" : "PENTDOM", "name" : "Dominant Pentatonic", "intnames": INTS_FLATS, "color" : INTCLR_PENTDOM };
 var SC_PENTMELMIN =  { "ngtype": SCALE, "varname" : "PENTMELMIN", "name" : "Pentatonic Melodic Minor", "intnames": INTS_FLATS, "color" : INTCLR_PENTMINMEL };
+var SC_WHOLETONE =  { "ngtype": SCALE, "varname" : "WHOLETONE", "name" : "Whole Tone", "intnames": INTS_SHARP456, "color" : INTCLR_WHOLETONE };
 
 
 var dictScales = {
@@ -278,6 +269,7 @@ var dictScales = {
 	"SC_LYDIANAUG": SC_LYDIANAUG,
 	"SC_MINNAT": SC_MINNAT,
 	"SC_PENTMELMIN": SC_PENTMELMIN,
+	"SC_WHOLETONE": SC_WHOLETONE,
 	//"SC_MINJAZZ": SC_MINJAZZ
 	};
 
