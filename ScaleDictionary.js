@@ -1,5 +1,6 @@
 // JavaScript Document
 
+var SYM_MAJ = "<span style = 'font-size: 75%; vertical-align: super; overflow:hidden;'>&#9650;</span>";
 // for get enharmonic
 var FLATTED = -1;
 var NATURAL = 0;
@@ -305,29 +306,64 @@ var ScaleModel = {
 //arps
 var INTCLR_MAJ = ["i_root", "white","white","white","i_third","white","white","i_fifth","white","white","white","white"];
 var INTCLR_MAJ7 = ["i_root", "white","white","white","i_third","white","white","i_fifth","white","white","white","i_seventh"];
+var INTCLR_MAJ6 = ["i_root", "white","white","white","i_third","white","white","i_fifth","white","black","white","white"];
 var INTCLR_DOM7 = ["i_root", "white","white","white","i_third","white","white","i_fifth","white","white","i_seventh","white"];
 var INTCLR_MIN = ["i_root", "white","white","i_third","white","white","white","i_fifth","white","white","white","white"];
-var INTCLR_MIN7 = ["i_root", "white","white","i_third","white","white","white","i_fifth","white","white","i_seventh","white"];
+var INTCLR_MIN6 = ["i_root", "white","white","i_third","white","white","white","i_fifth","white","white","white","white"];
+var INTCLR_MIN7 = ["i_root", "white","white","i_third","white","white","white","i_fifth","white","black","i_seventh","white"];
 var INTCLR_MIN7b5 = ["i_root", "white","white","i_third","white","white","i_fifth","white","white","white","i_seventh","white"];
 var INTCLR_DIM = ["i_root", "white","white","i_third","white","white","i_fifth","white","white","i_seventh","white","white"];
 
-var ARP_MAJ =  { "ngtype": ARP, "varname" : "MAJ", "name" : "maj", "intnames": INTS_FLATS, "color" : INTCLR_MAJ };
-var ARP_MAJ7 =  { "ngtype": ARP, "varname" : "MAJ7", "name" : "maj7", "intnames": INTS_SHARP4, "color" : INTCLR_MAJ7 };
+var INTCLR_DOM9 = ["i_root", "white","black","white","i_third","white","white","i_fifth","white","white","i_seventh","white"];
+var INTCLR_DOM13 = ["i_root", "white","black","white","i_third","white","white","i_fifth","white","black","i_seventh","white"];
+var INTCLR_DOMb9 = ["i_root", "black","white","white","i_third","white","white","i_fifth","white","white","i_seventh","white"];
+var INTCLR_DOMs5 = ["i_root", "white","white","white","i_third","white","white","i_passing","black","white","i_seventh","white"];
+var INTCLR_DOMs11 = ["i_root", "white","white","white","i_third","white","black","i_passing","white","white","i_seventh","white"];
+var INTCLR_DOMb9s5 = ["i_root", "black","white","white","i_third","white","white","i_passing","black","white","i_seventh","white"];
+var INTCLR_DOMb9b5 = ["i_root", "black","white","white","i_third","white","black","i_passing","white","white","i_seventh","white"];
+var INTCLR_DOMs9s5 = ["i_root", "white","white","black","i_third","white","white","i_passing","black","white","i_seventh","white"];
+
+
+var ARP_MAJ =  { "ngtype": ARP, "varname" : "MAJ", "name" : SYM_MAJ, "intnames": INTS_FLATS, "color" : INTCLR_MAJ };
+var ARP_MAJ6 =  { "ngtype": ARP, "varname" : "MAJ6", "name" : SYM_MAJ+"6", "intnames": INTS_FLATS, "color" : INTCLR_MAJ6 };
+var ARP_MAJ7 =  { "ngtype": ARP, "varname" : "MAJ7", "name" : SYM_MAJ+"7", "intnames": INTS_SHARP4, "color" : INTCLR_MAJ7 };
 var ARP_DOM7 =  { "ngtype": ARP, "varname" : "DOM7", "name" : "7", "intnames": INTS_DOM, "color" : INTCLR_DOM7 };
-var ARP_MIN =  { "ngtype": ARP, "varname" : "MIN", "name" : "min", "intnames": INTS_FLATS, "color" : INTCLR_MIN };
-var ARP_MIN7 =  { "ngtype": ARP, "varname" : "MIN7", "name" : "min7", "intnames": INTS_FLATS, "color" : INTCLR_MIN7 };
-var ARP_MIN7b5 =  { "ngtype": ARP, "varname" : "MIN7b5", "name" : "min7&#9837;5", "intnames": INTS_FLATS, "color" : INTCLR_MIN7b5 };
-var ARP_DIM =  { "ngtype": ARP, "varname" : "DIM", "name" : "dim", "intnames": INTS_DIM, "color" : INTCLR_DIM };
+var ARP_MIN =  { "ngtype": ARP, "varname" : "MIN", "name" : "-", "intnames": INTS_FLATS, "color" : INTCLR_MIN };
+var ARP_MIN6 =  { "ngtype": ARP, "varname" : "MIN6", "name" : "-6", "intnames": INTS_FLATS, "color" : INTCLR_MIN6 };
+var ARP_MIN7 =  { "ngtype": ARP, "varname" : "MIN7", "name" : "-7", "intnames": INTS_FLATS, "color" : INTCLR_MIN7 };
+var ARP_MIN7b5 =  { "ngtype": ARP, "varname" : "MIN7b5", "name" : "-7&#9837;5", "intnames": INTS_FLATS, "color" : INTCLR_MIN7b5 };
+var ARP_DIM =  { "ngtype": ARP, "varname" : "DIM", "name" : "o", "intnames": INTS_DIM, "color" : INTCLR_DIM };
+
+var ARP_DOM9 =  { "ngtype": ARP, "varname" : "DOM9", "name" : "9", "intnames": INTS_DOM, "color" : INTCLR_DOM9 };
+var ARP_DOM13 =  { "ngtype": ARP, "varname" : "DOM13", "name" : "13", "intnames": INTS_DOM, "color" : INTCLR_DOM13 };
+var ARP_DOMb9 =  { "ngtype": ARP, "varname" : "DOMb9", "name" : "7&#40;&#9837;9&#41;", "intnames": INTS_DOM, "color" : INTCLR_DOMb9 };
+var ARP_DOMs5 =  { "ngtype": ARP, "varname" : "DOMs9", "name" : "7&#40;&#9839;9&#41;", "intnames": INTS_DOM, "color" : INTCLR_DOMs5 };
+var ARP_DOMs11 =  { "ngtype": ARP, "varname" : "DOMs11", "name" : "7&#40;&#9839;11&#41;", "intnames": INTS_SHARP4, "color" : INTCLR_DOMs11 };
+var ARP_DOMb9s5 =  { "ngtype": ARP, "varname" : "DOMb9s5", "name" : "7&#40;&#9837;9&#9839;5&#41;", "intnames": INTS_DOM, "color" : INTCLR_DOMb9s5 };
+var ARP_DOMb9b5 =  { "ngtype": ARP, "varname" : "DOMb9b5", "name" : "7&#40;&#9837;9&#9837;5&#41;", "intnames": INTS_DOM, "color" : INTCLR_DOMb9b5 };
+var ARP_DOMs9s5 =  { "ngtype": ARP, "varname" : "DOMs9s5", "name" : "7&#40;&#9839;9&#9839;5&#41;", "intnames": INTS_DOM, "color" : INTCLR_DOMs9s5 };
+
 
 
 var dictArps = {
 	"ARP_MAJ" : ARP_MAJ,
 	"ARP_MAJ7" : ARP_MAJ7,
+	"ARP_MAJ6" : ARP_MAJ6,
 	"ARP_DOM7" : ARP_DOM7,
 	"ARP_MIN" : ARP_MIN,
 	"ARP_MIN7" : ARP_MIN7,
+	"ARP_MIN6" : ARP_MIN6,
 	"ARP_MIN7b5" : ARP_MIN7b5,
-	"ARP_DIM" : ARP_DIM
+	"ARP_DIM" : ARP_DIM,
+	"ARP_DOM9" : ARP_DOM9,
+	"ARP_DOM13" : ARP_DOM13,
+	"ARP_DOMb9" : ARP_DOMb9,
+	"ARP_DOMs5" : ARP_DOMs5,
+	"ARP_DOMs11" : ARP_DOMs11,
+	"ARP_DOMb9s5" : ARP_DOMb9s5,
+	"ARP_DOMb9b5" : ARP_DOMb9b5,
+	"ARP_DOMs9s5" : ARP_DOMs9s5,
+
 }
 
 
@@ -338,35 +374,55 @@ var dictChords={
 	//"CHD_MAJDROP2" : CHD_MAJDROP2
 	}
 
-var Notegroups = {
-	"MAJ":ARP_MAJ,
-	"MAJ7":ARP_MAJ7,
-	"DOM7":ARP_DOM7,
-	"MIN":ARP_MIN,
-	"MIN7":ARP_MIN7,
-	"MIN7b5":ARP_MIN7b5,
-	"DIM":ARP_DIM,
-	"MAJOR":SC_MAJOR,
-	"LYDIAN":SC_LYDIAN,
-	"MIXOLYDIAN":SC_MIXOLYDIAN,
-	"DORIAN":SC_DORIAN,
-	"AEOLIAN":SC_AEOLIAN,
-	"PHRYGIAN":SC_PHRYGIAN,
-	"LOCRIAN":SC_LOCRIAN,
-	"DIMINISHED":SC_DIMINISHED,
-	"MINHARM":SC_MINHARM,
-	"MINMEL":SC_MINMEL,
-	"ALTERED":SC_ALTERED,
-	"LYDIANDOM":SC_LYDIANDOM,
-	"PHRYGDOM":SC_PHRYGDOM,
-	"LYDIANAUG":SC_LYDIANAUG,
-	"MINNAT":SC_MINNAT,
-	"MINJAZZ":SC_MINJAZZ,
-	"PENTMIN":SC_PENTMIN,
-	"PENTMAJ":SC_PENTMAJ,
-	"PENTDOM":SC_PENTDOM,
-	"PENTMELMIN":SC_PENTMELMIN
+
+function merge_options(obj1,obj2){
+    var obj3 = {};
+    for (var attrname in obj1) { 
+    	obj3[attrname.split('_')[1]] = obj1[attrname];//keep chars after '_' for key
+    }
+    for (var attrname in obj2) { 
+    	obj3[attrname.split('_')[1]] = obj2[attrname]; //keep chars after '_' for key
+    }
+    return obj3;
 }
+
+//combine dictionaries
+var Notegroups = merge_options(dictScales, dictArps);
+
+console.log(Notegroups);
+
+// var Notegroups = {
+// 	"MAJ":ARP_MAJ,
+// 	"MAJ7":ARP_MAJ7,
+// 	"DOM7":ARP_DOM7,
+// 	"MIN":ARP_MIN,
+// 	"MIN7":ARP_MIN7,
+// 	"MIN7b5":ARP_MIN7b5,
+// 	"DIM":ARP_DIM,
+
+
+// 	"MAJOR":SC_MAJOR,
+// 	"LYDIAN":SC_LYDIAN,
+// 	"MIXOLYDIAN":SC_MIXOLYDIAN,
+// 	"DORIAN":SC_DORIAN,
+// 	"AEOLIAN":SC_AEOLIAN,
+// 	"PHRYGIAN":SC_PHRYGIAN,
+// 	"LOCRIAN":SC_LOCRIAN,
+// 	"DIMINISHED":SC_DIMINISHED,
+// 	"MINHARM":SC_MINHARM,
+// 	"MINMEL":SC_MINMEL,
+// 	"ALTERED":SC_ALTERED,
+// 	"LYDIANDOM":SC_LYDIANDOM,
+// 	"PHRYGDOM":SC_PHRYGDOM,
+// 	"LYDIANAUG":SC_LYDIANAUG,
+// 	"MINNAT":SC_MINNAT,
+// 	"MINJAZZ":SC_MINJAZZ,
+// 	"PENTMIN":SC_PENTMIN,
+// 	"PENTMAJ":SC_PENTMAJ,
+// 	"PENTDOM":SC_PENTDOM,
+// 	"PENTMELMIN":SC_PENTMELMIN,
+// 	"WHOLETONE": SC_WHOLETONE,
+// }
 
 var FretboardModel = {
 	// model to hold current Key, Notegroup and NG type for fretboard

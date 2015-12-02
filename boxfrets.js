@@ -979,6 +979,7 @@ var populateNotegroupsUnabridged = function(){
 			//var obj = ng;
 			html += '<div id="'+dictKeys[key].safename+'_'+ng+'" class="ngUnabDiv ngboxArp">';
 			html += dictKeys[key].name+dictArps[ng].name;
+			html += '<span style="font-size:150%;">&nbsp;</span>';//add vertical spacing
 			html += '</div>';
 		}
 
@@ -992,6 +993,7 @@ var populateNotegroupsUnabridged = function(){
 			//var obj = ng;
 			html += '<div id="'+dictKeys[key].safename+'_'+ng+'" class="ngUnabDiv ngboxScale">';
 			html += dictKeys[key].name +' '+ dictScales[ng].name;
+			html += '<span style="font-size:150%;">&nbsp;</span>';//add vertical spacing
 			html += '</div>';
 		}
 

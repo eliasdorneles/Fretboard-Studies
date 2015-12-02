@@ -38,7 +38,7 @@ a:hover { color: #005580; text-decoration: underline; }
 .i_sixth { background-color:#FFF !important; border-color:#80c0f9 !important; color:#333333 !important; }
 .i_flatseventh { background-color:#000 !important; border-color:#ccc7fa !important; color:#FFF !important; }
 .i_seventh { background-color:#000 !important; border-color:#ccc7fa !important; color:#FFF !important; }
-.i_passing { background-color:#ffffff !important; border-color:#333 !important; color:#111111 !important; }
+.i_passing { background-color:#ffffff !important; border-color:#aaa !important; color:#333333 !important; }
 
 /* pallete colorings */
 .black  { background-color:#000 !important; border-color:#000 !important; color:#FFF !important; }
@@ -53,6 +53,8 @@ a:hover { color: #005580; text-decoration: underline; }
 
 
 .transparent { background-color:transparent !important; border-color:transparent !important; color:transparent !important }
+
+span .superSym{ font-size: 75%; vertical-align: super; }
 
 table#fretclone tr .fretpainter {background-color:#DADADA !important; border-color:#FFF !important; height:6px !important; border-radius:0px !important;}
 
@@ -206,6 +208,7 @@ div.cNoteGroup{
 }
 
 div .ngUnabDiv{
+  overflow: hidden;
   float:left;
   text-align:center;
   width:220px;
