@@ -1,0 +1,39 @@
+<html>
+<head>
+<title>Fretboard Studies</title>
+<script type="text/javascript" src="HelpText.js"></script>
+
+<style type="text/css" media="screen">
+body { font-family:sans-serif; font-size:100%; }
+#help {background:#f5f5f5; padding:12px; border: solid thin #000}
+ul {margin-right: 8px;}
+li {margin-bottom: 7px; }
+h4 {margin-left: 8px; margin-top: 2px; color:#555  }
+#main_contianer{padding:8px 0 0 36px; width: 650px;}
+</style>
+
+</style>
+</head>
+<body>
+<div id="main_contianer">
+<h1><a href="fretboard.html">Fretboard Studies v.2</a></h1>
+
+<p>I added some functionality to the Fretboard Studies app by <a href="https://github.com/eliasdorneles">Elias Dorneles</a>.</p>
+
+<p>My main goals were to create a learning tool that would help me see interval, chord and scale relationships better. My git-hub repository for this version is <a href="https://github.com/deltadada/Fretboard-Studies">here</a>.  Feel free to branch and improve the code!</p>
+
+<p>Below is the help/instructions text which can be accessed in the app by clicking the <strong>'?'</strong> button:</p>
+
+<div id="help">
+<h4>Help/Instructions</h4>
+<div id="helpText">
+</div>
+</div>
+
+</div>
+
+</body>
+</html>
+<script>
+document.getElementById("helpText").innerHTML = HELP_TEXT;
+</script>

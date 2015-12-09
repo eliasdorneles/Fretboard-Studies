@@ -1,0 +1,36 @@
+<html>
+<head>
+        <script type="text/javascript" src="jquery-1.11.1.js"></script>
+        <script type="text/javascript" src="jquery-ui.min.js"></script>
+        <script type="text/javascript" src="jquery-cookie/jquery.cookie.js"></script>
+        <script type="text/javascript" src="storage-js/jquery.storage.js"></script>
+</head>
+<body>
+</body>
+</html>
+
+<script>
+ $( document ).ready(function() {
+    var aData = [];
+    aData.push(['a', true]);
+    aData.push(['b', false]);
+    aData.push(['c', false]);
+    var data =
+      {
+        intScheme : 'A',
+        riq_LoFret : 0,
+        riq_HiFret :19,
+        riq_StrDepth : 5,
+        riq_FretDepth : 5,
+        rrq_LoFret: 0,
+        rrq_HiFret: 19,
+        rrq_LoStr: 1,
+        rrq_HiStr: 6,
+        rrq_Notegroups : aData,
+      };
+    //data = {car : 'hatchback', model: 'i20', color: 'black'};
+    $.localStorage('testStore', data);
+    var test = $.localStorage('testStore');
+    alert('test value: '+test.rrq_Notegroups[0][1])
+});
+</script>

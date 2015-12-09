@@ -13,3 +13,26 @@ Here are some examples:
 * [[http://eliasdorneles.github.com/Fretboard-Studies/#strings=5:0,8:2;5:0,8:0;5:2,7:0;5:0,7:0;5:0,7:0;5:0,8:2&diagram_title=C%20major%20pentatonic|C major pentatonic scale]]
 
 If you want to help, or have ideas or suggestions, feel free to drop me an email: eliasdorneles (at) gmail com
+
+
+= Fretboard Studies v.2 =
+
+I added some thing to Elias's fretboard.
+
+There is a note painter which paints wherever the mouse is until turned off. 
+
+There are also "fretpainters" at the bottom which will paint all the notes in a fret.
+
+You can show the note names or the note intervals relative to the selected root. 
+
+There is a root pull-down and a set Root mode with the next mouse click. 
+
+There is also a notegroups browser which will replace any painted notes with scales or arpeggios (and update the root). I haven't figured out the best way to present chords yet.
+
+The paint by Interval color mode will continue to paint with this note group. 
+
+You can drag the notegroups to the notegroup dashboard. From there you can single click to convert painted notes to the new notegroup. These notegroup "buttons" can be resorted and double-clicked to trash. 
+
+There are also Player controls which will cycle through the notes relative to the speed spinner. 
+
+The generate link works pretty much the same. 

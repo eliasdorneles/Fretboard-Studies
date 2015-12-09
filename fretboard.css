@@ -1,0 +1,303 @@
+@charset "utf-8";
+/* CSS Document */
+
+* { margin:0; padding:0; border-spacing:0; }
+body { font-family:sans-serif; font-size:100%; }
+table {table-layout: fixed; }
+table#mainfretboard { position:absolute; top: 60px; left:69px; border:1px solid red; }
+/*table#mainfretboard tr td { border:1px solid black; font-size: 28px; width:46px; height:34px; text-align:center; }*/
+table#mainfretboard tr td { border:1px solid black; display:inline-block; font-size: 28px; width:66px; height:34px; text-align:center; }
+/* fretclone sits at z of 1 over main fretboard */
+table#fretclone { position:absolute; top: 40px; left:-5px; border-spacing:8px; }
+/*table#fretclone tr td { margin: 0 2px; display:inline-block; border:2px solid transparent; background-color:transparent; font-size:18px; font-weight:bold; width:40px;height:24px; text-align:center; z-index:1; border-radius: 5px; }*/
+table#fretclone tr td { margin: 0 12px; display:inline-block; border:2px solid transparent; background-color:transparent; font-size:18px; font-weight:bold; width:40px;height:24px; text-align:center; z-index:1; border-radius: 14px; }
+table#fretclone tr td:hover { cursor:pointer; border-color: black !important; border-style: dotted !important; }
+
+input  { padding: 0 4px 0 4px;}
+
+a:focus { outline: thin dotted #333; outline: 5px auto -webkit-focus-ring-color; outline-offset: -2px; }
+a:hover, a:active { outline: 0; }
+a { color: #0088cc; text-decoration: none; }
+a:hover { color: #005580; text-decoration: underline; }
+/*a:hover { color: #FF0000; text-decoration: underline; }*/
+
+/* interval colorings */
+.i_root { background-color:#f2a87d !important; border-color:#400d14 !important; color:#400d14 !important; }
+.i_flatnine { background-color:#FFF !important; border-color:#f7f900 !important; color:#333333 !important; }
+.i_nine { background-color:#FFF !important; border-color:#f7f900 !important; color:#333333 !important; }
+.i_flatnine { background-color:#FFF !important; border-color:#f7f900 !important; color:#333333 !important; }
+.i_sharpnine { background-color:#000 !important; border-color:#80c0f9 !important; color:#FFF !important; }
+.i_flatthird { background-color:#000 !important; border-color:#80c0f9 !important; color:#FFF !important; }
+.i_third { background-color:#000 !important; border-color:#80c0f9 !important; color:#FFF !important; }
+.i_eleven {}
+.i_sharpeleven {}
+.i_flatfifth { background-color:#000 !important; border-color:#c5f1a8 !important; color:#FFF !important; }
+.i_fifth { background-color:#000 !important; border-color:#c5f1a8 !important; color:#FFF !important; }
+.i_augfifth { background-color:#000 !important; border-color:#c5f1a8 !important; color:#FFF !important; }
+.i_flatsixth { background-color:#FFF !important; border-color:#80c0f9 !important; color:#333333 !important; }
+.i_sixth { background-color:#FFF !important; border-color:#80c0f9 !important; color:#333333 !important; }
+.i_flatseventh { background-color:#000 !important; border-color:#ccc7fa !important; color:#FFF !important; }
+.i_seventh { background-color:#000 !important; border-color:#ccc7fa !important; color:#FFF !important; }
+.i_passing { background-color:#ffffff !important; border-color:#aaa !important; color:#333333 !important; }
+
+/* pallete colorings */
+.black  { background-color:#000 !important; border-color:#000 !important; color:#FFF !important; }
+.orange { background-color:#ffbb67 !important; border-color:#543d22 !important; color:#333 !important; }
+.green  { background-color:#669999 !important; border-color:#003333 !important; color:#003333 !important; }
+.blue   { background-color:#333745 !important; border-color:#afcded !important; color:#afcded !important; }
+.yellow { background-color:#f6f792 !important; border-color:#4c4c2d !important; color:#4c4c2d !important; }
+.lightgreen { background-color:#daede2 !important; border-color:#000000 !important; color:#000000 !important; }
+.red    { background-color:#ea2e49 !important; border-color:#400d14 !important; color:#400d14 !important; }
+.blank  { background-color:#dddddd !important; border-color:#333333 !important; color:#333333 !important; }
+.white  { background-color:#ffffff !important; border-color:#FFF !important; color:#111111 !important; }
+
+
+.transparent { background-color:transparent !important; border-color:transparent !important; color:transparent !important }
+
+span .superSym{ font-size: 75%; vertical-align: super; }
+
+table#fretclone tr .fretpainter {background-color:#DADADA !important; border-color:#FFF !important; height:6px !important; border-radius:0px !important;}
+
+div#main {width: 100%; min-width: 1356px; }
+div#fretboard_container { height: 280px; /* margin:10px; */ width: 1400; white-space:nowrap; }
+
+div#fretboard_container
+
+.fb_messagebar{
+      text-align: right;
+      margin-top:12px;
+      margin-right:  120px;
+      color:#a5a5a5;
+      display:block;
+      width: inherit;
+      width:1289px;
+      }
+#message {float:right; display: inline; padding-top: 6px;}
+#btnHelp {float:right; width: 16px; height:16px; padding:0; margin-left: 4px; }
+#btnPref {float:right; width: 16px; height:16px; padding:0; margin-left: 4px; }
+#diagram_title { font-size:25px; font-weight:bold; margin:0 0 0 15px; display:block; padding:4px; border:0; width:auto; float:left; }
+
+div.h_ctrl_cnt{ padding:10px; margin:0px 10px 0px 10px;  }
+div.h_ctrl   { display:inline; margin-right: 12px; }
+
+div.h_ctrl .quizButton { border-radius: 5px; margin-left: 8px; background-color: white; border: #b5b5b5 solid 1px; }
+div.h_ctrl .quizLink {padding:2px 8px 2px 8px;  margin-left: 8px; background-color: white; border: #b5b5b5 solid 1px; }
+
+
+.setRootArmed { background-color:rgb(147,32,32); color: #FFF;}
+
+#eraser, #brush { font-weight: bold; padding: 2px; }
+
+input.color_button { width:40px; border-radius: 5px; margin-left: 8px; }
+
+#colorchooser {  display:inline; }
+
+
+
+/*.helpText li {list-style-type: none; font-weight:normal;}*/
+#form_controls { padding:10px; }
+
+#checkanswer { display:none; }
+
+#examples ul { margin-left: 20px; }
+
+/* jquery ui*/
+.tabs-nohdr {
+    padding: 0px;
+    background: none;
+    border-width: 0px;
+  font-size: inherit;
+
+
+
+}
+.tabs-nohdr .ui-tabs-nav {
+    padding-left: 0px;
+    background: transparent;
+    border-width: 0px 0px 1px 0px;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+}
+.tabs-nohdr .ui-tabs-panel {
+    background: #FFF;
+    border-width: 0px 1px 1px 1px;
+  overflow:auto;
+}
+.tabs-nohdr .ui-tabs-anchor{
+  font-weight:normal;
+}
+
+.prefTabs{
+  font-size: 11px;
+}
+
+.prefTabs .pref_hSpan{
+  margin: 0 16px 0 0;
+}
+
+.prefTabs h3 {
+  margin-bottom: 6px;
+}
+
+.prefTabs .RR_scaleOptionsCol{
+  display:block;
+  float: left;
+  margin-right: 12px;
+}
+/* must be under tabs-nohdr */
+div#notegroupsUnabridged  {
+  font-size:12px;
+  width: 660px;
+  display:inline-block;
+  float:left;
+}
+
+/*div#notegroupsUnabridged2  {
+  font-size:12px;
+  width: 660px;
+  display:inline-block;
+  float:left;
+}*/
+
+
+#notegroupsKeysTab a{
+  font-weight:bold;
+}
+
+
+#dashContainer{
+  border:#aaa thin solid;
+  padding:4px 12px 12px 12px;
+  display:inline-block;
+  float:left;
+  margin-left: 10px;
+  border-radius: 4px;
+  }
+#dashControls{
+  padding:8px;
+  height:24px;
+  }
+#dashControls input { padding:2px;}
+
+#ngDashboard {
+  border:#aaa thin solid;
+  width: 588px;
+  height: 400px;
+
+}
+
+div.cNoteGroup{
+  float:left;
+  text-align:center;
+  font-size:14px;
+  font-weight: bold;
+  width:120px;
+  height:36px;
+  padding: 4px;
+  margin: 8px;
+  background:rgb(200,238,251);
+  border-bottom:#555 thin solid;
+  border-top:#FFF thin solid;
+  border-right:#FFF thin solid;
+  border-left:#FFF thin solid;
+  /*border-width: 0px 0px 1px 0px; */
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+}
+
+div .ngUnabDiv{
+  overflow: hidden;
+  float:left;
+  text-align:center;
+  width:220px;
+  padding: 6px;
+  margin: 2px;
+  background:rgb(200,238,251);
+  border:#555 thin solid;
+  border-width: 0px 0px 1px 0px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+}
+
+div .tabs-nobg .ui-tabs-panel {
+    overflow:hidden;
+    padding:5px;
+  }
+
+.ui-draggable-helper{
+    background:#aaa;
+    z-index:999;
+    border:#F00 thin solid;
+  }
+
+ul .uNotegroup{
+    list-style:none;
+    border:#555 thin solid;
+    padding:3px;
+    margin: 2px;
+  }
+
+div .ngboxScale{
+  background:#ddfcc2;
+}
+
+div .ngboxArp{
+  background:#faf5af;
+}
+
+div .ngboxChd{
+  background:#cff6fd;
+}
+/* drag drop classes */
+  .ngExchange{}
+  span .drag{
+    background-color:rgb(153,153,153);
+   }
+  .remove-drag-hover {
+      background-color: #ED4949 !important;
+  }
+  .drop-area {
+      background-color: #afd1b2;
+  }
+  .xicon {
+      margin-top: 4px;
+      position: absolute;
+      margin-left: -17px;
+      color: #FFF;
+      font: message-box;
+      text-decoration: none;
+  }
+  .xicon:hover {
+      background-color: #fff;
+      color: #000;
+      width: 13px;
+      height: 20px;
+      text-align: center;
+  }
+  .tip {
+      font-size: 12px;
+      clear: both;
+  }
+
+/* end drag drop classes */
+
+/* jQuery dialog for help popup */
+div.ui-dialog-titlebar.ui-widget-header {background:none repeat scroll 0% 0% rgba(51, 83, 114, 1); color:white; padding:2px 6px 2px 6px; font-size: 16px}
+div#helpText.ui-dialog.ui-dialog-content {
+    font-family: Verdana,Arial,sans-serif;
+    font-size: .8em;
+    font-weight: normal;
+}
+div#helpText.ui-dialog-content li{list-style-type:circle; font-weight:normal; font-weight:normal; font-size: 12px; padding-bottom: 7px;  }
+/* end jQuery dialog for help popup */
+
+div .playing{
+    /*color:red;*/
+    border:rgb(255,0,0) thin solid;
+    /*//text-decoration:underline;
+    //background-color: rgb(255,102,153);*/
+  }
+/*@media print { #form_controls { display:none; } }*/
