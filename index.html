@@ -7,23 +7,24 @@
 	<style>
 	    * { margin:0; padding:0; border-spacing:0; }
 	    body { font-family:sans-serif; font-size:100%; }
-	    table#mainfretboard { position:absolute; top:120px; left:50px; border:1px solid red; }
-	    table#mainfretboard tr td { border:1px solid black; font-size:28px; width:46px; height:34px; text-align:center; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
-
-	    table#fretclone { position:absolute; top:100px; left:0px; border-spacing:8px; }
-	    table#fretclone tr td { margin: 0 2px; border:2px solid transparent; background-color:transparent; font-size:18px; font-weight:bold; width:38px; height:27px; text-align:center; z-index:1; border-radius:5px; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
-	    table#fretclone tr td:hover { cursor:pointer; border-color: black !important; border-style: dotted !important; }
-	    .orange { background-color:#ffbb67 !important; border-color:#543d22 !important; color:#543d22 !important; }
-	    .green  { background-color:#669999 !important; border-color:#003333 !important; color:#003333 !important; }
-	    .blue   { background-color:#333745 !important; border-color:#afcded !important; color:#afcded !important; }
-	    .yellow { background-color:#f6f792 !important; border-color:#4c4c2d !important; color:#4c4c2d !important; }
-	    .coffee { background-color:#daede2 !important; border-color:#000000 !important; color:#000000 !important; }
-	    .red    { background-color:#ea2e49 !important; border-color:#400d14 !important; color:#400d14 !important; }
+	    #fretboard { display:grid; position:absolute; top:110px; left:10px; border:1px solid red; box-sizing:border-box; }
+	    .fretboard-cell { border-right:1px solid #333; height:34px; display:flex; align-items:center; justify-content:center; overflow:hidden; font-size:16px; font-weight:bold; cursor:pointer; box-sizing:border-box; position:relative; z-index:1; }
+	    .fretboard-cell:hover { outline:2px dotted #555; outline-offset:-2px; }
+	    .fretboard-cell:not(.transparent)::before { content:''; position:absolute; left:2px; right:2px; top:50%; transform:translateY(-50%); height:26px; border-radius:5px; background-color:var(--fret-bg); border:2px solid var(--fret-border); box-sizing:border-box; z-index:1; }
+	    .fretboard-cell span.note { position:relative; z-index:2; }
+	    .fretboard-cell.has-marker.transparent::after { content:''; position:absolute; width:10px; height:10px; background:#aaa; border-radius:50%; top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none; z-index:2; }
+	    .string-line { position:absolute; left:0; right:0; background:#888; pointer-events:none; z-index:0; }
+	    .orange { --fret-bg:#ffbb67; --fret-border:#543d22; color:#543d22 !important; }
+	    .green  { --fret-bg:#669999; --fret-border:#003333; color:#003333 !important; }
+	    .blue   { --fret-bg:#333745; --fret-border:#afcded; color:#afcded !important; }
+	    .yellow { --fret-bg:#f6f792; --fret-border:#4c4c2d; color:#4c4c2d !important; }
+	    .coffee { --fret-bg:#daede2; --fret-border:#000000; color:#000000 !important; }
+	    .red    { --fret-bg:#ea2e49; --fret-border:#400d14; color:#400d14 !important; }
 	    .blank  { background-color:#dddddd !important; border-color:#333333 !important; color:#333333 !important; }
 	    .white  { background-color:#ffffff !important; border-color:#111111 !important; color:#111111 !important; }
-	    .transparent { background-color:transparent !important; border-color:transparent !important; color:transparent !important }
+	    .transparent { color:transparent !important }
 	    input.color_button { width:40px; border-radius: 5px; }
-	    div#main { height:280px; margin:10px; width: 940px; }
+	    div#main { height:340px; margin:10px; }
 	    #diagram_title { font-size:25px; font-weight:bold; margin:15px; display:block; padding:4px; border:0; width:100%; }
 	    #form_controls { padding:10px; }
 	    #checkanswer { display:none; }
@@ -42,14 +43,6 @@
 	<input id="diagram_title" type="text" value="Click to add a title..." />
 	<div id="main">
 		<div id="message">&nbsp;</div>
-	    <table id="mainfretboard">
-		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td></tr>
-		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&#x25cf;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-		</tr>
-	    </table>
 	</div>
 	<div id="form_controls">
 		<div id="colorchooser">

@@ -3,19 +3,37 @@ var GUITAR_STRINGS;
 var COLOR = "green";
 var POSSIBLE_COLORS = ["orange", "green", "blue", "yellow", "coffee", "red", "transparent"]
 var ERASER = false;
-var gen_fret_boxes = function(size, num_strings){
-    var tr = "<tr>";
-    for (var i = 0; i < size; i++){
-	tr += '<td class="transparent"><span class="note"></span></td>';
+var calculateFretWidths = function(numFrets, firstWidth) {
+    var ratio = Math.pow(2, -1/12);
+    return Array.from({length: numFrets}, function(_, i) {
+        return Math.round(firstWidth * Math.pow(ratio, i));
+    });
+};
+var SINGLE_DOT_FRETS = [3, 5, 7, 9, 15, 17, 19, 21];
+var DOUBLE_DOT_FRETS = [12];
+var STRING_THICKNESSES = [1, 1.2, 1.5, 1.7, 2, 2.3]; // high E → low E
+var CELL_HEIGHT = 34;
+var SINGLE_MARKER_STRING = 2;
+var DOUBLE_MARKER_STRINGS = [1, 4];
+var gen_fretboard = function(numFrets, numStrings, widths) {
+    var cols = widths.map(function(w) { return w + 'px'; }).join(' ');
+    var html = '<div id="fretboard" style="grid-template-columns:' + cols + '">';
+    for (var s = 0; s < numStrings; s++) {
+        for (var f = 0; f < numFrets; f++) {
+            var markerClass = '';
+            if (SINGLE_DOT_FRETS.indexOf(f) >= 0 && s === SINGLE_MARKER_STRING) markerClass = ' has-marker';
+            if (DOUBLE_DOT_FRETS.indexOf(f) >= 0 && DOUBLE_MARKER_STRINGS.indexOf(s) >= 0) markerClass = ' has-marker';
+            html += '<div class="fretboard-cell transparent' + markerClass + '"><span class="note"></span></div>';
+        }
     }
-    tr += "</tr>";
-    var table = '<table id="fretclone">';
-    for (var i = 0; i < num_strings; i++) {
-	table += tr;
+    for (var s = 0; s < numStrings; s++) {
+        var t = STRING_THICKNESSES[s];
+        var top = (s + 0.5) * CELL_HEIGHT - t / 2;
+        html += '<div class="string-line" style="top:' + top + 'px;height:' + t + 'px"></div>';
     }
-    table += "</table>";
-    return table;
-}
+    html += '</div>';
+    return html;
+};
 var td_paint = function(td, color = "coffee"){
     td.classList.remove(...POSSIBLE_COLORS);
     td.classList.add(color);
@@ -113,30 +131,22 @@ var td_paint_or_clear = function(td, color = "coffee"){
     }
 }
 
-var getFretcloneStrings = function(){
-    var board_strings = document.querySelectorAll('#fretclone tr');
-    var guitarStrings = Array.from(board_strings, () => []);
-    for (var i = 0; i < board_strings.length; i++){
-	var children = board_strings[i].children;
-	for (var j = 0; j < children.length; j++){
-	    var box = {
-		td: children[j],
-		paint: function(){
-		    td_paint_or_clear(this, COLOR);
-		},
-	    }
-	    guitarStrings[i].push(box);
-	    children[j].addEventListener('click', box.paint);
-
-	    // eraser:
-	    children[j].addEventListener('mouseover', function(){
-		if (ERASER) {
-		    td_clear(this);
-		    update_link();
-		}
-	    });
-	}
-    }
+var getFretboardStrings = function(numFrets, numStrings) {
+    var cells = document.querySelectorAll('#fretboard .fretboard-cell');
+    var guitarStrings = Array.from({length: numStrings}, function() { return []; });
+    cells.forEach(function(cell, idx) {
+        var s = Math.floor(idx / numFrets);
+        var f = idx % numFrets;
+        var box = {
+            td: cell,
+            paint: function() { td_paint_or_clear(this, COLOR); }
+        };
+        guitarStrings[s][f] = box;
+        cell.addEventListener('click', box.paint);
+        cell.addEventListener('mouseover', function() {
+            if (ERASER) { td_clear(this); update_link(); }
+        });
+    });
     return guitarStrings;
 };
 var show_notes_string = function(n_string, notes){
@@ -219,8 +229,13 @@ var loadFromUrl = function(url_params){
     }
 }
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('mainfretboard').insertAdjacentHTML('afterend', gen_fret_boxes(19, 6));
-    GUITAR_STRINGS = getFretcloneStrings();
+    var numFrets = 22;
+    var ratio = Math.pow(2, -1/12);
+    var sumRatios = (1 - Math.pow(ratio, numFrets)) / (1 - ratio);
+    var firstFretWidth = (window.innerWidth - 20) / sumRatios;
+    var fretWidths = calculateFretWidths(numFrets, firstFretWidth);
+    document.getElementById('main').insertAdjacentHTML('beforeend', gen_fretboard(numFrets, 6, fretWidths));
+    GUITAR_STRINGS = getFretboardStrings(numFrets, 6);
     set_notes();
 
     // Examples:
@@ -234,7 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
     update_link();
     var message = document.getElementById('message');
     // update link at every click on a note...
-    document.querySelectorAll('#fretclone tr td').forEach(function(td){ td.addEventListener('click', update_link); });
+    document.querySelectorAll('#fretboard .fretboard-cell').forEach(function(td){ td.addEventListener('click', update_link); });
     // or when changes are made to the title
     var titleInput = document.getElementById('diagram_title');
     ['change', 'keyup', 'keydown'].forEach(function(ev){ titleInput.addEventListener(ev, update_link); });
