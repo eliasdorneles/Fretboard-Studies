@@ -23,7 +23,8 @@ var gen_fretboard = function(numFrets, numStrings, widths) {
             var markerClass = '';
             if (SINGLE_DOT_FRETS.indexOf(f) >= 0 && s === SINGLE_MARKER_STRING) markerClass = ' has-marker';
             if (DOUBLE_DOT_FRETS.indexOf(f) >= 0 && DOUBLE_MARKER_STRINGS.indexOf(s) >= 0) markerClass = ' has-marker';
-            html += '<div class="fretboard-cell transparent' + markerClass + '"><span class="note"></span></div>';
+            var openClass = f === 0 ? ' open-string' : '';
+            html += '<div class="fretboard-cell transparent' + markerClass + openClass + '"><span class="note"></span></div>';
         }
     }
     for (var s = 0; s < numStrings; s++) {
@@ -231,8 +232,13 @@ var loadFromUrl = function(url_params){
 var NUM_FRETS = 22;
 var computeFretWidths = function() {
     var ratio = Math.pow(2, -1/12);
-    var sumRatios = (1 - Math.pow(ratio, NUM_FRETS)) / (1 - ratio);
-    return calculateFretWidths(NUM_FRETS, (window.innerWidth - 20) / sumRatios);
+    var numActualFrets = NUM_FRETS - 1;
+    var sumRatios = (1 - Math.pow(ratio, numActualFrets)) / (1 - ratio);
+    var lastFretRatio = Math.pow(ratio, numActualFrets - 1);
+    var firstWidth = (window.innerWidth - 20) / (sumRatios + lastFretRatio);
+    var openStringWidth = Math.round(firstWidth * lastFretRatio);
+    var fretWidths = calculateFretWidths(numActualFrets, firstWidth);
+    return [openStringWidth].concat(fretWidths);
 };
 var updateFretboardWidth = function() {
     var cols = computeFretWidths().map(function(w) { return w + 'px'; }).join(' ');

@@ -14,6 +14,7 @@
 	    .fretboard-cell span.note { position:relative; z-index:2; }
 	    .fretboard-cell.has-marker.transparent::after { content:''; position:absolute; width:15px; height:15px; background:#aaa; border-radius:50%; bottom:-7.5px; left:50%; transform:translateX(-50%); pointer-events:none; z-index:2; }
 	    .string-line { position:absolute; left:0; right:0; background:#888; pointer-events:none; z-index:0; }
+    .fretboard-cell.open-string { border-right: 6px solid #444 !important; }
 	    .orange { --fret-bg:#ffbb67; --fret-border:#543d22; background-color:#ffbb67; border-color:#543d22; color:#543d22 !important; }
 	    .green  { --fret-bg:#669999; --fret-border:#003333; background-color:#669999; border-color:#003333; color:#003333 !important; }
 	    .blue   { --fret-bg:#333745; --fret-border:#afcded; background-color:#333745; border-color:#afcded; color:#afcded !important; }
