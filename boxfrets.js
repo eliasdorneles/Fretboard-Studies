@@ -228,15 +228,27 @@ var loadFromUrl = function(url_params){
 	}
     }
 }
-document.addEventListener('DOMContentLoaded', function() {
-    var numFrets = 22;
+var NUM_FRETS = 22;
+var computeFretWidths = function() {
     var ratio = Math.pow(2, -1/12);
-    var sumRatios = (1 - Math.pow(ratio, numFrets)) / (1 - ratio);
-    var firstFretWidth = (window.innerWidth - 20) / sumRatios;
-    var fretWidths = calculateFretWidths(numFrets, firstFretWidth);
-    document.getElementById('main').insertAdjacentHTML('beforeend', gen_fretboard(numFrets, 6, fretWidths));
-    GUITAR_STRINGS = getFretboardStrings(numFrets, 6);
+    var sumRatios = (1 - Math.pow(ratio, NUM_FRETS)) / (1 - ratio);
+    return calculateFretWidths(NUM_FRETS, (window.innerWidth - 20) / sumRatios);
+};
+var updateFretboardWidth = function() {
+    var cols = computeFretWidths().map(function(w) { return w + 'px'; }).join(' ');
+    document.getElementById('fretboard').style.gridTemplateColumns = cols;
+};
+document.addEventListener('DOMContentLoaded', function() {
+    var fretWidths = computeFretWidths();
+    document.getElementById('main').insertAdjacentHTML('beforeend', gen_fretboard(NUM_FRETS, 6, fretWidths));
+    GUITAR_STRINGS = getFretboardStrings(NUM_FRETS, 6);
     set_notes();
+
+    var resizeTimer;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(updateFretboardWidth, 50);
+    });
 
     // Examples:
     // show diagram of a C Major chord
