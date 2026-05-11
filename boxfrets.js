@@ -16,8 +16,7 @@ var gen_fret_boxes = function(size, num_strings){
     table += "</table>";
     return table;
 }
-var td_paint = function(td){
-    var color = arguments.length > 1 ? arguments[1] : "coffee";
+var td_paint = function(td, color = "coffee"){
     td.classList.remove(...POSSIBLE_COLORS);
     td.classList.add(color);
 }
@@ -67,7 +66,7 @@ var create_link_from_fretboard = function(){
     }
     href += '#';
     href += "strings=" + uri_diagram_repr(GUITAR_STRINGS);
-    href += "&diagram_title=" + escape(document.getElementById('diagram_title').value);
+    href += "&diagram_title=" + encodeURIComponent(document.getElementById('diagram_title').value);
     return href;
 }
 var update_link = function(){
@@ -75,8 +74,7 @@ var update_link = function(){
     document.getElementById('linkquiz').href = create_link_from_fretboard() + "&q=y";
 }
 // handle url parameters
-function get_url_parameters(){
-    var query = arguments.length > 0 ? arguments[0] : window.location.href;
+function get_url_parameters(query = window.location.href){
     var params = {};
     var index_params = query.indexOf('#');
     if (index_params >= 0){
@@ -88,9 +86,8 @@ function get_url_parameters(){
     }
     return params;
 }
-function fill_from_repr(repr){
+function fill_from_repr(repr, match_color = null){
     var a_rep = repr.split(';');
-    var match_color = arguments.length > 1 ? arguments[1] : null;
     for(var i = 0; i < a_rep.length; i++){
 	if (is_defined(a_rep[i]) && a_rep[i] != ""){
 	    var par = a_rep[i].split(",").reduce(function(acc, e){
@@ -106,8 +103,7 @@ function fill_from_repr(repr){
     }
 }
 // callback for when a cell is clicked
-var td_paint_or_clear = function(td, color){
-    var color = arguments.length > 1 ? arguments[1] : "coffee";
+var td_paint_or_clear = function(td, color = "coffee"){
     if (!td.classList.contains('transparent') && td.classList.contains(color)){
 	td.classList.remove(...POSSIBLE_COLORS);
 	td.classList.add('transparent');
@@ -119,7 +115,7 @@ var td_paint_or_clear = function(td, color){
 
 var getFretcloneStrings = function(){
     var board_strings = document.querySelectorAll('#fretclone tr');
-    var guitarStrings = [[], [], [], [], [], []];
+    var guitarStrings = Array.from(board_strings, () => []);
     for (var i = 0; i < board_strings.length; i++){
 	var children = board_strings[i].children;
 	for (var j = 0; j < children.length; j++){
@@ -134,10 +130,10 @@ var getFretcloneStrings = function(){
 
 	    // eraser:
 	    children[j].addEventListener('mouseover', function(){
-		if (ERASER == true){
+		if (ERASER) {
 		    td_clear(this);
+		    update_link();
 		}
-		update_link();
 	    });
 	}
     }
@@ -192,14 +188,11 @@ var clear_fretboard = function(){
 	}
     }
 }
-var pick_note = function(position, offset){
-    if(typeof(offset)==='undefined') offset=0; // defaults to E
-    if(typeof(position)==='undefined') position=4; // defaults to E
+var pick_note = function(position = 4, offset = 0){
     var scale = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
     return scale[(position + offset) % scale.length];
 }
 var set_notes = function(){
-    //var offsets = [4, 9, 2, 7, 11, 4];
     var offsets = [4, 11, 7, 2, 9, 4];
     for(var i = 0; i < GUITAR_STRINGS.length; i++){
 	for(var j = 0; j < GUITAR_STRINGS[i].length; j++){
@@ -207,9 +200,10 @@ var set_notes = function(){
 	}
     }
 }
+
 var loadFromUrl = function(url_params){
     if (is_defined(url_params['diagram_title'])){
-	document.getElementById('diagram_title').value = unescape(url_params['diagram_title']);
+	document.getElementById('diagram_title').value = decodeURIComponent(url_params['diagram_title']);
     }
     if (is_defined(url_params['strings'])){
 	if (is_defined(url_params['q']) && url_params['q'] == 'y'){
@@ -218,7 +212,7 @@ var loadFromUrl = function(url_params){
 		check_answers(url_params['strings']);
 	    });
 	    document.getElementById('colorchooser').style.display = 'none';
-	    document.getElementById('checkanswer').style.display = '';
+	    document.getElementById('checkanswer').style.display = 'inline';
 	} else {
 	    fill_from_repr(url_params['strings']);
 	}
@@ -229,6 +223,7 @@ document.addEventListener('DOMContentLoaded', function() {
     GUITAR_STRINGS = getFretcloneStrings();
     set_notes();
 
+    // Examples:
     // show diagram of a C Major chord
     //show_chord([null, 1, null, 2, [3, 'red']]);
 
@@ -269,6 +264,11 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('clear').addEventListener('click', function(){
 	message.innerHTML = '';
 	clear_fretboard(); update_link();
+    });
+
+    document.getElementById('restart').addEventListener('click', function(e){
+	e.preventDefault();
+	window.location.href = window.location.pathname;
     });
 
     // set up example links
