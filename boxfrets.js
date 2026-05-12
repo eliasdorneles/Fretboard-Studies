@@ -12,6 +12,7 @@ var GAME_SECONDS_LEFT = 60;
 var GAME_CORRECT = 0;
 var GAME_WRONG = 0;
 var GAME_COMPLETED = [];
+var GAME_MISTAKES = [];
 var calculateFretWidths = function(numFrets, firstWidth) {
     var ratio = Math.pow(2, -1/12);
     return Array.from({length: numFrets}, function(_, i) {
@@ -259,6 +260,7 @@ function startGame() {
     GAME_CORRECT = 0;
     GAME_WRONG = 0;
     GAME_COMPLETED = [];
+    GAME_MISTAKES = [];
     GAME_SECONDS_LEFT = 60;
     document.getElementById('game-results').style.display = 'none';
     document.getElementById('game-start-btn').textContent = 'Stop';
@@ -302,6 +304,13 @@ function handleGameClick(s, f, cell) {
         setTimeout(function() { cell.style.backgroundColor = ''; nextChallenge(); }, 300);
     } else {
         GAME_WRONG++;
+        var key = GAME_TARGET_NOTE + '|' + STRING_NAMES[GAME_TARGET_STRING];
+        var existing = GAME_MISTAKES.find(function(m) { return m.key === key; });
+        if (existing) {
+            existing.count++;
+        } else {
+            GAME_MISTAKES.push({ key: key, note: GAME_TARGET_NOTE, stringName: STRING_NAMES[GAME_TARGET_STRING], count: 1 });
+        }
         cell.style.backgroundColor = '#e66';
         setTimeout(function() { cell.style.backgroundColor = ''; }, 300);
     }
@@ -328,6 +337,15 @@ function endGame() {
         slowest.forEach(function(r) {
             html += '<li>' + r.note + ' on ' + r.stringName + ' string — ' +
                 (r.timeMs / 1000).toFixed(1) + 's</li>';
+        });
+        html += '</ul>';
+    }
+    if (GAME_MISTAKES.length) {
+        var sortedMistakes = GAME_MISTAKES.slice().sort(function(a, b) { return b.count - a.count; });
+        html += '<br><em>Mistakes:</em><ul>';
+        sortedMistakes.forEach(function(m) {
+            html += '<li>' + m.note + ' on ' + m.stringName + ' string' +
+                (m.count > 1 ? ' — ' + m.count + '×' : '') + '</li>';
         });
         html += '</ul>';
     }

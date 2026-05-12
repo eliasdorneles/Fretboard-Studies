@@ -92,10 +92,11 @@
 	    input.color_button { width:40px; border-radius: 5px; }
 	    div#main { height:340px; margin:10px; }
 	    #diagram_title { font-size:25px; font-weight:bold; margin:15px; display:block; padding:4px; border:0; width:100%; }
-	    #form_controls { padding:10px; }
+	    #form_controls { padding:10px; text-align: center; }
 	    #checkanswer { display:none; }
 	    #message { text-align: right; }
-	    #examples ul { margin-left: 20px; }
+	    #examples strong { display: block; margin-bottom: 2px; }
+	    #examples ul { display: inline-block; text-align: left; margin: 0; }
 	    #clear, #eraser { font-weight: bold; padding: 2px; }
 	    a:focus { outline: thin dotted #333; outline: 5px auto -webkit-focus-ring-color; outline-offset: -2px; }
 	    a:hover, a:active { outline: 0; }
@@ -117,7 +118,7 @@
 	    #theme-toggle:hover { opacity: 1; }
 
 	    /* Game panel */
-	    #game-panel { padding: 24px 24px 32px; }
+	    #game-panel { padding: 24px 24px 32px; text-align: center; }
 
 	    /* Challenge block */
 	    #game-challenge { text-align: center; margin-bottom: 20px; }
@@ -133,7 +134,7 @@
 	    .game-sublabel { font-size: 16px; color: var(--game-sublabel-color); letter-spacing: 0.04em; }
 
 	    /* Status row */
-	    #game-status { display: flex; align-items: baseline; gap: 24px; margin-bottom: 16px; }
+	    #game-status { display: flex; align-items: baseline; justify-content: center; gap: 24px; margin-bottom: 16px; }
 	    #game-timer {
 	        font-family: 'JetBrains Mono', 'Courier New', monospace;
 	        font-size: 48px; font-weight: 700; color: var(--game-timer-color);
@@ -166,7 +167,7 @@
 	    }
 	    #game-results strong { color: var(--game-results-strong); }
 	    #game-results em { color: var(--game-results-em); font-style: normal; letter-spacing: 0.05em; }
-	    #game-results ul { margin: 4px 0 0 16px; }
+	    #game-results ul { margin: 4px 0 0 0; list-style: none; }
 	    #game-results li { color: var(--game-results-li); }
 	</style>
     </head>
