@@ -123,7 +123,13 @@
 	    #message { text-align: right; }
 	    #examples strong { display: block; margin-bottom: 2px; }
 	    #examples ul { display: inline-block; text-align: left; margin: 0; }
-	    #clear, #eraser { font-weight: bold; padding: 2px; }
+	    #tool-row { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 10px; }
+	    .row-label { font-size: 13px; color: var(--game-label-color); margin-right: 2px; }
+	    .row-sep { width: 1px; height: 20px; background: var(--tab-border); margin: 0 4px; }
+	    #clear, #eraser { font-weight: bold; padding: 2px 6px; }
+	    #share-controls { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 4px 0 12px; }
+	    #share-controls a.share-btn { border: 1px solid var(--tab-border); border-radius: 3px; padding: 4px 12px; font-size: 13px; color: var(--text-color); text-decoration: none; transition: border-color 0.15s, color 0.15s; }
+	    #share-controls a.share-btn:hover { border-color: #0088cc; color: #0088cc; text-decoration: none; }
 	    a:focus { outline: thin dotted #333; outline: 5px auto -webkit-focus-ring-color; outline-offset: -2px; }
 	    a:hover, a:active { outline: 0; }
 	    a { color: #0088cc; text-decoration: none; }
@@ -278,22 +284,24 @@
 	  <div id="game-results" style="display:none"></div>
 	</div>
 	<div id="form_controls">
-		<div id="colorchooser">
-			Palette:
+		<div id="tool-row">
+			<span class="row-label">Palette</span>
 			<input type="button" value="&nbsp;" class="color_button green" />
 			<input type="button" value="&nbsp;" class="color_button yellow" />
 			<input type="button" value="&nbsp;" class="color_button blue" />
 			<input type="button" value="&nbsp;" class="color_button coffee" />
 			<input type="button" value="&nbsp;" class="color_button red" />
-			<input type="button" value="&nbsp;" class="color_button orange" /><br /><br />
-			You can
-			<input id="clear" type="button" value="Clear" class="blank" /> the whole diagram or use an
-			<input id="eraser" type="button" value="Eraser" class="blank" />. Also, you can just click on a painted fret to clear it.<br />
+			<input type="button" value="&nbsp;" class="color_button orange" />
+			<span class="row-sep"></span>
+			<input id="clear" type="button" value="Clear" class="blank" />
+			<input id="eraser" type="button" value="Eraser" class="blank" />
+		</div>
+		<div id="share-controls">
+			<a id="linkthis" class="share-btn" href="javascript:void(0)" title="Copy a shareable link to this diagram">Copy link</a>
+			<a id="linkquiz" class="share-btn" href="javascript:void(0)" title="Copy a link where viewers mark notes and check their answers — great for exercises">Share as quiz</a>
+			<a id="restart" href="javascript:void(0)">Reset</a>
 		</div>
 		<input type="button" id="checkanswer" class="coffee" value="Check answer!" /><br />
-		<a id="restart" href="javascript:void(0)">Restart</a> |
-		<a id="linkthis" href="javascript:void(0)">Link</a> |
-		<a id="linkquiz" href="javascript:void(0)">Quiz link</a><br />
 		<div id="examples"><strong>Examples:</strong>
 			<ul>
 				<li><a href="#strings=6:1,18:1;11:1;3:1,15:1;8:1;1:1,13:1;6:1,18:1&diagram_title=Bb%20octaves">Bb octaves</a></li>

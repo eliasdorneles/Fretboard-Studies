@@ -114,8 +114,16 @@ var create_link_from_fretboard = function(){
     return href;
 }
 var update_link = function(){
-    document.getElementById('linkthis').href = create_link_from_fretboard();
-    document.getElementById('linkquiz').href = create_link_from_fretboard() + "&q=y";
+    var url = create_link_from_fretboard();
+    document.getElementById('linkthis').href = url;
+    document.getElementById('linkquiz').href = url + "&q=y";
+}
+function copyToClipboard(el, url) {
+    navigator.clipboard.writeText(url).then(function() {
+        var orig = el.textContent;
+        el.textContent = 'Copied!';
+        setTimeout(function() { el.textContent = orig; }, 1500);
+    });
 }
 // handle url parameters
 function get_url_parameters(query = window.location.href){
@@ -478,7 +486,8 @@ var loadFromUrl = function(url_params){
 	    document.getElementById('checkanswer').addEventListener('click', function(){
 		check_answers(url_params['strings']);
 	    });
-	    document.getElementById('colorchooser').style.display = 'none';
+	    document.getElementById('tool-row').style.display = 'none';
+	    document.getElementById('share-controls').style.display = 'none';
 	    document.getElementById('checkanswer').style.display = 'inline';
 	} else {
 	    fill_from_repr(url_params['strings']);
@@ -573,6 +582,15 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('restart').addEventListener('click', function(e){
 	e.preventDefault();
 	window.location.href = window.location.pathname;
+    });
+
+    document.getElementById('linkthis').addEventListener('click', function(e) {
+        e.preventDefault();
+        copyToClipboard(this, create_link_from_fretboard());
+    });
+    document.getElementById('linkquiz').addEventListener('click', function(e) {
+        e.preventDefault();
+        copyToClipboard(this, create_link_from_fretboard() + '&q=y');
     });
 
     // set up example links
