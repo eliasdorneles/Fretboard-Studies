@@ -36,6 +36,19 @@
 	        --game-results-em: #666;
 	        --game-results-li: #555;
 	        --game-target-highlight: rgba(0, 100, 200, 0.10);
+
+	        --piano-white-bg: #faf8f2;
+	        --piano-white-border: #888;
+	        --piano-white-text: #555;
+	        --piano-black-bg: #1a1510;
+	        --piano-black-border: #000;
+	        --piano-black-text: #c8b896;
+	        --piano-white-hover: #fff;
+	        --piano-black-hover: #2e2318;
+	        --piano-correct-bg: #c8e8c0;
+	        --piano-wrong-bg: #f0ccc8;
+	        --piano-black-correct-bg: #2a5020;
+	        --piano-black-wrong-bg: #501818;
 	    }
 
 	    body.dark-theme {
@@ -67,6 +80,19 @@
 	        --game-results-em: #8a7060;
 	        --game-results-li: #a08060;
 	        --game-target-highlight: rgba(212, 144, 42, 0.15);
+
+	        --piano-white-bg: #e8dfc8;
+	        --piano-white-border: #5a3e28;
+	        --piano-white-text: #4a3020;
+	        --piano-black-bg: #0e0a06;
+	        --piano-black-border: #2a1a0a;
+	        --piano-black-text: #d4902a;
+	        --piano-white-hover: #f0e8d0;
+	        --piano-black-hover: #1a1208;
+	        --piano-correct-bg: #b0d8a0;
+	        --piano-wrong-bg: #d8a898;
+	        --piano-black-correct-bg: #203818;
+	        --piano-black-wrong-bg: #381010;
 	    }
 
 	    * { margin:0; padding:0; border-spacing:0; }
@@ -169,17 +195,74 @@
 	    #game-results em { color: var(--game-results-em); font-style: normal; letter-spacing: 0.05em; }
 	    #game-results ul { margin: 4px 0 0 0; list-style: none; }
 	    #game-results li { color: var(--game-results-li); }
+
+	    /* Name the Note panel */
+	    #name-note-panel { padding: 24px 24px 32px; text-align: center; }
+	    #name-challenge { text-align: center; margin-bottom: 20px; }
+	    #name-status { display: flex; align-items: baseline; justify-content: center; gap: 24px; margin-bottom: 16px; }
+	    #name-timer { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 48px; font-weight: 700; color: var(--game-timer-color); transition: color 0.3s; }
+	    #name-timer.urgent { color: #e05030; }
+	    #name-score { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 20px; color: var(--game-score-color); }
+	    #name-start-btn { background: var(--game-btn-bg); color: var(--game-btn-text); border: none; border-radius: 3px; cursor: pointer; padding: 10px 28px; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+	    #name-start-btn:hover { background: var(--game-btn-hover); }
+	    #name-results { margin-top: 20px; padding: 20px 24px; background: var(--game-results-bg); border: 1px solid var(--game-results-border); border-radius: 4px; font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 14px; color: var(--game-results-text); line-height: 1.8; }
+	    #name-results strong { color: var(--game-results-strong); }
+	    #name-results em { color: var(--game-results-em); font-style: normal; letter-spacing: 0.05em; }
+	    #name-results ul { margin: 4px 0 0 0; list-style: none; }
+	    #name-results li { color: var(--game-results-li); }
+
+	    /* Piano keyboard */
+	    #note-keyboard { position: relative; display: flex; margin: 16px auto 20px; width: 322px; user-select: none; }
+	    .white-key { width: 46px; height: 130px; background: var(--piano-white-bg); border: 1px solid var(--piano-white-border); border-radius: 0 0 4px 4px; color: var(--piano-white-text); font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 11px; font-weight: 700; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; cursor: pointer; box-sizing: border-box; position: relative; z-index: 1; transition: background 0.08s; }
+	    .white-key:hover { background: var(--piano-white-hover); }
+	    .black-key { position: absolute; top: 0; width: 30px; height: 80px; background: var(--piano-black-bg); border: 1px solid var(--piano-black-border); border-radius: 0 0 3px 3px; color: var(--piano-black-text); font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 9px; font-weight: 700; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 6px; cursor: pointer; box-sizing: border-box; z-index: 2; transition: background 0.08s; }
+	    .black-key:hover { background: var(--piano-black-hover); }
+	    .piano-key.correct-flash { background: var(--piano-correct-bg) !important; }
+	    .black-key.correct-flash { background: var(--piano-black-correct-bg) !important; }
+	    .piano-key.wrong-flash { background: var(--piano-wrong-bg) !important; }
+	    .black-key.wrong-flash { background: var(--piano-black-wrong-bg) !important; }
+
+	    /* Single-cell target highlight */
+	    .target-cell::after { content: ''; position: absolute; inset: 2px; border: 2px solid var(--game-note-color); border-radius: 4px; pointer-events: none; z-index: 3; box-shadow: 0 0 8px var(--game-note-color); animation: pulse-cell 1s ease-in-out infinite; }
+	    @keyframes pulse-cell { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 	</style>
     </head>
     <body>
 	<nav id="mode-tabs">
 	  <button class="mode-tab active" data-mode="diagram">Diagram</button>
 	  <button class="mode-tab" data-mode="find-note">Find the Note</button>
+  <button class="mode-tab" data-mode="name-note">Name the Note</button>
 	  <button id="theme-toggle" title="Toggle dark/light theme">&#9790;</button>
 	</nav>
 	<input id="diagram_title" type="text" value="Click to add a title..." />
 	<div id="main">
 		<div id="message">&nbsp;</div>
+	</div>
+	<div id="name-note-panel" style="display:none">
+	  <div id="name-challenge">
+	    <div class="game-label">what note is this?</div>
+	    <div class="game-sublabel" id="name-string-label">on the &mdash; string</div>
+	  </div>
+	  <div id="name-status">
+	    <span id="name-timer">1:00</span>
+	    <span id="name-score">&#x2713; 0 &nbsp; &#x2717; 0</span>
+	  </div>
+	  <div id="note-keyboard">
+	    <button class="piano-key white-key" data-note="C">C</button>
+	    <button class="piano-key white-key" data-note="D">D</button>
+	    <button class="piano-key white-key" data-note="E">E</button>
+	    <button class="piano-key white-key" data-note="F">F</button>
+	    <button class="piano-key white-key" data-note="G">G</button>
+	    <button class="piano-key white-key" data-note="A">A</button>
+	    <button class="piano-key white-key" data-note="B">B</button>
+	    <button class="piano-key black-key" data-note="C#" style="left:32px">C#</button>
+	    <button class="piano-key black-key" data-note="D#" style="left:78px">D#</button>
+	    <button class="piano-key black-key" data-note="F#" style="left:170px">F#</button>
+	    <button class="piano-key black-key" data-note="G#" style="left:216px">G#</button>
+	    <button class="piano-key black-key" data-note="A#" style="left:262px">A#</button>
+	  </div>
+	  <button id="name-start-btn">Start</button>
+	  <div id="name-results" style="display:none"></div>
 	</div>
 	<div id="game-panel" style="display:none">
 	  <div id="game-challenge">

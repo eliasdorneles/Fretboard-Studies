@@ -13,6 +13,17 @@ var GAME_CORRECT = 0;
 var GAME_WRONG = 0;
 var GAME_COMPLETED = [];
 var GAME_MISTAKES = [];
+var NAME_RUNNING = false;
+var NAME_TARGET_STRING = -1;
+var NAME_TARGET_FRET = -1;
+var NAME_TARGET_NOTE = '';
+var NAME_CHALLENGE_START = 0;
+var NAME_TIMER_ID = null;
+var NAME_SECONDS_LEFT = 60;
+var NAME_CORRECT = 0;
+var NAME_WRONG = 0;
+var NAME_COMPLETED = [];
+var NAME_MISTAKES = [];
 var calculateFretWidths = function(numFrets, firstWidth) {
     var ratio = Math.pow(2, -1/12);
     return Array.from({length: numFrets}, function(_, i) {
@@ -243,16 +254,29 @@ function highlightTargetString(stringIdx) {
     }
 }
 
+function highlightTargetCell(s, f) {
+    document.querySelectorAll('.target-cell').forEach(function(el) {
+        el.classList.remove('target-cell');
+    });
+    if (s >= 0 && f >= 0) {
+        GUITAR_STRINGS[s][f].td.classList.add('target-cell');
+    }
+}
+
 function switchMode(mode) {
     var isDiagram = mode === 'diagram';
+    var isFindNote = mode === 'find-note';
+    var isNameNote = mode === 'name-note';
     document.getElementById('diagram_title').style.display = isDiagram ? '' : 'none';
     document.getElementById('form_controls').style.display = isDiagram ? '' : 'none';
-    document.getElementById('game-panel').style.display = isDiagram ? 'none' : '';
+    document.getElementById('game-panel').style.display = isFindNote ? '' : 'none';
+    document.getElementById('name-note-panel').style.display = isNameNote ? '' : 'none';
     document.body.classList.toggle('game-mode', !isDiagram);
     document.querySelectorAll('.mode-tab').forEach(function(btn) {
         btn.classList.toggle('active', btn.dataset.mode === mode);
     });
-    stopGame();
+    if (!isFindNote) stopGame();
+    if (!isNameNote) stopNameGame();
 }
 
 function startGame() {
@@ -355,6 +379,93 @@ function endGame() {
     document.getElementById('game-start-btn').textContent = 'Play Again';
 }
 
+function startNameGame() {
+    NAME_RUNNING = true;
+    NAME_CORRECT = 0; NAME_WRONG = 0;
+    NAME_COMPLETED = []; NAME_MISTAKES = [];
+    NAME_SECONDS_LEFT = 60;
+    document.getElementById('name-results').style.display = 'none';
+    document.getElementById('name-start-btn').textContent = 'Stop';
+    updateNameScore();
+    nextNameChallenge();
+    NAME_TIMER_ID = setInterval(function() {
+        NAME_SECONDS_LEFT--;
+        var m = Math.floor(NAME_SECONDS_LEFT / 60);
+        var s = NAME_SECONDS_LEFT % 60;
+        var timerEl = document.getElementById('name-timer');
+        timerEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+        timerEl.classList.toggle('urgent', NAME_SECONDS_LEFT <= 10);
+        if (NAME_SECONDS_LEFT <= 0) endNameGame();
+    }, 1000);
+}
+
+function stopNameGame() {
+    if (NAME_TIMER_ID) { clearInterval(NAME_TIMER_ID); NAME_TIMER_ID = null; }
+    NAME_RUNNING = false;
+    highlightTargetCell(-1, -1);
+    document.getElementById('name-timer').textContent = '1:00';
+    document.getElementById('name-start-btn').textContent = 'Start';
+}
+
+function nextNameChallenge() {
+    NAME_TARGET_STRING = Math.floor(Math.random() * 6);
+    NAME_TARGET_FRET = Math.floor(Math.random() * 22);
+    NAME_TARGET_NOTE = getNoteName(NAME_TARGET_STRING, NAME_TARGET_FRET);
+    NAME_CHALLENGE_START = Date.now();
+    highlightTargetCell(NAME_TARGET_STRING, NAME_TARGET_FRET);
+    document.getElementById('name-string-label').textContent =
+        'on the ' + STRING_NAMES[NAME_TARGET_STRING] + ' string';
+}
+
+function handleNameKeyClick(note) {
+    if (!NAME_RUNNING) return;
+    var btn = document.querySelector('.piano-key[data-note="' + note + '"]');
+    if (note === NAME_TARGET_NOTE) {
+        var elapsed = Date.now() - NAME_CHALLENGE_START;
+        NAME_CORRECT++;
+        NAME_COMPLETED.push({ note: NAME_TARGET_NOTE, stringName: STRING_NAMES[NAME_TARGET_STRING], fret: NAME_TARGET_FRET, timeMs: elapsed });
+        if (btn) { btn.classList.add('correct-flash'); setTimeout(function() { btn.classList.remove('correct-flash'); }, 300); }
+        setTimeout(nextNameChallenge, 300);
+    } else {
+        NAME_WRONG++;
+        var key = NAME_TARGET_NOTE + '|' + STRING_NAMES[NAME_TARGET_STRING];
+        var existing = NAME_MISTAKES.find(function(m) { return m.key === key; });
+        if (existing) { existing.count++; }
+        else { NAME_MISTAKES.push({ key: key, note: NAME_TARGET_NOTE, stringName: STRING_NAMES[NAME_TARGET_STRING], count: 1 }); }
+        if (btn) { btn.classList.add('wrong-flash'); setTimeout(function() { btn.classList.remove('wrong-flash'); }, 300); }
+    }
+    updateNameScore();
+}
+
+function updateNameScore() {
+    document.getElementById('name-score').textContent = '✓ ' + NAME_CORRECT + '   ✗ ' + NAME_WRONG;
+}
+
+function endNameGame() {
+    stopNameGame();
+    document.getElementById('name-timer').textContent = '0:00';
+    var total = NAME_CORRECT + NAME_WRONG;
+    var pct = total > 0 ? Math.round(100 * NAME_CORRECT / total) : 0;
+    var slowest = NAME_COMPLETED.slice().sort(function(a, b) { return b.timeMs - a.timeMs; }).slice(0, 3);
+    var html = '<strong>Game Over!</strong><br>';
+    html += '✓ ' + NAME_CORRECT + ' correct &nbsp; ✗ ' + NAME_WRONG + ' wrong &nbsp; (' + pct + '% accuracy)<br>';
+    if (slowest.length) {
+        html += '<br><em>Slowest correct answers:</em><ul>';
+        slowest.forEach(function(r) { html += '<li>' + r.note + ' on ' + r.stringName + ' string — ' + (r.timeMs / 1000).toFixed(1) + 's</li>'; });
+        html += '</ul>';
+    }
+    if (NAME_MISTAKES.length) {
+        var sorted = NAME_MISTAKES.slice().sort(function(a, b) { return b.count - a.count; });
+        html += '<br><em>Mistakes:</em><ul>';
+        sorted.forEach(function(m) { html += '<li>' + m.note + ' on ' + m.stringName + ' string' + (m.count > 1 ? ' — ' + m.count + '\xd7' : '') + '</li>'; });
+        html += '</ul>';
+    }
+    var resultsEl = document.getElementById('name-results');
+    resultsEl.innerHTML = html;
+    resultsEl.style.display = '';
+    document.getElementById('name-start-btn').textContent = 'Play Again';
+}
+
 var loadFromUrl = function(url_params){
     if (is_defined(url_params['diagram_title'])){
 	document.getElementById('diagram_title').value = decodeURIComponent(url_params['diagram_title']);
@@ -412,6 +523,13 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('game-start-btn').addEventListener('click', function() {
         if (GAME_RUNNING) stopGame();
         else startGame();
+    });
+    document.querySelectorAll('.piano-key').forEach(function(btn) {
+        btn.addEventListener('click', function() { handleNameKeyClick(this.dataset.note); });
+    });
+    document.getElementById('name-start-btn').addEventListener('click', function() {
+        if (NAME_RUNNING) stopNameGame();
+        else startNameGame();
     });
 
     loadFromUrl(get_url_parameters());
