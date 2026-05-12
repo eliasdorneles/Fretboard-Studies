@@ -9,7 +9,7 @@
 
 	    :root {
 	        --bg-page: #f0ece6;
-	        --bg-fretboard: #fffdf8;
+	        --bg-fretboard: #e8d090;
 	        --border-fretboard: #bbb;
 	        --cell-border: #333;
 	        --string-color: #888;
@@ -97,7 +97,7 @@
 
 	    * { margin:0; padding:0; border-spacing:0; }
 	    body { font-family:sans-serif; font-size:100%; background: var(--bg-page); color: var(--text-color); transition: background-color 0.25s, color 0.25s; }
-	    #diagram_title { background: var(--input-bg); color: var(--text-color); }
+	    #diagram_title { background: var(--bg-page); color: var(--text-color); }
 	    #fretboard { display:grid; position:absolute; top:110px; left:10px; background: var(--bg-fretboard); border:1px solid var(--border-fretboard); box-sizing:border-box; transition: background-color 0.25s, border-color 0.25s; }
 	    .fretboard-cell { border-right:1px solid var(--cell-border) !important; background-color:transparent !important; height:34px; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:bold; cursor:pointer; box-sizing:border-box; position:relative; z-index:1; }
 	    .fretboard-cell:hover { outline:2px dotted #555; outline-offset:-2px; }
@@ -117,14 +117,16 @@
 	    .transparent { color:transparent !important }
 	    input.color_button { width:40px; border-radius: 5px; }
 	    div#main { height:340px; margin:10px; }
-	    #diagram_title { font-size:25px; font-weight:bold; margin:15px; display:block; padding:4px; border:0; width:100%; }
+	    #diagram_title { font-size:25px; font-weight:bold; margin:15px; display:block; padding:4px; border:0; border-bottom:2px solid transparent; width:100%; transition: border-color 0.15s; outline:none; }
+	    #diagram_title:hover { border-bottom-color: var(--border-fretboard); cursor: text; }
+	    #diagram_title:focus { border-bottom-color: var(--cell-border); }
 	    #form_controls { padding:10px; text-align: center; }
 	    #checkanswer { display:none; }
 	    #message { text-align: right; }
 	    #examples strong { display: block; margin-bottom: 2px; }
 	    #examples ul { display: inline-block; text-align: left; margin: 0; }
 	    #tool-row { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 10px; }
-	    .row-label { font-size: 13px; color: var(--game-label-color); margin-right: 2px; }
+	    .row-label { font-size: 13px; color: var(--text-color); margin-right: 2px; }
 	    .row-sep { width: 1px; height: 20px; background: var(--tab-border); margin: 0 4px; }
 	    #clear, #eraser { font-weight: bold; padding: 2px 6px; }
 	    #share-controls { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 4px 0 12px; }
