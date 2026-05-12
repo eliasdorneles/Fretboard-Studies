@@ -5,16 +5,81 @@
         <meta charset='utf-8' />
 	<script src="boxfrets.js" defer></script>
 	<style>
+	    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+	    :root {
+	        --bg-page: #f0ece6;
+	        --bg-fretboard: #fffdf8;
+	        --border-fretboard: #bbb;
+	        --cell-border: #333;
+	        --string-color: #888;
+	        --text-color: #222;
+	        --input-bg: #fff;
+	        --tab-bg: #eee;
+	        --tab-active-bg: #fff;
+	        --tab-border: #ccc;
+	        --tab-text: inherit;
+	        --tab-active-text: inherit;
+
+	        --game-note-color: #005580;
+	        --game-label-color: #666;
+	        --game-sublabel-color: #888;
+	        --game-timer-color: #222;
+	        --game-score-color: #555;
+	        --game-btn-bg: #005580;
+	        --game-btn-text: #fff;
+	        --game-btn-hover: #007ab8;
+	        --game-results-bg: #f0f0f0;
+	        --game-results-border: #ccc;
+	        --game-results-text: #333;
+	        --game-results-strong: #111;
+	        --game-results-em: #666;
+	        --game-results-li: #555;
+	        --game-target-highlight: rgba(0, 100, 200, 0.10);
+	    }
+
+	    body.dark-theme {
+	        --bg-page: #0e0b08;
+	        --bg-fretboard: #2c1e12;
+	        --border-fretboard: #5a3e28;
+	        --cell-border: #4a3020;
+	        --string-color: #8a6040;
+	        --tab-bg: #1a120a;
+	        --tab-active-bg: #0e0b08;
+	        --tab-border: #3d2a1a;
+	        --text-color: #c8b896;
+	        --input-bg: #1a120a;
+	        --tab-text: #7a6040;
+	        --tab-active-text: #f0e4c8;
+
+	        --game-note-color: #d4902a;
+	        --game-label-color: #6b5040;
+	        --game-sublabel-color: #8a7060;
+	        --game-timer-color: #f0e4c8;
+	        --game-score-color: #8a7060;
+	        --game-btn-bg: #d4902a;
+	        --game-btn-text: #1c1510;
+	        --game-btn-hover: #e8a535;
+	        --game-results-bg: #2a1f15;
+	        --game-results-border: #3d2a1a;
+	        --game-results-text: #c0aa88;
+	        --game-results-strong: #f0e4c8;
+	        --game-results-em: #8a7060;
+	        --game-results-li: #a08060;
+	        --game-target-highlight: rgba(212, 144, 42, 0.15);
+	    }
+
 	    * { margin:0; padding:0; border-spacing:0; }
-	    body { font-family:sans-serif; font-size:100%; }
-	    #fretboard { display:grid; position:absolute; top:110px; left:10px; border:1px solid red; box-sizing:border-box; }
-	    .fretboard-cell { border-right:1px solid #333 !important; background-color:transparent !important; height:34px; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:bold; cursor:pointer; box-sizing:border-box; position:relative; z-index:1; }
+	    body { font-family:sans-serif; font-size:100%; background: var(--bg-page); color: var(--text-color); transition: background-color 0.25s, color 0.25s; }
+	    #diagram_title { background: var(--input-bg); color: var(--text-color); }
+	    #fretboard { display:grid; position:absolute; top:110px; left:10px; background: var(--bg-fretboard); border:1px solid var(--border-fretboard); box-sizing:border-box; transition: background-color 0.25s, border-color 0.25s; }
+	    .fretboard-cell { border-right:1px solid var(--cell-border) !important; background-color:transparent !important; height:34px; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:bold; cursor:pointer; box-sizing:border-box; position:relative; z-index:1; }
 	    .fretboard-cell:hover { outline:2px dotted #555; outline-offset:-2px; }
 	    .fretboard-cell:not(.transparent)::before { content:''; position:absolute; width:min(calc(100% - 4px), 40px); height:26px; top:50%; left:50%; transform:translate(-50%,-50%); border-radius:5px; background-color:var(--fret-bg); border:2px solid var(--fret-border); box-sizing:border-box; z-index:1; }
 	    .fretboard-cell span.note { position:relative; z-index:2; }
 	    .fretboard-cell.has-marker.transparent::after { content:''; position:absolute; width:15px; height:15px; background:#aaa; border-radius:50%; bottom:-7.5px; left:50%; transform:translateX(-50%); pointer-events:none; z-index:2; }
-	    .string-line { position:absolute; left:0; right:0; background:#888; pointer-events:none; z-index:0; }
-    .fretboard-cell.open-string { border-right: 6px solid #444 !important; }
+	    .string-line { position:absolute; left:0; right:0; background: var(--string-color); pointer-events:none; z-index:0; }
+	    .fretboard-cell.open-string { border-right: 6px solid var(--cell-border) !important; }
 	    .orange { --fret-bg:#ffbb67; --fret-border:#543d22; background-color:#ffbb67; border-color:#543d22; color:#543d22 !important; }
 	    .green  { --fret-bg:#669999; --fret-border:#003333; background-color:#669999; border-color:#003333; color:#003333 !important; }
 	    .blue   { --fret-bg:#333745; --fret-border:#afcded; background-color:#333745; border-color:#afcded; color:#afcded !important; }
@@ -40,33 +105,76 @@
 	    @media print { #form_controls { display:none; } }
 
 	    /* Tabs */
-	    #mode-tabs { padding: 8px 10px 0; border-bottom: 1px solid #ccc; }
-	    .mode-tab { padding: 6px 16px; cursor: pointer; border: 1px solid #ccc;
-	                border-bottom: none; background: #eee; margin-right: 4px; }
-	    .mode-tab.active { background: #fff; font-weight: bold; }
+	    #mode-tabs { display: flex; align-items: flex-end; padding: 8px 10px 0; border-bottom: 1px solid var(--tab-border); background: var(--bg-page); transition: background-color 0.25s, border-color 0.25s; }
+	    .mode-tab { padding: 6px 16px; cursor: pointer; border: 1px solid var(--tab-border);
+	                border-bottom: none; background: var(--tab-bg); margin-right: 4px; color: var(--tab-text); }
+	    .mode-tab.active { background: var(--tab-active-bg); color: var(--tab-active-text); font-weight: bold; }
+	    #theme-toggle {
+	        margin-left: auto; background: none; border: none; cursor: pointer;
+	        font-size: 18px; padding: 4px 10px 8px; color: var(--tab-text, #666);
+	        opacity: 0.65; line-height: 1; align-self: center;
+	    }
+	    #theme-toggle:hover { opacity: 1; }
 
 	    /* Game panel */
-	    #game-panel { padding: 12px 10px; }
-	    #game-challenge { font-size: 22px; margin-bottom: 8px; }
-	    #target-note { font-size: 32px; font-weight: bold; color: #006; }
-	    #game-timer { font-size: 28px; font-weight: bold; margin-right: 20px; }
-	    #game-score { font-size: 18px; }
-	    #game-start-btn { margin-top: 10px; padding: 6px 20px; font-size: 16px; }
+	    #game-panel { padding: 24px 24px 32px; }
+
+	    /* Challenge block */
+	    #game-challenge { text-align: center; margin-bottom: 20px; }
+	    .game-label { font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--game-label-color); margin-bottom: 4px; }
+	    #target-note {
+	        display: block;
+	        font-family: 'Playfair Display', Georgia, serif;
+	        font-size: 96px; font-weight: 700; line-height: 1;
+	        color: var(--game-note-color);
+	        margin: 8px 0;
+	        transition: opacity 0.15s;
+	    }
+	    .game-sublabel { font-size: 16px; color: var(--game-sublabel-color); letter-spacing: 0.04em; }
+
+	    /* Status row */
+	    #game-status { display: flex; align-items: baseline; gap: 24px; margin-bottom: 16px; }
+	    #game-timer {
+	        font-family: 'JetBrains Mono', 'Courier New', monospace;
+	        font-size: 48px; font-weight: 700; color: var(--game-timer-color);
+	        transition: color 0.3s;
+	    }
+	    #game-timer.urgent { color: #e05030; }
+	    #game-score { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 20px; color: var(--game-score-color); }
+
+	    /* Start/Stop/Play Again button */
+	    #game-start-btn {
+	        background: var(--game-btn-bg); color: var(--game-btn-text);
+	        border: none; border-radius: 3px; cursor: pointer;
+	        padding: 10px 28px; font-size: 13px; font-weight: 700;
+	        letter-spacing: 0.12em; text-transform: uppercase;
+	    }
+	    #game-start-btn:hover { background: var(--game-btn-hover); }
 
 	    /* Target string highlight */
-	    .target-string { background-color: rgba(100, 180, 255, 0.18) !important; }
+	    .target-string { background-color: var(--game-target-highlight) !important; }
 
 	    /* Hide note names during game */
 	    body.game-mode .fretboard-cell span.note { visibility: hidden; }
 
 	    /* Results */
-	    #game-results { margin-top: 12px; padding: 10px; border: 1px solid #ccc; background: #f9f9f9; }
+	    #game-results {
+	        margin-top: 20px; padding: 20px 24px;
+	        background: var(--game-results-bg); border: 1px solid var(--game-results-border); border-radius: 4px;
+	        font-family: 'JetBrains Mono', 'Courier New', monospace;
+	        font-size: 14px; color: var(--game-results-text); line-height: 1.8;
+	    }
+	    #game-results strong { color: var(--game-results-strong); }
+	    #game-results em { color: var(--game-results-em); font-style: normal; letter-spacing: 0.05em; }
+	    #game-results ul { margin: 4px 0 0 16px; }
+	    #game-results li { color: var(--game-results-li); }
 	</style>
     </head>
     <body>
 	<nav id="mode-tabs">
 	  <button class="mode-tab active" data-mode="diagram">Diagram</button>
 	  <button class="mode-tab" data-mode="find-note">Find the Note</button>
+	  <button id="theme-toggle" title="Toggle dark/light theme">&#9790;</button>
 	</nav>
 	<input id="diagram_title" type="text" value="Click to add a title..." />
 	<div id="main">
@@ -74,7 +182,9 @@
 	</div>
 	<div id="game-panel" style="display:none">
 	  <div id="game-challenge">
-	    Find <span id="target-note">--</span> on the highlighted string
+	    <div class="game-label">find the note</div>
+	    <span id="target-note">--</span>
+	    <div class="game-sublabel">on the highlighted string</div>
 	  </div>
 	  <div id="game-status">
 	    <span id="game-timer">1:00</span>

@@ -270,6 +270,7 @@ function startGame() {
         var s = GAME_SECONDS_LEFT % 60;
         document.getElementById('game-timer').textContent =
             m + ':' + (s < 10 ? '0' : '') + s;
+        document.getElementById('game-timer').classList.toggle('urgent', GAME_SECONDS_LEFT <= 10);
         if (GAME_SECONDS_LEFT <= 0) endGame();
     }, 1000);
 }
@@ -278,6 +279,7 @@ function stopGame() {
     if (GAME_TIMER_ID) { clearInterval(GAME_TIMER_ID); GAME_TIMER_ID = null; }
     GAME_RUNNING = false;
     highlightTargetString(-1);
+    document.getElementById('game-timer').classList.remove('urgent');
     document.getElementById('game-timer').textContent = '1:00';
     document.getElementById('game-start-btn').textContent = 'Start';
 }
@@ -313,6 +315,7 @@ function updateGameScore() {
 
 function endGame() {
     stopGame();
+    document.getElementById('game-timer').textContent = '0:00';
     var total = GAME_CORRECT + GAME_WRONG;
     var pct = total > 0 ? Math.round(100 * GAME_CORRECT / total) : 0;
     var slowest = GAME_COMPLETED
@@ -445,4 +448,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     // TODO: fix quiz behavior (do not show note names in quiz mode), and show message on check answer
     // TODO: find a way to show enarmonics
+
+    var savedTheme = localStorage.getItem('fretboard-theme') || 'light';
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        document.getElementById('theme-toggle').textContent = '☀';
+    }
+    document.getElementById('theme-toggle').addEventListener('click', function() {
+        var isDark = document.body.classList.toggle('dark-theme');
+        this.textContent = isDark ? '☀' : '☾';
+        localStorage.setItem('fretboard-theme', isDark ? 'dark' : 'light');
+    });
 });
