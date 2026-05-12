@@ -38,12 +38,50 @@
 	    a:hover { color: #005580; text-decoration: underline; }
 
 	    @media print { #form_controls { display:none; } }
+
+	    /* Tabs */
+	    #mode-tabs { padding: 8px 10px 0; border-bottom: 1px solid #ccc; }
+	    .mode-tab { padding: 6px 16px; cursor: pointer; border: 1px solid #ccc;
+	                border-bottom: none; background: #eee; margin-right: 4px; }
+	    .mode-tab.active { background: #fff; font-weight: bold; }
+
+	    /* Game panel */
+	    #game-panel { padding: 12px 10px; }
+	    #game-challenge { font-size: 22px; margin-bottom: 8px; }
+	    #target-note { font-size: 32px; font-weight: bold; color: #006; }
+	    #game-timer { font-size: 28px; font-weight: bold; margin-right: 20px; }
+	    #game-score { font-size: 18px; }
+	    #game-start-btn { margin-top: 10px; padding: 6px 20px; font-size: 16px; }
+
+	    /* Target string highlight */
+	    .target-string { background-color: rgba(100, 180, 255, 0.18) !important; }
+
+	    /* Hide note names during game */
+	    body.game-mode .fretboard-cell span.note { visibility: hidden; }
+
+	    /* Results */
+	    #game-results { margin-top: 12px; padding: 10px; border: 1px solid #ccc; background: #f9f9f9; }
 	</style>
     </head>
     <body>
+	<nav id="mode-tabs">
+	  <button class="mode-tab active" data-mode="diagram">Diagram</button>
+	  <button class="mode-tab" data-mode="find-note">Find the Note</button>
+	</nav>
 	<input id="diagram_title" type="text" value="Click to add a title..." />
 	<div id="main">
 		<div id="message">&nbsp;</div>
+	</div>
+	<div id="game-panel" style="display:none">
+	  <div id="game-challenge">
+	    Find <span id="target-note">--</span> on the highlighted string
+	  </div>
+	  <div id="game-status">
+	    <span id="game-timer">1:00</span>
+	    <span id="game-score">&#x2713; 0 &nbsp; &#x2717; 0</span>
+	  </div>
+	  <button id="game-start-btn">Start</button>
+	  <div id="game-results" style="display:none"></div>
 	</div>
 	<div id="form_controls">
 		<div id="colorchooser">

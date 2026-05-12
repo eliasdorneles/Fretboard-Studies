@@ -3,6 +3,15 @@ var GUITAR_STRINGS;
 var COLOR = "green";
 var POSSIBLE_COLORS = ["orange", "green", "blue", "yellow", "coffee", "red", "transparent"]
 var ERASER = false;
+var GAME_RUNNING = false;
+var GAME_TARGET_STRING = -1;
+var GAME_TARGET_NOTE = '';
+var GAME_CHALLENGE_START = 0;
+var GAME_TIMER_ID = null;
+var GAME_SECONDS_LEFT = 60;
+var GAME_CORRECT = 0;
+var GAME_WRONG = 0;
+var GAME_COMPLETED = [];
 var calculateFretWidths = function(numFrets, firstWidth) {
     var ratio = Math.pow(2, -1/12);
     return Array.from({length: numFrets}, function(_, i) {
@@ -12,6 +21,9 @@ var calculateFretWidths = function(numFrets, firstWidth) {
 var SINGLE_DOT_FRETS = [3, 5, 7, 9, 15, 17, 19, 21];
 var DOUBLE_DOT_FRETS = [12];
 var STRING_THICKNESSES = [1, 1.2, 1.5, 1.7, 2, 2.3]; // high E → low E
+var STRING_NAMES = ['high E', 'B', 'G', 'D', 'A', 'low E'];
+var STRING_OFFSETS = [4, 11, 7, 2, 9, 4];
+var CHROMATIC = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 var CELL_HEIGHT = 34;
 var SINGLE_MARKER_STRING = 2;
 var DOUBLE_MARKER_STRINGS = [1, 4];
@@ -140,7 +152,13 @@ var getFretboardStrings = function(numFrets, numStrings) {
         var f = idx % numFrets;
         var box = {
             td: cell,
-            paint: function() { td_paint_or_clear(this, COLOR); }
+            paint: function() {
+                if (GAME_RUNNING) {
+                    if (s === GAME_TARGET_STRING) handleGameClick(s, f, cell);
+                } else {
+                    td_paint_or_clear(cell, COLOR);
+                }
+            }
         };
         guitarStrings[s][f] = box;
         cell.addEventListener('click', box.paint);
@@ -212,6 +230,110 @@ var set_notes = function(){
     }
 }
 
+function getNoteName(s, f) {
+    return pick_note(f, STRING_OFFSETS[s]);
+}
+
+function highlightTargetString(stringIdx) {
+    for (var s = 0; s < GUITAR_STRINGS.length; s++) {
+        for (var f = 0; f < GUITAR_STRINGS[s].length; f++) {
+            GUITAR_STRINGS[s][f].td.classList.toggle('target-string', s === stringIdx);
+        }
+    }
+}
+
+function switchMode(mode) {
+    var isDiagram = mode === 'diagram';
+    document.getElementById('diagram_title').style.display = isDiagram ? '' : 'none';
+    document.getElementById('form_controls').style.display = isDiagram ? '' : 'none';
+    document.getElementById('game-panel').style.display = isDiagram ? 'none' : '';
+    document.body.classList.toggle('game-mode', !isDiagram);
+    document.querySelectorAll('.mode-tab').forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+    });
+    stopGame();
+}
+
+function startGame() {
+    GAME_RUNNING = true;
+    GAME_CORRECT = 0;
+    GAME_WRONG = 0;
+    GAME_COMPLETED = [];
+    GAME_SECONDS_LEFT = 60;
+    document.getElementById('game-results').style.display = 'none';
+    document.getElementById('game-start-btn').textContent = 'Stop';
+    updateGameScore();
+    nextChallenge();
+    GAME_TIMER_ID = setInterval(function() {
+        GAME_SECONDS_LEFT--;
+        var m = Math.floor(GAME_SECONDS_LEFT / 60);
+        var s = GAME_SECONDS_LEFT % 60;
+        document.getElementById('game-timer').textContent =
+            m + ':' + (s < 10 ? '0' : '') + s;
+        if (GAME_SECONDS_LEFT <= 0) endGame();
+    }, 1000);
+}
+
+function stopGame() {
+    if (GAME_TIMER_ID) { clearInterval(GAME_TIMER_ID); GAME_TIMER_ID = null; }
+    GAME_RUNNING = false;
+    highlightTargetString(-1);
+    document.getElementById('game-timer').textContent = '1:00';
+    document.getElementById('game-start-btn').textContent = 'Start';
+}
+
+function nextChallenge() {
+    GAME_TARGET_STRING = Math.floor(Math.random() * 6);
+    GAME_TARGET_NOTE = CHROMATIC[Math.floor(Math.random() * 12)];
+    GAME_CHALLENGE_START = Date.now();
+    highlightTargetString(GAME_TARGET_STRING);
+    document.getElementById('target-note').textContent = GAME_TARGET_NOTE;
+}
+
+function handleGameClick(s, f, cell) {
+    var clicked = getNoteName(s, f);
+    if (clicked === GAME_TARGET_NOTE) {
+        var elapsed = Date.now() - GAME_CHALLENGE_START;
+        GAME_CORRECT++;
+        GAME_COMPLETED.push({ note: GAME_TARGET_NOTE, stringName: STRING_NAMES[s], timeMs: elapsed });
+        cell.style.backgroundColor = '#6c6';
+        setTimeout(function() { cell.style.backgroundColor = ''; nextChallenge(); }, 300);
+    } else {
+        GAME_WRONG++;
+        cell.style.backgroundColor = '#e66';
+        setTimeout(function() { cell.style.backgroundColor = ''; }, 300);
+    }
+    updateGameScore();
+}
+
+function updateGameScore() {
+    document.getElementById('game-score').textContent =
+        '✓ ' + GAME_CORRECT + '   ✗ ' + GAME_WRONG;
+}
+
+function endGame() {
+    stopGame();
+    var total = GAME_CORRECT + GAME_WRONG;
+    var pct = total > 0 ? Math.round(100 * GAME_CORRECT / total) : 0;
+    var slowest = GAME_COMPLETED
+        .slice().sort(function(a, b) { return b.timeMs - a.timeMs; })
+        .slice(0, 3);
+    var html = '<strong>Game Over!</strong><br>';
+    html += '✓ ' + GAME_CORRECT + ' correct &nbsp; ✗ ' + GAME_WRONG + ' wrong &nbsp; (' + pct + '% accuracy)<br>';
+    if (slowest.length) {
+        html += '<br><em>Slowest correct answers:</em><ul>';
+        slowest.forEach(function(r) {
+            html += '<li>' + r.note + ' on ' + r.stringName + ' string — ' +
+                (r.timeMs / 1000).toFixed(1) + 's</li>';
+        });
+        html += '</ul>';
+    }
+    var resultsEl = document.getElementById('game-results');
+    resultsEl.innerHTML = html;
+    resultsEl.style.display = '';
+    document.getElementById('game-start-btn').textContent = 'Play Again';
+}
+
 var loadFromUrl = function(url_params){
     if (is_defined(url_params['diagram_title'])){
 	document.getElementById('diagram_title').value = decodeURIComponent(url_params['diagram_title']);
@@ -263,6 +385,14 @@ document.addEventListener('DOMContentLoaded', function() {
     //var a_minor_penta = [[5, 8], [5, 8], [5, 7], [5, 7], [5, 7], [5, 8]];
     // show diagram of an A minor penta scale form
     //show_scale(a_minor_penta);
+    document.querySelectorAll('.mode-tab').forEach(function(btn) {
+        btn.addEventListener('click', function() { switchMode(this.dataset.mode); });
+    });
+    document.getElementById('game-start-btn').addEventListener('click', function() {
+        if (GAME_RUNNING) stopGame();
+        else startGame();
+    });
+
     loadFromUrl(get_url_parameters());
     update_link();
     var message = document.getElementById('message');
