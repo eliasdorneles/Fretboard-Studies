@@ -3,6 +3,7 @@ var GUITAR_STRINGS;
 var COLOR = "green";
 var POSSIBLE_COLORS = ["orange", "green", "blue", "yellow", "coffee", "red", "transparent"]
 var ERASER = false;
+var CURRENT_MODE = 'diagram';
 var GAME_RUNNING = false;
 var GAME_TARGET_STRING = -1;
 var GAME_TARGET_NOTE = '';
@@ -165,17 +166,17 @@ var getFretboardStrings = function(numFrets, numStrings) {
         var box = {
             td: cell,
             paint: function() {
-                if (GAME_RUNNING) {
-                    if (s === GAME_TARGET_STRING) handleGameClick(s, f, cell);
-                } else {
+                if (CURRENT_MODE === 'diagram') {
                     td_paint_or_clear(cell, COLOR);
+                } else if (CURRENT_MODE === 'find-note' && GAME_RUNNING) {
+                    if (s === GAME_TARGET_STRING) handleGameClick(s, f, cell);
                 }
             }
         };
         guitarStrings[s][f] = box;
         cell.addEventListener('click', box.paint);
         cell.addEventListener('mouseover', function() {
-            if (ERASER) { td_clear(this); update_link(); }
+            if (ERASER && CURRENT_MODE === 'diagram') { td_clear(this); update_link(); }
         });
     });
     return guitarStrings;
@@ -264,6 +265,7 @@ function highlightTargetCell(s, f) {
 }
 
 function switchMode(mode) {
+    CURRENT_MODE = mode;
     var isDiagram = mode === 'diagram';
     var isFindNote = mode === 'find-note';
     var isNameNote = mode === 'name-note';
