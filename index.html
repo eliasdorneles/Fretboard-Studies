@@ -261,6 +261,38 @@
 	    /* Two-cell interval highlight */
 	    .interval-cell::after { content: ''; position: absolute; inset: 2px; border: 2px solid var(--game-note-color); border-radius: 4px; pointer-events: none; z-index: 3; box-shadow: 0 0 8px var(--game-note-color); animation: pulse-cell 1s ease-in-out infinite; }
 
+	    /* Chord game panel */
+	    #chord-game-panel { padding: 24px 24px 32px; text-align: center; }
+	    #chord-challenge { text-align: center; margin-bottom: 20px; }
+	    #chord-status { display: flex; align-items: baseline; justify-content: center; gap: 24px; margin-bottom: 16px; }
+	    #chord-timer { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 48px; font-weight: 700; color: var(--game-timer-color); transition: color 0.3s; }
+	    #chord-timer.urgent { color: #e05030; }
+	    #chord-score { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 20px; color: var(--game-score-color); }
+	    #chord-start-btn { background: var(--game-btn-bg); color: var(--game-btn-text); border: none; border-radius: 3px; cursor: pointer; padding: 10px 28px; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+	    #chord-start-btn:hover { background: var(--game-btn-hover); }
+	    #chord-results { margin-top: 20px; padding: 20px 24px; background: var(--game-results-bg); border: 1px solid var(--game-results-border); border-radius: 4px; font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 14px; color: var(--game-results-text); line-height: 1.8; }
+	    #chord-results strong { color: var(--game-results-strong); }
+	    #chord-results em { color: var(--game-results-em); font-style: normal; letter-spacing: 0.05em; }
+	    #chord-results ul { margin: 4px 0 0 0; list-style: none; }
+	    #chord-results li { color: var(--game-results-li); }
+
+	    /* Chord type buttons */
+	    #chord-type-section { margin-bottom: 16px; }
+	    #chord-keyboard { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 8px auto 8px; max-width: 420px; }
+	    .chord-btn { min-width: 76px; height: 48px; background: var(--piano-white-bg); border: 1px solid var(--piano-white-border); border-radius: 4px; color: var(--piano-white-text); font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 13px; font-weight: 700; cursor: pointer; transition: background 0.08s; }
+	    .chord-btn:hover:not(:disabled) { background: var(--piano-white-hover); }
+	    .chord-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+	    .chord-btn.correct-flash { background: var(--piano-correct-bg) !important; }
+	    .chord-btn.wrong-flash { background: var(--piano-wrong-bg) !important; }
+
+	    /* Chord root keyboard */
+	    #chord-root-section { margin-bottom: 12px; }
+	    #chord-note-keyboard { position: relative; display: flex; margin: 8px auto 4px; width: 322px; user-select: none; }
+	    #chord-root-confirmed { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 16px; color: var(--game-note-color); margin: 4px 0 2px; min-height: 22px; }
+
+	    /* Three-cell chord highlight */
+	    .chord-cell::after { content: ''; position: absolute; inset: 2px; border: 2px solid var(--game-note-color); border-radius: 4px; pointer-events: none; z-index: 3; box-shadow: 0 0 8px var(--game-note-color); animation: pulse-cell 1s ease-in-out infinite; }
+
 	    /* Piano keyboard */
 	    #note-keyboard { position: relative; display: flex; margin: 16px auto 20px; width: 322px; user-select: none; }
 	    .white-key { width: 46px; height: 130px; background: var(--piano-white-bg); border: 1px solid var(--piano-white-border); border-radius: 0 0 4px 4px; color: var(--piano-white-text); font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 11px; font-weight: 700; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; cursor: pointer; box-sizing: border-box; position: relative; z-index: 1; transition: background 0.08s; }
@@ -281,17 +313,18 @@
 	        input.color_button { width: 44px; height: 36px; }
 	        #tool-row { gap: 4px; flex-wrap: wrap; }
 	        .fretboard-cell { padding: 3px 0; }
-	        #note-keyboard { transform: scale(0.88); transform-origin: center top; margin-bottom: -20px; }
+	        #note-keyboard, #chord-note-keyboard { transform: scale(0.88); transform-origin: center top; margin-bottom: -20px; }
 	        #diagram_title { font-size: 20px; margin: 10px; }
 	        #target-note { font-size: 60px; }
-	        #game-timer, #name-timer, #interval-timer { font-size: 34px; }
-	        #game-score, #name-score, #interval-score { font-size: 16px; }
-	        #game-panel, #name-note-panel, #interval-game-panel { padding: 12px 16px 16px; }
-	        #game-challenge, #name-challenge, #interval-challenge { margin-bottom: 10px; }
-	        #game-status, #name-status, #interval-status { gap: 14px; margin-bottom: 10px; }
+	        #game-timer, #name-timer, #interval-timer, #chord-timer { font-size: 34px; }
+	        #game-score, #name-score, #interval-score, #chord-score { font-size: 16px; }
+	        #game-panel, #name-note-panel, #interval-game-panel, #chord-game-panel { padding: 12px 16px 16px; }
+	        #game-challenge, #name-challenge, #interval-challenge, #chord-challenge { margin-bottom: 10px; }
+	        #game-status, #name-status, #interval-status, #chord-status { gap: 14px; margin-bottom: 10px; }
 	        .game-sublabel { font-size: 14px; }
 	        .game-label { font-size: 10px; }
 	        .interval-btn { width: 48px; height: 42px; font-size: 11px; }
+	        .chord-btn { min-width: 60px; height: 42px; font-size: 11px; }
 	    }
 	</style>
     </head>
@@ -301,6 +334,7 @@
 	  <button class="mode-tab" data-mode="find-note">Find the Note</button>
           <button class="mode-tab" data-mode="name-note">Name the Note</button>
           <button class="mode-tab" data-mode="interval-game">Name the Interval</button>
+          <button class="mode-tab" data-mode="chord-game">Name the Chord</button>
 	  <button id="theme-toggle" title="Toggle dark/light theme">&#9790;</button>
 	</nav>
 	<input id="diagram_title" type="text" value="Click to add a title..." />
@@ -368,6 +402,46 @@
 	  </div>
 	  <button id="interval-start-btn">Start</button>
 	  <div id="interval-results" style="display:none"></div>
+	</div>
+	<div id="chord-game-panel" style="display:none">
+	  <div id="chord-challenge">
+	    <div class="game-label">what chord is this?</div>
+	    <div class="game-sublabel" id="chord-sublabel">identify the root note, then the chord type</div>
+	  </div>
+	  <div id="chord-status">
+	    <span id="chord-timer">1:00</span>
+	    <span id="chord-score">&#x2713; 0 &nbsp; &#x2717; 0</span>
+	  </div>
+	  <div id="chord-root-section">
+	    <div class="game-label">step 1: root note</div>
+	    <div id="chord-note-keyboard">
+	      <button class="chord-piano-key white-key" data-note="C">C</button>
+	      <button class="chord-piano-key white-key" data-note="D">D</button>
+	      <button class="chord-piano-key white-key" data-note="E">E</button>
+	      <button class="chord-piano-key white-key" data-note="F">F</button>
+	      <button class="chord-piano-key white-key" data-note="G">G</button>
+	      <button class="chord-piano-key white-key" data-note="A">A</button>
+	      <button class="chord-piano-key white-key" data-note="B">B</button>
+	      <button class="chord-piano-key black-key" data-note="C#" style="left:32px">C#</button>
+	      <button class="chord-piano-key black-key" data-note="D#" style="left:78px">D#</button>
+	      <button class="chord-piano-key black-key" data-note="F#" style="left:170px">F#</button>
+	      <button class="chord-piano-key black-key" data-note="G#" style="left:216px">G#</button>
+	      <button class="chord-piano-key black-key" data-note="A#" style="left:262px">A#</button>
+	    </div>
+	    <div id="chord-root-confirmed" style="visibility:hidden">&nbsp;</div>
+	  </div>
+	  <div id="chord-type-section">
+	    <div class="game-label">step 2: chord type</div>
+	    <div id="chord-keyboard">
+	      <button class="chord-btn" data-chord="maj7" title="Major 7 (1&#x2011;3&#x2011;7)" disabled>Maj7</button>
+	      <button class="chord-btn" data-chord="min7" title="Minor 7 (1&#x2011;b3&#x2011;b7)" disabled>min7</button>
+	      <button class="chord-btn" data-chord="dom7" title="Dominant 7 (1&#x2011;3&#x2011;b7)" disabled>Dom7</button>
+	      <button class="chord-btn" data-chord="dim7" title="dim7 / min6 (1&#x2011;b3&#x2011;6)" disabled>dim7</button>
+	      <button class="chord-btn" data-chord="maj6" title="Major 6 (1&#x2011;3&#x2011;6)" disabled>Maj6</button>
+	    </div>
+	  </div>
+	  <button id="chord-start-btn">Start</button>
+	  <div id="chord-results" style="display:none"></div>
 	</div>
 	<div id="main">
 		<div id="message">&nbsp;</div>
