@@ -25,6 +25,7 @@ var NAME_CORRECT = 0;
 var NAME_WRONG = 0;
 var NAME_COMPLETED = [];
 var NAME_MISTAKES = [];
+var NOTE_NAMES_MODE = 'sharps';
 var calculateFretWidths = function(numFrets, firstWidth) {
     var ratio = Math.pow(2, -1/12);
     return Array.from({length: numFrets}, function(_, i) {
@@ -37,6 +38,7 @@ var STRING_THICKNESSES = [1, 1.2, 1.5, 1.7, 2, 2.3]; // high E → low E
 var STRING_NAMES = ['high E', 'B', 'G', 'D', 'A', 'low E'];
 var STRING_OFFSETS = [4, 11, 7, 2, 9, 4];
 var CHROMATIC = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+var CHROMATIC_FLATS = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
 var MOBILE_BREAKPOINT = 540;
 var getLayoutParams = function() {
     return window.innerWidth < MOBILE_BREAKPOINT
@@ -117,6 +119,7 @@ var create_link_from_fretboard = function(){
     href += '#';
     href += "strings=" + uri_diagram_repr(GUITAR_STRINGS);
     href += "&diagram_title=" + encodeURIComponent(document.getElementById('diagram_title').value);
+    href += "&note_names=" + NOTE_NAMES_MODE;
     return href;
 }
 var update_link = function(){
@@ -250,14 +253,43 @@ var clear_fretboard = function(){
     }
 }
 var pick_note = function(position = 4, offset = 0){
-    var scale = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-    return scale[(position + offset) % scale.length];
+    return CHROMATIC[(position + offset) % CHROMATIC.length];
+}
+var format_note_name = function(note){
+    if (NOTE_NAMES_MODE !== 'flats') return note;
+    var noteIndex = CHROMATIC.indexOf(note);
+    return noteIndex >= 0 ? CHROMATIC_FLATS[noteIndex] : note;
+}
+var updateNoteNameToggle = function() {
+    var useFlats = NOTE_NAMES_MODE === 'flats';
+    var sharpBtn = document.getElementById('note-sharps');
+    var flatBtn = document.getElementById('note-flats');
+    if (!sharpBtn || !flatBtn) return;
+    sharpBtn.classList.toggle('active', !useFlats);
+    sharpBtn.setAttribute('aria-pressed', !useFlats ? 'true' : 'false');
+    flatBtn.classList.toggle('active', useFlats);
+    flatBtn.setAttribute('aria-pressed', useFlats ? 'true' : 'false');
+}
+var updateNameGameKeyboardLabels = function() {
+    document.querySelectorAll('.piano-key').forEach(function(btn){
+        btn.textContent = format_note_name(btn.dataset.note);
+    });
+}
+var setNoteNameMode = function(mode) {
+    NOTE_NAMES_MODE = mode === 'flats' ? 'flats' : 'sharps';
+    if (GUITAR_STRINGS) set_notes();
+    updateNameGameKeyboardLabels();
+    if (GAME_RUNNING || CURRENT_MODE === 'find-note') {
+        document.getElementById('target-note').textContent = format_note_name(GAME_TARGET_NOTE);
+    }
+    updateNoteNameToggle();
+    update_link();
 }
 var set_notes = function(){
     var offsets = [4, 11, 7, 2, 9, 4];
     for(var i = 0; i < GUITAR_STRINGS.length; i++){
 	for(var j = 0; j < GUITAR_STRINGS[i].length; j++){
-	    GUITAR_STRINGS[i][j].td.querySelector('.note').innerHTML = pick_note(j, offsets[i]);
+	    GUITAR_STRINGS[i][j].td.querySelector('.note').innerHTML = format_note_name(pick_note(j, offsets[i]));
 	}
     }
 }
@@ -337,7 +369,7 @@ function nextChallenge() {
     GAME_TARGET_NOTE = CHROMATIC[Math.floor(Math.random() * 12)];
     GAME_CHALLENGE_START = Date.now();
     highlightTargetString(GAME_TARGET_STRING);
-    document.getElementById('target-note').textContent = GAME_TARGET_NOTE;
+    document.getElementById('target-note').textContent = format_note_name(GAME_TARGET_NOTE);
 }
 
 function handleGameClick(s, f, cell) {
@@ -381,7 +413,7 @@ function endGame() {
     if (slowest.length) {
         html += '<br><em>Slowest correct answers:</em><ul>';
         slowest.forEach(function(r) {
-            html += '<li>' + r.note + ' on ' + r.stringName + ' string — ' +
+            html += '<li>' + format_note_name(r.note) + ' on ' + r.stringName + ' string — ' +
                 (r.timeMs / 1000).toFixed(1) + 's</li>';
         });
         html += '</ul>';
@@ -390,7 +422,7 @@ function endGame() {
         var sortedMistakes = GAME_MISTAKES.slice().sort(function(a, b) { return b.count - a.count; });
         html += '<br><em>Mistakes:</em><ul>';
         sortedMistakes.forEach(function(m) {
-            html += '<li>' + m.note + ' on ' + m.stringName + ' string' +
+            html += '<li>' + format_note_name(m.note) + ' on ' + m.stringName + ' string' +
                 (m.count > 1 ? ' — ' + m.count + '×' : '') + '</li>';
         });
         html += '</ul>';
@@ -473,13 +505,13 @@ function endNameGame() {
     html += '✓ ' + NAME_CORRECT + ' correct &nbsp; ✗ ' + NAME_WRONG + ' wrong &nbsp; (' + pct + '% accuracy)<br>';
     if (slowest.length) {
         html += '<br><em>Slowest correct answers:</em><ul>';
-        slowest.forEach(function(r) { html += '<li>' + r.note + ' on ' + r.stringName + ' string — ' + (r.timeMs / 1000).toFixed(1) + 's</li>'; });
+        slowest.forEach(function(r) { html += '<li>' + format_note_name(r.note) + ' on ' + r.stringName + ' string — ' + (r.timeMs / 1000).toFixed(1) + 's</li>'; });
         html += '</ul>';
     }
     if (NAME_MISTAKES.length) {
         var sorted = NAME_MISTAKES.slice().sort(function(a, b) { return b.count - a.count; });
         html += '<br><em>Mistakes:</em><ul>';
-        sorted.forEach(function(m) { html += '<li>' + m.note + ' on ' + m.stringName + ' string' + (m.count > 1 ? ' — ' + m.count + '\xd7' : '') + '</li>'; });
+        sorted.forEach(function(m) { html += '<li>' + format_note_name(m.note) + ' on ' + m.stringName + ' string' + (m.count > 1 ? ' — ' + m.count + '\xd7' : '') + '</li>'; });
         html += '</ul>';
     }
     var resultsEl = document.getElementById('name-results');
@@ -489,6 +521,9 @@ function endNameGame() {
 }
 
 var loadFromUrl = function(url_params){
+    if (is_defined(url_params['note_names'])) {
+	setNoteNameMode(url_params['note_names']);
+    }
     if (is_defined(url_params['diagram_title'])){
 	document.getElementById('diagram_title').value = decodeURIComponent(url_params['diagram_title']);
     }
@@ -530,6 +565,8 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('main').insertAdjacentHTML('beforeend', gen_fretboard(NUM_FRETS, 6, fretWidths));
     GUITAR_STRINGS = getFretboardStrings(NUM_FRETS, 6);
     set_notes();
+    updateNameGameKeyboardLabels();
+    updateNoteNameToggle();
 
     var rebuildFretboard = function() {
         var newParams = getLayoutParams();
@@ -597,6 +634,12 @@ document.addEventListener('DOMContentLoaded', function() {
 	    COLOR = this.className.split(' ')[1];
 	    message.innerHTML = '';
 	});
+    });
+    document.getElementById('note-sharps').addEventListener('click', function() {
+	setNoteNameMode('sharps');
+    });
+    document.getElementById('note-flats').addEventListener('click', function() {
+	setNoteNameMode('flats');
     });
 
     // set up eraser and clear buttons:

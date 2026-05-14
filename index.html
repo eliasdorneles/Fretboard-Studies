@@ -135,6 +135,9 @@
 	    #tool-row { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 10px; }
 	    .row-label { font-size: 13px; color: var(--text-color); margin-right: 2px; }
 	    .row-sep { width: 1px; height: 20px; background: var(--tab-border); margin: 0 4px; }
+	    #note-names-toggle { display: inline-flex; border: 1px solid var(--tab-border); border-radius: 3px; overflow: hidden; }
+	    .note-name-btn { border: 0; background: var(--tab-bg); color: var(--tab-text); padding: 4px 8px; font-size: 12px; cursor: pointer; }
+	    .note-name-btn.active { background: var(--game-btn-bg); color: var(--game-btn-text); }
 	    #clear, #eraser { font-weight: bold; padding: 2px 6px; }
 	    #share-controls { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 4px 0 12px; }
 	    #share-controls a.share-btn { border: 1px solid var(--tab-border); border-radius: 3px; padding: 4px 12px; font-size: 13px; color: var(--text-color); text-decoration: none; transition: border-color 0.15s, color 0.15s; }
@@ -325,6 +328,12 @@
 			<input type="button" value="&nbsp;" class="color_button coffee" />
 			<input type="button" value="&nbsp;" class="color_button red" />
 			<input type="button" value="&nbsp;" class="color_button orange" />
+			<span class="row-sep"></span>
+			<span class="row-label">Notes</span>
+			<span id="note-names-toggle">
+				<button id="note-sharps" type="button" class="note-name-btn active" aria-pressed="true">Sharps</button>
+				<button id="note-flats" type="button" class="note-name-btn" aria-pressed="false">Flats</button>
+			</span>
 			<span class="row-sep"></span>
 			<input id="clear" type="button" value="Clear" class="blank" />
 			<input id="eraser" type="button" value="Eraser" class="blank" />
