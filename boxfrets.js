@@ -521,7 +521,7 @@ function endNameGame() {
 }
 
 var loadFromUrl = function(url_params){
-    if (is_defined(url_params['note_names'])) {
+    if (is_defined(url_params['note_names']) && (url_params['note_names'] === 'sharps' || url_params['note_names'] === 'flats')) {
 	setNoteNameMode(url_params['note_names']);
     }
     if (is_defined(url_params['diagram_title'])){
