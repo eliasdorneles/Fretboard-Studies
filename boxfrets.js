@@ -73,8 +73,33 @@ var CHORD_TYPES = [
     { id: 'dim7',  name: 'dim7 / min6',label: 'dim7',  intervals: [0, 3, 9]  },
     { id: 'maj6',  name: 'Major 6',    label: 'Maj6',  intervals: [0, 4, 9]  },
 ];
-var CHORDGAME_MAX_SPAN = 5;          // max fret span when placing chord notes
-var CHORDGAME_MAX_ATTEMPTS = 200;    // retry limit when finding a valid chord voicing
+var CHORDGAME_SHELL_SHAPES = {
+    maj7: [
+        [{ s: 5, d: 0 }, { s: 4, d: -1 }, { s: 3, d: 1 }],
+        [{ s: 4, d: 0 }, { s: 3, d: -1 }, { s: 2, d: 1 }],
+        [{ s: 3, d: 0 }, { s: 2, d: -1 }, { s: 1, d: 2 }],
+    ],
+    min7: [
+        [{ s: 5, d: 0 }, { s: 4, d: -2 }, { s: 3, d: 0 }],
+        [{ s: 4, d: 0 }, { s: 3, d: -2 }, { s: 2, d: 0 }],
+        [{ s: 3, d: 0 }, { s: 2, d: -2 }, { s: 1, d: 1 }],
+    ],
+    dom7: [
+        [{ s: 5, d: 0 }, { s: 4, d: -1 }, { s: 3, d: 0 }],
+        [{ s: 4, d: 0 }, { s: 3, d: -1 }, { s: 2, d: 0 }],
+        [{ s: 3, d: 0 }, { s: 2, d: -1 }, { s: 1, d: 1 }],
+    ],
+    dim7: [
+        [{ s: 5, d: 0 }, { s: 4, d: -2 }, { s: 3, d: -1 }],
+        [{ s: 4, d: 0 }, { s: 3, d: -2 }, { s: 2, d: -1 }],
+        [{ s: 3, d: 0 }, { s: 2, d: -2 }, { s: 1, d: 0 }],
+    ],
+    maj6: [
+        [{ s: 5, d: 0 }, { s: 4, d: -1 }, { s: 3, d: -1 }],
+        [{ s: 4, d: 0 }, { s: 3, d: -1 }, { s: 2, d: -1 }],
+        [{ s: 3, d: 0 }, { s: 2, d: -1 }, { s: 1, d: 0 }],
+    ],
+};
 var INTGAME_MAX_STRING_DISTANCE = 2; // max string span for interval challenges
 var INTGAME_MAX_FRET_DISTANCE = 3;   // max fret span for interval challenges
 var INTGAME_MAX_ATTEMPTS = 100;      // retry limit when picking a valid interval pair
@@ -708,56 +733,20 @@ var updateChordGameKeyboardLabels = function() {
     });
 };
 
-function findFretOnString(stringIdx, targetChrIdx, nearFret, maxSpan) {
-    // Each pitch class appears every 12 frets; checking 2 octaves covers all 24 frets
-    var fBase = ((targetChrIdx - STRING_OFFSETS[stringIdx]) % 12 + 12) % 12;
-    var best = -1;
-    var bestDist = maxSpan + 1;
-    for (var oct = 0; oct <= 1; oct++) {
-        var f = fBase + oct * 12;
-        if (f < NUM_FRETS) {
-            var dist = Math.abs(f - nearFret);
-            if (dist <= maxSpan && dist < bestDist) {
-                bestDist = dist;
-                best = f;
-            }
-        }
-    }
-    return best;
-}
-
 function placeChordOnFretboard(chordIdx) {
     var chord = CHORD_TYPES[chordIdx];
-    var numStrings = GUITAR_STRINGS.length;
-    for (var attempt = 0; attempt < CHORDGAME_MAX_ATTEMPTS; attempt++) {
-        var rootS = Math.floor(Math.random() * numStrings);
-        var rootF = Math.floor(Math.random() * NUM_FRETS);
-        var rootChrIdx = CHROMATIC.indexOf(getNoteName(rootS, rootF));
-        var cells = [{s: rootS, f: rootF}];
-        var usedStrings = [rootS];
-        var valid = true;
-        for (var i = 1; i < chord.intervals.length; i++) {
-            var targetChrIdx = (rootChrIdx + chord.intervals[i]) % 12;
-            var strOrder = [];
-            for (var s = 0; s < numStrings; s++) {
-                if (usedStrings.indexOf(s) < 0) strOrder.push(s);
-            }
-            strOrder.sort(function(a, b) { return Math.abs(a - rootS) - Math.abs(b - rootS); });
-            var placed = false;
-            for (var j = 0; j < strOrder.length; j++) {
-                var sf = strOrder[j];
-                var f = findFretOnString(sf, targetChrIdx, rootF, CHORDGAME_MAX_SPAN);
-                if (f >= 0) {
-                    cells.push({s: sf, f: f});
-                    usedStrings.push(sf);
-                    placed = true;
-                    break;
-                }
-            }
-            if (!placed) { valid = false; break; }
-        }
-        // Ensure the root is on the lowest-pitched string (highest string index)
-        if (valid && cells.every(function(c) { return c.s <= rootS; })) return cells;
+    var shapes = CHORDGAME_SHELL_SHAPES[chord.id] || [];
+    if (!shapes.length) return null;
+    var start = Math.floor(Math.random() * shapes.length);
+    for (var i = 0; i < shapes.length; i++) {
+        var shape = shapes[(start + i) % shapes.length];
+        var minDelta = Math.min.apply(null, shape.map(function(n) { return n.d; }));
+        var maxDelta = Math.max.apply(null, shape.map(function(n) { return n.d; }));
+        var minRootFret = -minDelta;
+        var maxRootFret = NUM_FRETS - 1 - maxDelta;
+        if (maxRootFret < minRootFret) continue;
+        var rootFret = minRootFret + Math.floor(Math.random() * (maxRootFret - minRootFret + 1));
+        return shape.map(function(n) { return { s: n.s, f: rootFret + n.d }; });
     }
     return null;
 }
