@@ -53,6 +53,9 @@ var STRING_OFFSETS = [4, 11, 7, 2, 9, 4];
 var CUMULATIVE_PITCHES = [24, 19, 15, 10, 5, 0]; // semitones above low E open (string 0=high E … string 5=low E)
 var INTERVAL_NAMES = ['P1', 'm2', 'M2', 'm3', 'M3', 'P4', 'TT', 'P5', 'm6', 'M6', 'm7', 'M7', 'P8'];
 var INTERVAL_FULL_NAMES = ['Unison', 'Minor 2nd', 'Major 2nd', 'Minor 3rd', 'Major 3rd', 'Perfect 4th', 'Tritone', 'Perfect 5th', 'Minor 6th', 'Major 6th', 'Minor 7th', 'Major 7th', 'Octave'];
+var INTGAME_MAX_STRING_DISTANCE = 2; // max string span for interval challenges
+var INTGAME_MAX_FRET_DISTANCE = 3;   // max fret span for interval challenges
+var INTGAME_MAX_ATTEMPTS = 100;      // retry limit when picking a valid interval pair
 var CHROMATIC = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 var CHROMATIC_FLATS = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
 var MOBILE_BREAKPOINT = 540;
@@ -585,15 +588,16 @@ function stopIntervalGame() {
 
 function nextIntervalChallenge() {
     var s1, f1, s2, f2, interval;
+    var numStrings = GUITAR_STRINGS.length;
     var maxFret = NUM_FRETS - 1;
-    for (var attempt = 0; attempt < 100; attempt++) {
-        s1 = Math.floor(Math.random() * 6);
+    for (var attempt = 0; attempt < INTGAME_MAX_ATTEMPTS; attempt++) {
+        s1 = Math.floor(Math.random() * numStrings);
         f1 = Math.floor(Math.random() * (maxFret + 1));
-        var minS = Math.max(0, s1 - 2);
-        var maxS = Math.min(5, s1 + 2);
+        var minS = Math.max(0, s1 - INTGAME_MAX_STRING_DISTANCE);
+        var maxS = Math.min(numStrings - 1, s1 + INTGAME_MAX_STRING_DISTANCE);
         s2 = minS + Math.floor(Math.random() * (maxS - minS + 1));
-        var minF = Math.max(0, f1 - 3);
-        var maxF = Math.min(maxFret, f1 + 3);
+        var minF = Math.max(0, f1 - INTGAME_MAX_FRET_DISTANCE);
+        var maxF = Math.min(maxFret, f1 + INTGAME_MAX_FRET_DISTANCE);
         f2 = minF + Math.floor(Math.random() * (maxF - minF + 1));
         if (s2 === s1 && f2 === f1) continue;
         interval = Math.abs(getAbsolutePitch(s2, f2) - getAbsolutePitch(s1, f1));
