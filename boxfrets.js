@@ -40,7 +40,7 @@ var CHROMATIC = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'
 var MOBILE_BREAKPOINT = 540;
 var getLayoutParams = function() {
     return window.innerWidth < MOBILE_BREAKPOINT
-        ? { numFrets: 14, cellHeight: 34 }
+        ? { numFrets: 13, cellHeight: 34 }
         : { numFrets: 22, cellHeight: 34 };
 };
 var CELL_HEIGHT = 34;
@@ -431,7 +431,7 @@ function stopNameGame() {
 
 function nextNameChallenge() {
     NAME_TARGET_STRING = Math.floor(Math.random() * 6);
-    NAME_TARGET_FRET = Math.floor(Math.random() * 22);
+    NAME_TARGET_FRET = Math.floor(Math.random() * NUM_FRETS);
     NAME_TARGET_NOTE = getNoteName(NAME_TARGET_STRING, NAME_TARGET_FRET);
     NAME_CHALLENGE_START = Date.now();
     highlightTargetCell(NAME_TARGET_STRING, NAME_TARGET_FRET);
@@ -512,10 +512,14 @@ var computeFretWidths = function() {
     var numActualFrets = NUM_FRETS - 1;
     var sumRatios = (1 - Math.pow(ratio, numActualFrets)) / (1 - ratio);
     var lastFretRatio = Math.pow(ratio, numActualFrets - 1);
-    var firstWidth = (window.innerWidth - 22) / (sumRatios + lastFretRatio);
+    var totalWidth = document.documentElement.clientWidth - 22;
+    var firstWidth = totalWidth / (sumRatios + lastFretRatio);
     var openStringWidth = Math.round(firstWidth * lastFretRatio);
     var fretWidths = calculateFretWidths(numActualFrets, firstWidth);
-    return [openStringWidth].concat(fretWidths);
+    var allWidths = [openStringWidth].concat(fretWidths);
+    var roundingError = allWidths.reduce(function(a, b) { return a + b; }, 0) - totalWidth;
+    allWidths[allWidths.length - 1] -= roundingError;
+    return allWidths;
 };
 var updateFretboardWidth = function() {
     var cols = computeFretWidths().map(function(w) { return w + 'px'; }).join(' ');
