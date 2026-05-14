@@ -756,7 +756,8 @@ function placeChordOnFretboard(chordIdx) {
             }
             if (!placed) { valid = false; break; }
         }
-        if (valid) return cells;
+        // Ensure the root is on the lowest-pitched string (highest string index)
+        if (valid && cells.every(function(c) { return c.s <= rootS; })) return cells;
     }
     return null;
 }
