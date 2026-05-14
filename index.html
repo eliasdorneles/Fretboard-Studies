@@ -236,6 +236,31 @@
 	    #name-results ul { margin: 4px 0 0 0; list-style: none; }
 	    #name-results li { color: var(--game-results-li); }
 
+	    /* Name the Interval panel */
+	    #interval-game-panel { padding: 24px 24px 32px; text-align: center; }
+	    #interval-challenge { text-align: center; margin-bottom: 20px; }
+	    #interval-status { display: flex; align-items: baseline; justify-content: center; gap: 24px; margin-bottom: 16px; }
+	    #interval-timer { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 48px; font-weight: 700; color: var(--game-timer-color); transition: color 0.3s; }
+	    #interval-timer.urgent { color: #e05030; }
+	    #interval-score { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 20px; color: var(--game-score-color); }
+	    #interval-start-btn { background: var(--game-btn-bg); color: var(--game-btn-text); border: none; border-radius: 3px; cursor: pointer; padding: 10px 28px; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+	    #interval-start-btn:hover { background: var(--game-btn-hover); }
+	    #interval-results { margin-top: 20px; padding: 20px 24px; background: var(--game-results-bg); border: 1px solid var(--game-results-border); border-radius: 4px; font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 14px; color: var(--game-results-text); line-height: 1.8; }
+	    #interval-results strong { color: var(--game-results-strong); }
+	    #interval-results em { color: var(--game-results-em); font-style: normal; letter-spacing: 0.05em; }
+	    #interval-results ul { margin: 4px 0 0 0; list-style: none; }
+	    #interval-results li { color: var(--game-results-li); }
+
+	    /* Interval buttons */
+	    #interval-keyboard { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 16px auto 20px; max-width: 420px; }
+	    .interval-btn { width: 58px; height: 48px; background: var(--piano-white-bg); border: 1px solid var(--piano-white-border); border-radius: 4px; color: var(--piano-white-text); font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 12px; font-weight: 700; cursor: pointer; transition: background 0.08s; }
+	    .interval-btn:hover { background: var(--piano-white-hover); }
+	    .interval-btn.correct-flash { background: var(--piano-correct-bg) !important; }
+	    .interval-btn.wrong-flash { background: var(--piano-wrong-bg) !important; }
+
+	    /* Two-cell interval highlight */
+	    .interval-cell::after { content: ''; position: absolute; inset: 2px; border: 2px solid var(--game-note-color); border-radius: 4px; pointer-events: none; z-index: 3; box-shadow: 0 0 8px var(--game-note-color); animation: pulse-cell 1s ease-in-out infinite; }
+
 	    /* Piano keyboard */
 	    #note-keyboard { position: relative; display: flex; margin: 16px auto 20px; width: 322px; user-select: none; }
 	    .white-key { width: 46px; height: 130px; background: var(--piano-white-bg); border: 1px solid var(--piano-white-border); border-radius: 0 0 4px 4px; color: var(--piano-white-text); font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 11px; font-weight: 700; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; cursor: pointer; box-sizing: border-box; position: relative; z-index: 1; transition: background 0.08s; }
@@ -259,13 +284,14 @@
 	        #note-keyboard { transform: scale(0.88); transform-origin: center top; margin-bottom: -20px; }
 	        #diagram_title { font-size: 20px; margin: 10px; }
 	        #target-note { font-size: 60px; }
-	        #game-timer, #name-timer { font-size: 34px; }
-	        #game-score, #name-score { font-size: 16px; }
-	        #game-panel, #name-note-panel { padding: 12px 16px 16px; }
-	        #game-challenge, #name-challenge { margin-bottom: 10px; }
-	        #game-status, #name-status { gap: 14px; margin-bottom: 10px; }
+	        #game-timer, #name-timer, #interval-timer { font-size: 34px; }
+	        #game-score, #name-score, #interval-score { font-size: 16px; }
+	        #game-panel, #name-note-panel, #interval-game-panel { padding: 12px 16px 16px; }
+	        #game-challenge, #name-challenge, #interval-challenge { margin-bottom: 10px; }
+	        #game-status, #name-status, #interval-status { gap: 14px; margin-bottom: 10px; }
 	        .game-sublabel { font-size: 14px; }
 	        .game-label { font-size: 10px; }
+	        .interval-btn { width: 48px; height: 42px; font-size: 11px; }
 	    }
 	</style>
     </head>
@@ -273,7 +299,8 @@
 	<nav id="mode-tabs">
 	  <button class="mode-tab active" data-mode="diagram">Diagram</button>
 	  <button class="mode-tab" data-mode="find-note">Find the Note</button>
-  <button class="mode-tab" data-mode="name-note">Name the Note</button>
+          <button class="mode-tab" data-mode="name-note">Name the Note</button>
+          <button class="mode-tab" data-mode="interval-game">Name the Interval</button>
 	  <button id="theme-toggle" title="Toggle dark/light theme">&#9790;</button>
 	</nav>
 	<input id="diagram_title" type="text" value="Click to add a title..." />
@@ -315,6 +342,32 @@
 	  </div>
 	  <button id="name-start-btn">Start</button>
 	  <div id="name-results" style="display:none"></div>
+	</div>
+	<div id="interval-game-panel" style="display:none">
+	  <div id="interval-challenge">
+	    <div class="game-label">what is the interval between these two notes?</div>
+	    <div class="game-sublabel" id="interval-sublabel"></div>
+	  </div>
+	  <div id="interval-status">
+	    <span id="interval-timer">1:00</span>
+	    <span id="interval-score">&#x2713; 0 &nbsp; &#x2717; 0</span>
+	  </div>
+	  <div id="interval-keyboard">
+	    <button class="interval-btn" data-semitones="1" title="Minor 2nd">m2</button>
+	    <button class="interval-btn" data-semitones="2" title="Major 2nd">M2</button>
+	    <button class="interval-btn" data-semitones="3" title="Minor 3rd">m3</button>
+	    <button class="interval-btn" data-semitones="4" title="Major 3rd">M3</button>
+	    <button class="interval-btn" data-semitones="5" title="Perfect 4th">P4</button>
+	    <button class="interval-btn" data-semitones="6" title="Tritone">TT</button>
+	    <button class="interval-btn" data-semitones="7" title="Perfect 5th">P5</button>
+	    <button class="interval-btn" data-semitones="8" title="Minor 6th">m6</button>
+	    <button class="interval-btn" data-semitones="9" title="Major 6th">M6</button>
+	    <button class="interval-btn" data-semitones="10" title="Minor 7th">m7</button>
+	    <button class="interval-btn" data-semitones="11" title="Major 7th">M7</button>
+	    <button class="interval-btn" data-semitones="12" title="Octave">P8</button>
+	  </div>
+	  <button id="interval-start-btn">Start</button>
+	  <div id="interval-results" style="display:none"></div>
 	</div>
 	<div id="main">
 		<div id="message">&nbsp;</div>

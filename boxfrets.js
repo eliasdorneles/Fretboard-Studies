@@ -25,6 +25,19 @@ var NAME_CORRECT = 0;
 var NAME_WRONG = 0;
 var NAME_COMPLETED = [];
 var NAME_MISTAKES = [];
+var INTGAME_RUNNING = false;
+var INTGAME_ROOT_STRING = -1;
+var INTGAME_ROOT_FRET = -1;
+var INTGAME_TARGET_STRING = -1;
+var INTGAME_TARGET_FRET = -1;
+var INTGAME_INTERVAL = -1;
+var INTGAME_CHALLENGE_START = 0;
+var INTGAME_TIMER_ID = null;
+var INTGAME_SECONDS_LEFT = 60;
+var INTGAME_CORRECT = 0;
+var INTGAME_WRONG = 0;
+var INTGAME_COMPLETED = [];
+var INTGAME_MISTAKES = [];
 var NOTE_NAMES_MODE = 'sharps';
 var calculateFretWidths = function(numFrets, firstWidth) {
     var ratio = Math.pow(2, -1/12);
@@ -37,6 +50,9 @@ var DOUBLE_DOT_FRETS = [12];
 var STRING_THICKNESSES = [1, 1.2, 1.5, 1.7, 2, 2.3]; // high E → low E
 var STRING_NAMES = ['high E', 'B', 'G', 'D', 'A', 'low E'];
 var STRING_OFFSETS = [4, 11, 7, 2, 9, 4];
+var CUMULATIVE_PITCHES = [24, 19, 15, 10, 5, 0]; // semitones above low E open (string 0=high E … string 5=low E)
+var INTERVAL_NAMES = ['P1', 'm2', 'M2', 'm3', 'M3', 'P4', 'TT', 'P5', 'm6', 'M6', 'm7', 'M7', 'P8'];
+var INTERVAL_FULL_NAMES = ['Unison', 'Minor 2nd', 'Major 2nd', 'Minor 3rd', 'Major 3rd', 'Perfect 4th', 'Tritone', 'Perfect 5th', 'Minor 6th', 'Major 6th', 'Minor 7th', 'Major 7th', 'Octave'];
 var CHROMATIC = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 var CHROMATIC_FLATS = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
 var MOBILE_BREAKPOINT = 540;
@@ -298,6 +314,10 @@ function getNoteName(s, f) {
     return pick_note(f, STRING_OFFSETS[s]);
 }
 
+function getAbsolutePitch(s, f) {
+    return CUMULATIVE_PITCHES[s] + f;
+}
+
 function highlightTargetString(stringIdx) {
     for (var s = 0; s < GUITAR_STRINGS.length; s++) {
         for (var f = 0; f < GUITAR_STRINGS[s].length; f++) {
@@ -315,21 +335,32 @@ function highlightTargetCell(s, f) {
     }
 }
 
+function highlightIntervalCells(s1, f1, s2, f2) {
+    document.querySelectorAll('.interval-cell').forEach(function(el) {
+        el.classList.remove('interval-cell');
+    });
+    if (s1 >= 0 && f1 >= 0) GUITAR_STRINGS[s1][f1].td.classList.add('interval-cell');
+    if (s2 >= 0 && f2 >= 0) GUITAR_STRINGS[s2][f2].td.classList.add('interval-cell');
+}
+
 function switchMode(mode) {
     CURRENT_MODE = mode;
     var isDiagram = mode === 'diagram';
     var isFindNote = mode === 'find-note';
     var isNameNote = mode === 'name-note';
+    var isIntervalGame = mode === 'interval-game';
     document.getElementById('diagram_title').style.display = isDiagram ? '' : 'none';
     document.getElementById('form_controls').style.display = isDiagram ? '' : 'none';
     document.getElementById('game-panel').style.display = isFindNote ? '' : 'none';
     document.getElementById('name-note-panel').style.display = isNameNote ? '' : 'none';
+    document.getElementById('interval-game-panel').style.display = isIntervalGame ? '' : 'none';
     document.body.classList.toggle('game-mode', !isDiagram);
     document.querySelectorAll('.mode-tab').forEach(function(btn) {
         btn.classList.toggle('active', btn.dataset.mode === mode);
     });
     if (!isFindNote) stopGame();
     if (!isNameNote) stopNameGame();
+    if (!isIntervalGame) stopIntervalGame();
     if (!isDiagram) clear_fretboard();
 }
 
@@ -520,6 +551,116 @@ function endNameGame() {
     document.getElementById('name-start-btn').textContent = 'Play Again';
 }
 
+function startIntervalGame() {
+    INTGAME_RUNNING = true;
+    INTGAME_CORRECT = 0;
+    INTGAME_WRONG = 0;
+    INTGAME_COMPLETED = [];
+    INTGAME_MISTAKES = [];
+    INTGAME_SECONDS_LEFT = 60;
+    document.getElementById('interval-results').style.display = 'none';
+    document.getElementById('interval-start-btn').textContent = 'Stop';
+    updateIntervalScore();
+    nextIntervalChallenge();
+    INTGAME_TIMER_ID = setInterval(function() {
+        INTGAME_SECONDS_LEFT--;
+        var m = Math.floor(INTGAME_SECONDS_LEFT / 60);
+        var s = INTGAME_SECONDS_LEFT % 60;
+        var timerEl = document.getElementById('interval-timer');
+        timerEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+        timerEl.classList.toggle('urgent', INTGAME_SECONDS_LEFT <= 10);
+        if (INTGAME_SECONDS_LEFT <= 0) endIntervalGame();
+    }, 1000);
+}
+
+function stopIntervalGame() {
+    if (INTGAME_TIMER_ID) { clearInterval(INTGAME_TIMER_ID); INTGAME_TIMER_ID = null; }
+    INTGAME_RUNNING = false;
+    highlightIntervalCells(-1, -1, -1, -1);
+    document.getElementById('interval-timer').classList.remove('urgent');
+    document.getElementById('interval-timer').textContent = '1:00';
+    document.getElementById('interval-start-btn').textContent = 'Start';
+    document.getElementById('interval-sublabel').textContent = '';
+}
+
+function nextIntervalChallenge() {
+    var s1, f1, s2, f2, interval;
+    var maxFret = NUM_FRETS - 1;
+    for (var attempt = 0; attempt < 100; attempt++) {
+        s1 = Math.floor(Math.random() * 6);
+        f1 = Math.floor(Math.random() * (maxFret + 1));
+        var minS = Math.max(0, s1 - 2);
+        var maxS = Math.min(5, s1 + 2);
+        s2 = minS + Math.floor(Math.random() * (maxS - minS + 1));
+        var minF = Math.max(0, f1 - 3);
+        var maxF = Math.min(maxFret, f1 + 3);
+        f2 = minF + Math.floor(Math.random() * (maxF - minF + 1));
+        if (s2 === s1 && f2 === f1) continue;
+        interval = Math.abs(getAbsolutePitch(s2, f2) - getAbsolutePitch(s1, f1));
+        if (interval === 0 || interval > 12) continue;
+        break;
+    }
+    INTGAME_ROOT_STRING = s1;
+    INTGAME_ROOT_FRET = f1;
+    INTGAME_TARGET_STRING = s2;
+    INTGAME_TARGET_FRET = f2;
+    INTGAME_INTERVAL = interval;
+    INTGAME_CHALLENGE_START = Date.now();
+    highlightIntervalCells(s1, f1, s2, f2);
+    document.getElementById('interval-sublabel').textContent =
+        STRING_NAMES[s1] + (f1 === 0 ? ' open' : ' fret ' + f1) +
+        ' and ' + STRING_NAMES[s2] + (f2 === 0 ? ' open' : ' fret ' + f2);
+}
+
+function handleIntervalBtnClick(semitones) {
+    if (!INTGAME_RUNNING) return;
+    var btn = document.querySelector('.interval-btn[data-semitones="' + semitones + '"]');
+    if (semitones === INTGAME_INTERVAL) {
+        var elapsed = Date.now() - INTGAME_CHALLENGE_START;
+        INTGAME_CORRECT++;
+        INTGAME_COMPLETED.push({ interval: INTGAME_INTERVAL, intervalName: INTERVAL_NAMES[INTGAME_INTERVAL], timeMs: elapsed });
+        if (btn) { btn.classList.add('correct-flash'); setTimeout(function() { btn.classList.remove('correct-flash'); }, 300); }
+        setTimeout(nextIntervalChallenge, 300);
+    } else {
+        INTGAME_WRONG++;
+        var key = 'interval-' + INTGAME_INTERVAL;
+        var existing = INTGAME_MISTAKES.find(function(m) { return m.key === key; });
+        if (existing) { existing.count++; }
+        else { INTGAME_MISTAKES.push({ key: key, interval: INTGAME_INTERVAL, intervalName: INTERVAL_NAMES[INTGAME_INTERVAL], count: 1 }); }
+        if (btn) { btn.classList.add('wrong-flash'); setTimeout(function() { btn.classList.remove('wrong-flash'); }, 300); }
+    }
+    updateIntervalScore();
+}
+
+function updateIntervalScore() {
+    document.getElementById('interval-score').textContent = '✓ ' + INTGAME_CORRECT + '   ✗ ' + INTGAME_WRONG;
+}
+
+function endIntervalGame() {
+    stopIntervalGame();
+    document.getElementById('interval-timer').textContent = '0:00';
+    var total = INTGAME_CORRECT + INTGAME_WRONG;
+    var pct = total > 0 ? Math.round(100 * INTGAME_CORRECT / total) : 0;
+    var slowest = INTGAME_COMPLETED.slice().sort(function(a, b) { return b.timeMs - a.timeMs; }).slice(0, 3);
+    var html = '<strong>Game Over!</strong><br>';
+    html += '✓ ' + INTGAME_CORRECT + ' correct &nbsp; ✗ ' + INTGAME_WRONG + ' wrong &nbsp; (' + pct + '% accuracy)<br>';
+    if (slowest.length) {
+        html += '<br><em>Slowest correct answers:</em><ul>';
+        slowest.forEach(function(r) { html += '<li>' + r.intervalName + ' — ' + (r.timeMs / 1000).toFixed(1) + 's</li>'; });
+        html += '</ul>';
+    }
+    if (INTGAME_MISTAKES.length) {
+        var sorted = INTGAME_MISTAKES.slice().sort(function(a, b) { return b.count - a.count; });
+        html += '<br><em>Mistakes:</em><ul>';
+        sorted.forEach(function(m) { html += '<li>' + m.intervalName + (m.count > 1 ? ' — ' + m.count + '\xd7' : '') + '</li>'; });
+        html += '</ul>';
+    }
+    var resultsEl = document.getElementById('interval-results');
+    resultsEl.innerHTML = html;
+    resultsEl.style.display = '';
+    document.getElementById('interval-start-btn').textContent = 'Play Again';
+}
+
 var loadFromUrl = function(url_params){
     if (is_defined(url_params['note_names']) && (url_params['note_names'] === 'sharps' || url_params['note_names'] === 'flats')) {
 	setNoteNameMode(url_params['note_names']);
@@ -616,6 +757,13 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('name-start-btn').addEventListener('click', function() {
         if (NAME_RUNNING) stopNameGame();
         else startNameGame();
+    });
+    document.getElementById('interval-start-btn').addEventListener('click', function() {
+        if (INTGAME_RUNNING) stopIntervalGame();
+        else startIntervalGame();
+    });
+    document.querySelectorAll('.interval-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() { handleIntervalBtnClick(parseInt(this.dataset.semitones, 10)); });
     });
 
     loadFromUrl(get_url_parameters());
