@@ -38,6 +38,19 @@ var INTGAME_CORRECT = 0;
 var INTGAME_WRONG = 0;
 var INTGAME_COMPLETED = [];
 var INTGAME_MISTAKES = [];
+var CHORDGAME_RUNNING = false;
+var CHORDGAME_ROOT_STRING = -1;
+var CHORDGAME_ROOT_FRET = -1;
+var CHORDGAME_CHORD_IDX = -1;
+var CHORDGAME_NOTE_CELLS = [];
+var CHORDGAME_STEP = 'root';
+var CHORDGAME_CHALLENGE_START = 0;
+var CHORDGAME_TIMER_ID = null;
+var CHORDGAME_SECONDS_LEFT = 60;
+var CHORDGAME_CORRECT = 0;
+var CHORDGAME_WRONG = 0;
+var CHORDGAME_COMPLETED = [];
+var CHORDGAME_MISTAKES = [];
 var NOTE_NAMES_MODE = 'sharps';
 var calculateFretWidths = function(numFrets, firstWidth) {
     var ratio = Math.pow(2, -1/12);
@@ -53,6 +66,14 @@ var STRING_OFFSETS = [4, 11, 7, 2, 9, 4];
 var CUMULATIVE_PITCHES = [24, 19, 15, 10, 5, 0]; // semitones above low E open (string 0=high E … string 5=low E)
 var INTERVAL_NAMES = ['P1', 'm2', 'M2', 'm3', 'M3', 'P4', 'TT', 'P5', 'm6', 'M6', 'm7', 'M7', 'P8'];
 var INTERVAL_FULL_NAMES = ['Unison', 'Minor 2nd', 'Major 2nd', 'Minor 3rd', 'Major 3rd', 'Perfect 4th', 'Tritone', 'Perfect 5th', 'Minor 6th', 'Major 6th', 'Minor 7th', 'Major 7th', 'Octave'];
+var CHORD_TYPES = [
+    { id: 'maj7',  name: 'Major 7',    label: 'Maj7',  intervals: [0, 4, 11] },
+    { id: 'min7',  name: 'Minor 7',    label: 'min7',  intervals: [0, 3, 10] },
+    { id: 'dom7',  name: 'Dominant 7', label: 'Dom7',  intervals: [0, 4, 10] },
+    { id: 'dim7',  name: 'dim7 / min6',label: 'dim7',  intervals: [0, 3, 9]  },
+    { id: 'maj6',  name: 'Major 6',    label: 'Maj6',  intervals: [0, 4, 9]  },
+];
+var CHORDGAME_MAX_SPAN = 5;          // max fret span when placing chord notes
 var INTGAME_MAX_STRING_DISTANCE = 2; // max string span for interval challenges
 var INTGAME_MAX_FRET_DISTANCE = 3;   // max fret span for interval challenges
 var INTGAME_MAX_ATTEMPTS = 100;      // retry limit when picking a valid interval pair
@@ -298,6 +319,7 @@ var setNoteNameMode = function(mode) {
     NOTE_NAMES_MODE = mode === 'flats' ? 'flats' : 'sharps';
     if (GUITAR_STRINGS) set_notes();
     updateNameGameKeyboardLabels();
+    updateChordGameKeyboardLabels();
     if (GAME_RUNNING || CURRENT_MODE === 'find-note') {
         document.getElementById('target-note').textContent = format_note_name(GAME_TARGET_NOTE);
     }
@@ -346,17 +368,30 @@ function highlightIntervalCells(s1, f1, s2, f2) {
     if (s2 >= 0 && f2 >= 0) GUITAR_STRINGS[s2][f2].td.classList.add('interval-cell');
 }
 
+function highlightChordCells(cells) {
+    document.querySelectorAll('.chord-cell').forEach(function(el) {
+        el.classList.remove('chord-cell');
+    });
+    if (cells) {
+        cells.forEach(function(cell) {
+            GUITAR_STRINGS[cell.s][cell.f].td.classList.add('chord-cell');
+        });
+    }
+}
+
 function switchMode(mode) {
     CURRENT_MODE = mode;
     var isDiagram = mode === 'diagram';
     var isFindNote = mode === 'find-note';
     var isNameNote = mode === 'name-note';
     var isIntervalGame = mode === 'interval-game';
+    var isChordGame = mode === 'chord-game';
     document.getElementById('diagram_title').style.display = isDiagram ? '' : 'none';
     document.getElementById('form_controls').style.display = isDiagram ? '' : 'none';
     document.getElementById('game-panel').style.display = isFindNote ? '' : 'none';
     document.getElementById('name-note-panel').style.display = isNameNote ? '' : 'none';
     document.getElementById('interval-game-panel').style.display = isIntervalGame ? '' : 'none';
+    document.getElementById('chord-game-panel').style.display = isChordGame ? '' : 'none';
     document.body.classList.toggle('game-mode', !isDiagram);
     document.querySelectorAll('.mode-tab').forEach(function(btn) {
         btn.classList.toggle('active', btn.dataset.mode === mode);
@@ -364,6 +399,7 @@ function switchMode(mode) {
     if (!isFindNote) stopGame();
     if (!isNameNote) stopNameGame();
     if (!isIntervalGame) stopIntervalGame();
+    if (!isChordGame) stopChordGame();
     if (!isDiagram) clear_fretboard();
 }
 
@@ -665,6 +701,202 @@ function endIntervalGame() {
     document.getElementById('interval-start-btn').textContent = 'Play Again';
 }
 
+var updateChordGameKeyboardLabels = function() {
+    document.querySelectorAll('.chord-piano-key').forEach(function(btn) {
+        btn.textContent = format_note_name(btn.dataset.note);
+    });
+};
+
+function findFretOnString(stringIdx, targetChrIdx, nearFret, maxSpan) {
+    var fBase = ((targetChrIdx - STRING_OFFSETS[stringIdx]) % 12 + 12) % 12;
+    var best = -1;
+    var bestDist = maxSpan + 1;
+    for (var oct = 0; oct <= 1; oct++) {
+        var f = fBase + oct * 12;
+        if (f < NUM_FRETS) {
+            var dist = Math.abs(f - nearFret);
+            if (dist <= maxSpan && dist < bestDist) {
+                bestDist = dist;
+                best = f;
+            }
+        }
+    }
+    return best;
+}
+
+function placeChordOnFretboard(chordIdx) {
+    var chord = CHORD_TYPES[chordIdx];
+    var numStrings = GUITAR_STRINGS.length;
+    for (var attempt = 0; attempt < 200; attempt++) {
+        var rootS = Math.floor(Math.random() * numStrings);
+        var rootF = Math.floor(Math.random() * NUM_FRETS);
+        var rootChrIdx = CHROMATIC.indexOf(getNoteName(rootS, rootF));
+        var cells = [{s: rootS, f: rootF}];
+        var usedStrings = [rootS];
+        var valid = true;
+        for (var i = 1; i < chord.intervals.length; i++) {
+            var targetChrIdx = (rootChrIdx + chord.intervals[i]) % 12;
+            var strOrder = [];
+            for (var s = 0; s < numStrings; s++) {
+                if (usedStrings.indexOf(s) < 0) strOrder.push(s);
+            }
+            strOrder.sort(function(a, b) { return Math.abs(a - rootS) - Math.abs(b - rootS); });
+            var placed = false;
+            for (var j = 0; j < strOrder.length; j++) {
+                var sf = strOrder[j];
+                var f = findFretOnString(sf, targetChrIdx, rootF, CHORDGAME_MAX_SPAN);
+                if (f >= 0) {
+                    cells.push({s: sf, f: f});
+                    usedStrings.push(sf);
+                    placed = true;
+                    break;
+                }
+            }
+            if (!placed) { valid = false; break; }
+        }
+        if (valid) return cells;
+    }
+    return null;
+}
+
+function setChordTypeButtonsEnabled(enabled) {
+    document.querySelectorAll('.chord-btn').forEach(function(btn) {
+        btn.disabled = !enabled;
+    });
+}
+
+function startChordGame() {
+    CHORDGAME_RUNNING = true;
+    CHORDGAME_CORRECT = 0;
+    CHORDGAME_WRONG = 0;
+    CHORDGAME_COMPLETED = [];
+    CHORDGAME_MISTAKES = [];
+    CHORDGAME_SECONDS_LEFT = 60;
+    document.getElementById('chord-results').style.display = 'none';
+    document.getElementById('chord-start-btn').textContent = 'Stop';
+    updateChordScore();
+    nextChordChallenge();
+    CHORDGAME_TIMER_ID = setInterval(function() {
+        CHORDGAME_SECONDS_LEFT--;
+        var m = Math.floor(CHORDGAME_SECONDS_LEFT / 60);
+        var s = CHORDGAME_SECONDS_LEFT % 60;
+        var timerEl = document.getElementById('chord-timer');
+        timerEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+        timerEl.classList.toggle('urgent', CHORDGAME_SECONDS_LEFT <= 10);
+        if (CHORDGAME_SECONDS_LEFT <= 0) endChordGame();
+    }, 1000);
+}
+
+function stopChordGame() {
+    if (CHORDGAME_TIMER_ID) { clearInterval(CHORDGAME_TIMER_ID); CHORDGAME_TIMER_ID = null; }
+    CHORDGAME_RUNNING = false;
+    highlightChordCells(null);
+    document.getElementById('chord-timer').classList.remove('urgent');
+    document.getElementById('chord-timer').textContent = '1:00';
+    document.getElementById('chord-start-btn').textContent = 'Start';
+    document.getElementById('chord-sublabel').textContent = 'identify the root note, then the chord type';
+    document.getElementById('chord-root-confirmed').style.visibility = 'hidden';
+    document.getElementById('chord-root-confirmed').textContent = '';
+    setChordTypeButtonsEnabled(false);
+}
+
+function nextChordChallenge() {
+    var chordIdx = Math.floor(Math.random() * CHORD_TYPES.length);
+    var cells = placeChordOnFretboard(chordIdx);
+    if (!cells) {
+        for (var t = 0; t < CHORD_TYPES.length; t++) {
+            cells = placeChordOnFretboard(t);
+            if (cells) { chordIdx = t; break; }
+        }
+    }
+    CHORDGAME_CHORD_IDX = chordIdx;
+    CHORDGAME_NOTE_CELLS = cells;
+    CHORDGAME_ROOT_STRING = cells[0].s;
+    CHORDGAME_ROOT_FRET = cells[0].f;
+    CHORDGAME_STEP = 'root';
+    CHORDGAME_CHALLENGE_START = Date.now();
+    highlightChordCells(cells);
+    document.getElementById('chord-sublabel').textContent = 'step 1: identify the root note';
+    document.getElementById('chord-root-confirmed').style.visibility = 'hidden';
+    document.getElementById('chord-root-confirmed').textContent = '';
+    setChordTypeButtonsEnabled(false);
+}
+
+function handleChordRootClick(note) {
+    if (!CHORDGAME_RUNNING || CHORDGAME_STEP !== 'root') return;
+    var btn = document.querySelector('.chord-piano-key[data-note="' + note + '"]');
+    var targetNote = getNoteName(CHORDGAME_ROOT_STRING, CHORDGAME_ROOT_FRET);
+    if (note === targetNote) {
+        if (btn) { btn.classList.add('correct-flash'); setTimeout(function() { btn.classList.remove('correct-flash'); }, 300); }
+        CHORDGAME_STEP = 'type';
+        var confirmedEl = document.getElementById('chord-root-confirmed');
+        confirmedEl.textContent = 'Root: ' + format_note_name(targetNote) + ' \u2713';
+        confirmedEl.style.visibility = 'visible';
+        document.getElementById('chord-sublabel').textContent = 'step 2: choose the chord type';
+        setChordTypeButtonsEnabled(true);
+    } else {
+        CHORDGAME_WRONG++;
+        var key = getNoteName(CHORDGAME_ROOT_STRING, CHORDGAME_ROOT_FRET) + '-root|' + CHORD_TYPES[CHORDGAME_CHORD_IDX].id;
+        var existing = CHORDGAME_MISTAKES.find(function(m) { return m.key === key; });
+        if (existing) { existing.count++; }
+        else { CHORDGAME_MISTAKES.push({ key: key, chordName: format_note_name(getNoteName(CHORDGAME_ROOT_STRING, CHORDGAME_ROOT_FRET)) + ' ' + CHORD_TYPES[CHORDGAME_CHORD_IDX].name, count: 1 }); }
+        if (btn) { btn.classList.add('wrong-flash'); setTimeout(function() { btn.classList.remove('wrong-flash'); }, 300); }
+        updateChordScore();
+    }
+}
+
+function handleChordTypeClick(chordId) {
+    if (!CHORDGAME_RUNNING || CHORDGAME_STEP !== 'type') return;
+    var btn = document.querySelector('.chord-btn[data-chord="' + chordId + '"]');
+    var targetChord = CHORD_TYPES[CHORDGAME_CHORD_IDX];
+    if (chordId === targetChord.id) {
+        var elapsed = Date.now() - CHORDGAME_CHALLENGE_START;
+        CHORDGAME_CORRECT++;
+        var rootNote = format_note_name(getNoteName(CHORDGAME_ROOT_STRING, CHORDGAME_ROOT_FRET));
+        CHORDGAME_COMPLETED.push({ chordName: rootNote + ' ' + targetChord.name, timeMs: elapsed });
+        if (btn) { btn.classList.add('correct-flash'); setTimeout(function() { btn.classList.remove('correct-flash'); }, 300); }
+        updateChordScore();
+        setTimeout(nextChordChallenge, 300);
+    } else {
+        CHORDGAME_WRONG++;
+        var key = getNoteName(CHORDGAME_ROOT_STRING, CHORDGAME_ROOT_FRET) + '|' + targetChord.id;
+        var existing = CHORDGAME_MISTAKES.find(function(m) { return m.key === key; });
+        if (existing) { existing.count++; }
+        else { CHORDGAME_MISTAKES.push({ key: key, chordName: format_note_name(getNoteName(CHORDGAME_ROOT_STRING, CHORDGAME_ROOT_FRET)) + ' ' + targetChord.name, count: 1 }); }
+        if (btn) { btn.classList.add('wrong-flash'); setTimeout(function() { btn.classList.remove('wrong-flash'); }, 300); }
+        updateChordScore();
+    }
+}
+
+function updateChordScore() {
+    document.getElementById('chord-score').textContent = '\u2713 ' + CHORDGAME_CORRECT + '   \u2717 ' + CHORDGAME_WRONG;
+}
+
+function endChordGame() {
+    stopChordGame();
+    document.getElementById('chord-timer').textContent = '0:00';
+    var total = CHORDGAME_CORRECT + CHORDGAME_WRONG;
+    var pct = total > 0 ? Math.round(100 * CHORDGAME_CORRECT / total) : 0;
+    var slowest = CHORDGAME_COMPLETED.slice().sort(function(a, b) { return b.timeMs - a.timeMs; }).slice(0, 3);
+    var html = '<strong>Game Over!</strong><br>';
+    html += '\u2713 ' + CHORDGAME_CORRECT + ' correct &nbsp; \u2717 ' + CHORDGAME_WRONG + ' wrong &nbsp; (' + pct + '% accuracy)<br>';
+    if (slowest.length) {
+        html += '<br><em>Slowest correct answers:</em><ul>';
+        slowest.forEach(function(r) { html += '<li>' + r.chordName + ' \u2014 ' + (r.timeMs / 1000).toFixed(1) + 's</li>'; });
+        html += '</ul>';
+    }
+    if (CHORDGAME_MISTAKES.length) {
+        var sorted = CHORDGAME_MISTAKES.slice().sort(function(a, b) { return b.count - a.count; });
+        html += '<br><em>Mistakes:</em><ul>';
+        sorted.forEach(function(m) { html += '<li>' + m.chordName + (m.count > 1 ? ' \u2014 ' + m.count + '\xd7' : '') + '</li>'; });
+        html += '</ul>';
+    }
+    var resultsEl = document.getElementById('chord-results');
+    resultsEl.innerHTML = html;
+    resultsEl.style.display = '';
+    document.getElementById('chord-start-btn').textContent = 'Play Again';
+}
+
 var loadFromUrl = function(url_params){
     if (is_defined(url_params['note_names']) && (url_params['note_names'] === 'sharps' || url_params['note_names'] === 'flats')) {
 	setNoteNameMode(url_params['note_names']);
@@ -711,6 +943,7 @@ document.addEventListener('DOMContentLoaded', function() {
     GUITAR_STRINGS = getFretboardStrings(NUM_FRETS, 6);
     set_notes();
     updateNameGameKeyboardLabels();
+    updateChordGameKeyboardLabels();
     updateNoteNameToggle();
 
     var rebuildFretboard = function() {
@@ -768,6 +1001,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     document.querySelectorAll('.interval-btn').forEach(function(btn) {
         btn.addEventListener('click', function() { handleIntervalBtnClick(parseInt(this.dataset.semitones, 10)); });
+    });
+    document.getElementById('chord-start-btn').addEventListener('click', function() {
+        if (CHORDGAME_RUNNING) stopChordGame();
+        else startChordGame();
+    });
+    document.querySelectorAll('.chord-piano-key').forEach(function(btn) {
+        btn.addEventListener('click', function() { handleChordRootClick(this.dataset.note); });
+    });
+    document.querySelectorAll('.chord-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() { handleChordTypeClick(this.dataset.chord); });
     });
 
     loadFromUrl(get_url_parameters());
