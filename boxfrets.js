@@ -74,6 +74,7 @@ var CHORD_TYPES = [
     { id: 'maj6',  name: 'Major 6',    label: 'Maj6',  intervals: [0, 4, 9]  },
 ];
 var CHORDGAME_MAX_SPAN = 5;          // max fret span when placing chord notes
+var CHORDGAME_MAX_ATTEMPTS = 200;    // retry limit when finding a valid chord voicing
 var INTGAME_MAX_STRING_DISTANCE = 2; // max string span for interval challenges
 var INTGAME_MAX_FRET_DISTANCE = 3;   // max fret span for interval challenges
 var INTGAME_MAX_ATTEMPTS = 100;      // retry limit when picking a valid interval pair
@@ -708,6 +709,7 @@ var updateChordGameKeyboardLabels = function() {
 };
 
 function findFretOnString(stringIdx, targetChrIdx, nearFret, maxSpan) {
+    // Each pitch class appears every 12 frets; checking 2 octaves covers all 24 frets
     var fBase = ((targetChrIdx - STRING_OFFSETS[stringIdx]) % 12 + 12) % 12;
     var best = -1;
     var bestDist = maxSpan + 1;
@@ -727,7 +729,7 @@ function findFretOnString(stringIdx, targetChrIdx, nearFret, maxSpan) {
 function placeChordOnFretboard(chordIdx) {
     var chord = CHORD_TYPES[chordIdx];
     var numStrings = GUITAR_STRINGS.length;
-    for (var attempt = 0; attempt < 200; attempt++) {
+    for (var attempt = 0; attempt < CHORDGAME_MAX_ATTEMPTS; attempt++) {
         var rootS = Math.floor(Math.random() * numStrings);
         var rootF = Math.floor(Math.random() * NUM_FRETS);
         var rootChrIdx = CHROMATIC.indexOf(getNoteName(rootS, rootF));
