@@ -37,6 +37,12 @@ var STRING_THICKNESSES = [1, 1.2, 1.5, 1.7, 2, 2.3]; // high E → low E
 var STRING_NAMES = ['high E', 'B', 'G', 'D', 'A', 'low E'];
 var STRING_OFFSETS = [4, 11, 7, 2, 9, 4];
 var CHROMATIC = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+var MOBILE_BREAKPOINT = 540;
+var getLayoutParams = function() {
+    return window.innerWidth < MOBILE_BREAKPOINT
+        ? { numFrets: 14, cellHeight: 34 }
+        : { numFrets: 22, cellHeight: 34 };
+};
 var CELL_HEIGHT = 34;
 var SINGLE_MARKER_STRING = 2;
 var DOUBLE_MARKER_STRINGS = [1, 4];
@@ -175,7 +181,12 @@ var getFretboardStrings = function(numFrets, numStrings) {
             td: cell,
             paint: function() {
                 if (CURRENT_MODE === 'diagram') {
-                    td_paint_or_clear(cell, COLOR);
+                    if (ERASER) {
+                        td_clear(cell);
+                        update_link();
+                    } else {
+                        td_paint_or_clear(cell, COLOR);
+                    }
                 } else if (CURRENT_MODE === 'find-note' && GAME_RUNNING) {
                     if (s === GAME_TARGET_STRING) handleGameClick(s, f, cell);
                 }
@@ -287,6 +298,7 @@ function switchMode(mode) {
     });
     if (!isFindNote) stopGame();
     if (!isNameNote) stopNameGame();
+    if (!isDiagram) clear_fretboard();
 }
 
 function startGame() {
@@ -494,13 +506,13 @@ var loadFromUrl = function(url_params){
 	}
     }
 }
-var NUM_FRETS = 22;
+var NUM_FRETS = getLayoutParams().numFrets;
 var computeFretWidths = function() {
     var ratio = Math.pow(2, -1/12);
     var numActualFrets = NUM_FRETS - 1;
     var sumRatios = (1 - Math.pow(ratio, numActualFrets)) / (1 - ratio);
     var lastFretRatio = Math.pow(ratio, numActualFrets - 1);
-    var firstWidth = (window.innerWidth - 20) / (sumRatios + lastFretRatio);
+    var firstWidth = (window.innerWidth - 22) / (sumRatios + lastFretRatio);
     var openStringWidth = Math.round(firstWidth * lastFretRatio);
     var fretWidths = calculateFretWidths(numActualFrets, firstWidth);
     return [openStringWidth].concat(fretWidths);
@@ -515,10 +527,32 @@ document.addEventListener('DOMContentLoaded', function() {
     GUITAR_STRINGS = getFretboardStrings(NUM_FRETS, 6);
     set_notes();
 
+    var rebuildFretboard = function() {
+        var newParams = getLayoutParams();
+        if (newParams.numFrets === NUM_FRETS) {
+            updateFretboardWidth();
+            return;
+        }
+        var savedRepr = uri_diagram_repr(GUITAR_STRINGS);
+        NUM_FRETS = newParams.numFrets;
+        CELL_HEIGHT = newParams.cellHeight;
+        var old = document.getElementById('fretboard');
+        if (old) old.remove();
+        var fretWidths = computeFretWidths();
+        document.getElementById('main').insertAdjacentHTML('beforeend', gen_fretboard(NUM_FRETS, 6, fretWidths));
+        GUITAR_STRINGS = getFretboardStrings(NUM_FRETS, 6);
+        set_notes();
+        document.querySelectorAll('#fretboard .fretboard-cell').forEach(function(td) {
+            td.addEventListener('click', update_link);
+        });
+        if (savedRepr) fill_from_repr(savedRepr);
+        update_link();
+    };
+
     var resizeTimer;
     window.addEventListener('resize', function() {
         clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(updateFretboardWidth, 50);
+        resizeTimer = setTimeout(rebuildFretboard, 50);
     });
 
     // Examples:
@@ -567,7 +601,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	if (ERASER) {
 	    this.classList.remove('blank');
 	    this.classList.add('white');
-	    message.innerHTML = '<b>Eraser activated!</b><br /><sub>Mouseover the marks to erase them</sub>';
+	    message.innerHTML = '<b>Eraser activated!</b><br /><sub>Tap/click marks to erase them</sub>';
 	} else {
 	    this.classList.remove('white');
 	    this.classList.add('blank');

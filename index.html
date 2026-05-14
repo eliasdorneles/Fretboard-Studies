@@ -3,6 +3,7 @@
     <head>
         <title>Fretboard Studies</title>
         <meta charset='utf-8' />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 	<script src="boxfrets.js" defer></script>
 	<style>
 	    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=JetBrains+Mono:wght@400;700&display=swap');
@@ -35,7 +36,9 @@
 	        --game-results-strong: #111;
 	        --game-results-em: #666;
 	        --game-results-li: #555;
-	        --game-target-highlight: rgba(0, 100, 200, 0.10);
+	        --game-target-highlight: rgba(0, 85, 180, 0.28);
+        --game-target-highlight-bright: rgba(0, 85, 180, 0.65);
+        --game-string-border: rgba(0, 85, 180, 0.70);
 
 	        --piano-white-bg: #faf8f2;
 	        --piano-white-border: #888;
@@ -79,7 +82,9 @@
 	        --game-results-strong: #f0e4c8;
 	        --game-results-em: #8a7060;
 	        --game-results-li: #a08060;
-	        --game-target-highlight: rgba(212, 144, 42, 0.15);
+	        --game-target-highlight: rgba(212, 144, 42, 0.38);
+        --game-target-highlight-bright: rgba(212, 144, 42, 0.75);
+        --game-string-border: rgba(212, 144, 42, 0.75);
 
 	        --piano-white-bg: #e8dfc8;
 	        --piano-white-border: #5a3e28;
@@ -98,7 +103,7 @@
 	    * { margin:0; padding:0; border-spacing:0; }
 	    body { font-family:sans-serif; font-size:100%; background: var(--bg-page); color: var(--text-color); transition: background-color 0.25s, color 0.25s; }
 	    #diagram_title { background: var(--bg-page); color: var(--text-color); }
-	    #fretboard { display:grid; position:absolute; top:110px; left:10px; background: var(--bg-fretboard); border:1px solid var(--border-fretboard); box-sizing:border-box; transition: background-color 0.25s, border-color 0.25s; }
+	    #fretboard { display:grid; position:relative; margin:0 10px; background: var(--bg-fretboard); border:1px solid var(--border-fretboard); box-sizing:border-box; transition: background-color 0.25s, border-color 0.25s; }
 	    .fretboard-cell { border-right:1px solid var(--cell-border) !important; background-color:transparent !important; height:34px; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:bold; cursor:pointer; box-sizing:border-box; position:relative; z-index:1; }
 	    .fretboard-cell:hover { outline:2px dotted #555; outline-offset:-2px; }
 	    .fretboard-cell:not(.transparent)::before { content:''; position:absolute; width:min(calc(100% - 4px), 40px); height:26px; top:50%; left:50%; transform:translate(-50%,-50%); border-radius:5px; background-color:var(--fret-bg); border:2px solid var(--fret-border); box-sizing:border-box; z-index:1; }
@@ -116,7 +121,7 @@
 	    .white  { background-color:#ffffff !important; border-color:#111111 !important; color:#111111 !important; }
 	    .transparent { color:transparent !important }
 	    input.color_button { width:40px; border-radius: 5px; }
-	    div#main { height:340px; margin:10px; }
+	    div#main { margin:10px 0; }
 	    #diagram_title { font-size:25px; font-weight:bold; margin:15px; display:block; padding:4px; border:0; border-bottom:2px solid transparent; width:100%; transition: border-color 0.15s; outline:none; }
 	    #diagram_title:hover { border-bottom-color: var(--border-fretboard); cursor: text; }
 	    #diagram_title:focus { border-bottom-color: var(--cell-border); }
@@ -187,7 +192,14 @@
 	    #game-start-btn:hover { background: var(--game-btn-hover); }
 
 	    /* Target string highlight */
-	    .target-string { background-color: var(--game-target-highlight) !important; }
+	    .target-string {
+	        background-color: var(--game-target-highlight) !important;
+	        animation: string-pop 0.45s ease-out;
+	    }
+	    @keyframes string-pop {
+	        0%   { background-color: var(--game-target-highlight-bright) !important; }
+	        100% { background-color: var(--game-target-highlight) !important; }
+	    }
 
 	    /* Hide note names during game */
 	    body.game-mode .fretboard-cell span.note { visibility: hidden; }
@@ -233,6 +245,23 @@
 	    /* Single-cell target highlight */
 	    .target-cell::after { content: ''; position: absolute; inset: 2px; border: 2px solid var(--game-note-color); border-radius: 4px; pointer-events: none; z-index: 3; box-shadow: 0 0 8px var(--game-note-color); animation: pulse-cell 1s ease-in-out infinite; }
 	    @keyframes pulse-cell { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+	    @media (max-width: 539px) {
+	        .mode-tab { padding: 10px 12px; font-size: 14px; }
+	        input.color_button { width: 44px; height: 36px; }
+	        #tool-row { gap: 4px; flex-wrap: wrap; }
+	        .fretboard-cell { padding: 3px 0; }
+	        #note-keyboard { transform: scale(0.88); transform-origin: center top; margin-bottom: -20px; }
+	        #diagram_title { font-size: 20px; margin: 10px; }
+	        #target-note { font-size: 60px; }
+	        #game-timer, #name-timer { font-size: 34px; }
+	        #game-score, #name-score { font-size: 16px; }
+	        #game-panel, #name-note-panel { padding: 12px 16px 16px; }
+	        #game-challenge, #name-challenge { margin-bottom: 10px; }
+	        #game-status, #name-status { gap: 14px; margin-bottom: 10px; }
+	        .game-sublabel { font-size: 14px; }
+	        .game-label { font-size: 10px; }
+	    }
 	</style>
     </head>
     <body>
@@ -243,8 +272,18 @@
 	  <button id="theme-toggle" title="Toggle dark/light theme">&#9790;</button>
 	</nav>
 	<input id="diagram_title" type="text" value="Click to add a title..." />
-	<div id="main">
-		<div id="message">&nbsp;</div>
+	<div id="game-panel" style="display:none">
+	  <div id="game-challenge">
+	    <div class="game-label">find the note</div>
+	    <span id="target-note">--</span>
+	    <div class="game-sublabel">on the highlighted string</div>
+	  </div>
+	  <div id="game-status">
+	    <span id="game-timer">1:00</span>
+	    <span id="game-score">&#x2713; 0 &nbsp; &#x2717; 0</span>
+	  </div>
+	  <button id="game-start-btn">Start</button>
+	  <div id="game-results" style="display:none"></div>
 	</div>
 	<div id="name-note-panel" style="display:none">
 	  <div id="name-challenge">
@@ -272,18 +311,8 @@
 	  <button id="name-start-btn">Start</button>
 	  <div id="name-results" style="display:none"></div>
 	</div>
-	<div id="game-panel" style="display:none">
-	  <div id="game-challenge">
-	    <div class="game-label">find the note</div>
-	    <span id="target-note">--</span>
-	    <div class="game-sublabel">on the highlighted string</div>
-	  </div>
-	  <div id="game-status">
-	    <span id="game-timer">1:00</span>
-	    <span id="game-score">&#x2713; 0 &nbsp; &#x2717; 0</span>
-	  </div>
-	  <button id="game-start-btn">Start</button>
-	  <div id="game-results" style="display:none"></div>
+	<div id="main">
+		<div id="message">&nbsp;</div>
 	</div>
 	<div id="form_controls">
 		<div id="tool-row">
