@@ -10,6 +10,7 @@ var GAME_TARGET_NOTE = '';
 var GAME_CHALLENGE_START = 0;
 var GAME_TIMER_ID = null;
 var GAME_SECONDS_LEFT = 60;
+var GAME_SESSION_START = 0;
 var GAME_CORRECT = 0;
 var GAME_WRONG = 0;
 var GAME_COMPLETED = [];
@@ -21,6 +22,7 @@ var NAME_TARGET_NOTE = '';
 var NAME_CHALLENGE_START = 0;
 var NAME_TIMER_ID = null;
 var NAME_SECONDS_LEFT = 60;
+var NAME_SESSION_START = 0;
 var NAME_CORRECT = 0;
 var NAME_WRONG = 0;
 var NAME_COMPLETED = [];
@@ -34,6 +36,7 @@ var INTGAME_INTERVAL = -1;
 var INTGAME_CHALLENGE_START = 0;
 var INTGAME_TIMER_ID = null;
 var INTGAME_SECONDS_LEFT = 60;
+var INTGAME_SESSION_START = 0;
 var INTGAME_CORRECT = 0;
 var INTGAME_WRONG = 0;
 var INTGAME_COMPLETED = [];
@@ -47,6 +50,7 @@ var CHORDGAME_STEP = 'root';
 var CHORDGAME_CHALLENGE_START = 0;
 var CHORDGAME_TIMER_ID = null;
 var CHORDGAME_SECONDS_LEFT = 60;
+var CHORDGAME_SESSION_START = 0;
 var CHORDGAME_CORRECT = 0;
 var CHORDGAME_WRONG = 0;
 var CHORDGAME_COMPLETED = [];
@@ -85,8 +89,9 @@ function normalizeSessionData(sessionData) {
     var correct = Number(sessionData.correct) || 0;
     var wrong = Number(sessionData.wrong) || 0;
     var total = correct + wrong;
+    var parsedPlayedAt = Date.parse(sessionData.playedAt);
     return {
-        playedAt: (sessionData.playedAt && !isNaN(Date.parse(sessionData.playedAt))) ? sessionData.playedAt : new Date().toISOString(),
+        playedAt: (sessionData.playedAt && !isNaN(parsedPlayedAt)) ? sessionData.playedAt : new Date().toISOString(),
         durationSeconds: Number(sessionData.durationSeconds) || 0,
         correct: correct,
         wrong: wrong,
@@ -164,14 +169,22 @@ function formatStatsDate(iso) {
     if (isNaN(date.getTime())) return '—';
     return date.toLocaleDateString();
 }
+function escapeHtml(text) {
+    return String(text).replace(/[&<>"']/g, function(ch) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+}
 function renderStatsBlock(gameKey) {
-    var gameStats = GAME_STATS.games[gameKey] || createEmptyGameStats();
+    var safeGameKey = STATS_GAME_KEYS.indexOf(gameKey) >= 0 ? gameKey : 'find-note';
+    var safeGameKeyAttr = escapeHtml(safeGameKey);
+    var gameStats = GAME_STATS.games[safeGameKey] || createEmptyGameStats();
     var agg = gameStats.aggregates;
     var totalAnswers = agg.totalCorrect + agg.totalWrong;
     var avgAccuracy = totalAnswers > 0 ? Math.round((100 * agg.totalCorrect) / totalAnswers) : 0;
     var lastSession = gameStats.sessions.length ? gameStats.sessions[gameStats.sessions.length - 1] : null;
-    var html = '<div class="stats-block" data-stats-game="' + gameKey + '">';
-    html += '<br><em>Progress (' + STATS_GAME_LABELS[gameKey] + ')</em><br>';
+    var gameLabel = escapeHtml(STATS_GAME_LABELS[safeGameKey] || safeGameKey);
+    var html = '<div class="stats-block" data-stats-game="' + safeGameKeyAttr + '">';
+    html += '<br><em>Progress (' + gameLabel + ')</em><br>';
     html += '<div class="stats-privacy">Stored only in your browser (private, not sent to servers).</div>';
     if (!agg.totalSessions) {
         html += '<div class="stats-line">No saved sessions yet.</div>';
@@ -187,14 +200,19 @@ function renderStatsBlock(gameKey) {
         }
     }
     html += '<div class="stats-actions">';
-    html += '<button class="stats-action" data-action="clear-last" data-game="' + gameKey + '">Clear last game stats</button>';
-    html += '<button class="stats-action" data-action="clear-all" data-game="' + gameKey + '">Clear all stats</button>';
+    html += '<button class="stats-action" data-action="clear-last" data-game="' + safeGameKeyAttr + '">Clear last game stats</button>';
+    html += '<button class="stats-action" data-action="clear-all" data-game="' + safeGameKeyAttr + '">Clear all stats</button>';
     html += '</div></div>';
     return html;
 }
 function refreshStatsBlocks(gameKey) {
+    if (STATS_GAME_KEYS.indexOf(gameKey) < 0) return;
     document.querySelectorAll('.stats-block[data-stats-game="' + gameKey + '"]').forEach(function(el) {
-        el.outerHTML = renderStatsBlock(gameKey);
+        var tmp = document.createElement('div');
+        tmp.innerHTML = renderStatsBlock(gameKey);
+        if (tmp.firstElementChild) {
+            el.replaceWith(tmp.firstElementChild);
+        }
     });
 }
 var GAME_STATS = loadStatsStore();
@@ -577,6 +595,7 @@ function switchMode(mode) {
 
 function startGame() {
     GAME_RUNNING = true;
+    GAME_SESSION_START = Date.now();
     GAME_CORRECT = 0;
     GAME_WRONG = 0;
     GAME_COMPLETED = [];
@@ -644,6 +663,7 @@ function updateGameScore() {
 
 function endGame() {
     stopGame();
+    var durationSeconds = GAME_SESSION_START ? Math.max(0, Math.round((Date.now() - GAME_SESSION_START) / 1000)) : 0;
     document.getElementById('game-timer').textContent = '0:00';
     var total = GAME_CORRECT + GAME_WRONG;
     var pct = total > 0 ? Math.round(100 * GAME_CORRECT / total) : 0;
@@ -671,7 +691,7 @@ function endGame() {
     }
     recordGameSession('find-note', {
         playedAt: new Date().toISOString(),
-        durationSeconds: 60,
+        durationSeconds: durationSeconds,
         correct: GAME_CORRECT,
         wrong: GAME_WRONG,
         details: { slowest: slowest, mistakes: GAME_MISTAKES.slice() }
@@ -685,6 +705,7 @@ function endGame() {
 
 function startNameGame() {
     NAME_RUNNING = true;
+    NAME_SESSION_START = Date.now();
     NAME_CORRECT = 0; NAME_WRONG = 0;
     NAME_COMPLETED = []; NAME_MISTAKES = [];
     NAME_SECONDS_LEFT = 60;
@@ -747,6 +768,7 @@ function updateNameScore() {
 
 function endNameGame() {
     stopNameGame();
+    var durationSeconds = NAME_SESSION_START ? Math.max(0, Math.round((Date.now() - NAME_SESSION_START) / 1000)) : 0;
     document.getElementById('name-timer').textContent = '0:00';
     var total = NAME_CORRECT + NAME_WRONG;
     var pct = total > 0 ? Math.round(100 * NAME_CORRECT / total) : 0;
@@ -766,7 +788,7 @@ function endNameGame() {
     }
     recordGameSession('name-note', {
         playedAt: new Date().toISOString(),
-        durationSeconds: 60,
+        durationSeconds: durationSeconds,
         correct: NAME_CORRECT,
         wrong: NAME_WRONG,
         details: { slowest: slowest, mistakes: NAME_MISTAKES.slice() }
@@ -780,6 +802,7 @@ function endNameGame() {
 
 function startIntervalGame() {
     INTGAME_RUNNING = true;
+    INTGAME_SESSION_START = Date.now();
     INTGAME_CORRECT = 0;
     INTGAME_WRONG = 0;
     INTGAME_COMPLETED = [];
@@ -866,6 +889,7 @@ function updateIntervalScore() {
 
 function endIntervalGame() {
     stopIntervalGame();
+    var durationSeconds = INTGAME_SESSION_START ? Math.max(0, Math.round((Date.now() - INTGAME_SESSION_START) / 1000)) : 0;
     document.getElementById('interval-timer').textContent = '0:00';
     var total = INTGAME_CORRECT + INTGAME_WRONG;
     var pct = total > 0 ? Math.round(100 * INTGAME_CORRECT / total) : 0;
@@ -885,7 +909,7 @@ function endIntervalGame() {
     }
     recordGameSession('interval-game', {
         playedAt: new Date().toISOString(),
-        durationSeconds: 60,
+        durationSeconds: durationSeconds,
         correct: INTGAME_CORRECT,
         wrong: INTGAME_WRONG,
         details: { slowest: slowest, mistakes: INTGAME_MISTAKES.slice() }
@@ -929,6 +953,7 @@ function setChordTypeButtonsEnabled(enabled) {
 
 function startChordGame() {
     CHORDGAME_RUNNING = true;
+    CHORDGAME_SESSION_START = Date.now();
     CHORDGAME_CORRECT = 0;
     CHORDGAME_WRONG = 0;
     CHORDGAME_COMPLETED = [];
@@ -1036,6 +1061,7 @@ function updateChordScore() {
 
 function endChordGame() {
     stopChordGame();
+    var durationSeconds = CHORDGAME_SESSION_START ? Math.max(0, Math.round((Date.now() - CHORDGAME_SESSION_START) / 1000)) : 0;
     document.getElementById('chord-timer').textContent = '0:00';
     var total = CHORDGAME_CORRECT + CHORDGAME_WRONG;
     var pct = total > 0 ? Math.round(100 * CHORDGAME_CORRECT / total) : 0;
@@ -1055,7 +1081,7 @@ function endChordGame() {
     }
     recordGameSession('chord-game', {
         playedAt: new Date().toISOString(),
-        durationSeconds: 60,
+        durationSeconds: durationSeconds,
         correct: CHORDGAME_CORRECT,
         wrong: CHORDGAME_WRONG,
         details: { slowest: slowest, mistakes: CHORDGAME_MISTAKES.slice() }
@@ -1188,10 +1214,13 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         var action = btn.dataset.action;
         var gameKey = btn.dataset.game;
+        if (STATS_GAME_KEYS.indexOf(gameKey) < 0) return;
         if (action === 'clear-last') {
+            if (!confirm('Clear last saved game stats for this mode?')) return;
             clearLastGameStats(gameKey);
             refreshStatsBlocks(gameKey);
         } else if (action === 'clear-all') {
+            if (!confirm('Clear all saved stats for every game mode?')) return;
             clearAllGameStats();
             STATS_GAME_KEYS.forEach(function(key) { refreshStatsBlocks(key); });
         }
