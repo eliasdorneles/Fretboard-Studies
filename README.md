@@ -11,6 +11,7 @@ Live at: http://eliasdorneles.github.com/Fretboard-Studies/
 - Paint notes with 6 colors to highlight patterns and differences
 - Every diagram is shareable via URL
 - Quiz mode: share a link that hides the answer until the student clicks "Check answer"
+- Game modes track private progress stats in browser local storage (with options to clear last game or all stats)
 
 ## Usage
 

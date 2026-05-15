@@ -10,6 +10,7 @@ var GAME_TARGET_NOTE = '';
 var GAME_CHALLENGE_START = 0;
 var GAME_TIMER_ID = null;
 var GAME_SECONDS_LEFT = 60;
+var GAME_SESSION_START = 0;
 var GAME_CORRECT = 0;
 var GAME_WRONG = 0;
 var GAME_COMPLETED = [];
@@ -21,6 +22,7 @@ var NAME_TARGET_NOTE = '';
 var NAME_CHALLENGE_START = 0;
 var NAME_TIMER_ID = null;
 var NAME_SECONDS_LEFT = 60;
+var NAME_SESSION_START = 0;
 var NAME_CORRECT = 0;
 var NAME_WRONG = 0;
 var NAME_COMPLETED = [];
@@ -34,6 +36,7 @@ var INTGAME_INTERVAL = -1;
 var INTGAME_CHALLENGE_START = 0;
 var INTGAME_TIMER_ID = null;
 var INTGAME_SECONDS_LEFT = 60;
+var INTGAME_SESSION_START = 0;
 var INTGAME_CORRECT = 0;
 var INTGAME_WRONG = 0;
 var INTGAME_COMPLETED = [];
@@ -47,11 +50,172 @@ var CHORDGAME_STEP = 'root';
 var CHORDGAME_CHALLENGE_START = 0;
 var CHORDGAME_TIMER_ID = null;
 var CHORDGAME_SECONDS_LEFT = 60;
+var CHORDGAME_SESSION_START = 0;
 var CHORDGAME_CORRECT = 0;
 var CHORDGAME_WRONG = 0;
 var CHORDGAME_COMPLETED = [];
 var CHORDGAME_MISTAKES = [];
 var NOTE_NAMES_MODE = 'sharps';
+var STATS_STORAGE_KEY = 'fretboard-game-stats-v1';
+var STATS_GAME_KEYS = ['find-note', 'name-note', 'interval-game', 'chord-game'];
+var STATS_GAME_LABELS = {
+    'find-note': 'Find the Note',
+    'name-note': 'Name the Note',
+    'interval-game': 'Name the Interval',
+    'chord-game': 'Name the Chord'
+};
+function createEmptyGameStats() {
+    return {
+        sessions: [],
+        aggregates: {
+            totalSessions: 0,
+            totalCorrect: 0,
+            totalWrong: 0,
+            practiceDays: 0,
+            bestAccuracy: 0,
+            firstPlayedAt: null,
+            lastPlayedAt: null
+        }
+    };
+}
+function createEmptyStatsStore() {
+    var games = {};
+    STATS_GAME_KEYS.forEach(function(key) {
+        games[key] = createEmptyGameStats();
+    });
+    return { version: 1, games: games };
+}
+function normalizeSessionData(sessionData) {
+    var correct = Number(sessionData.correct) || 0;
+    var wrong = Number(sessionData.wrong) || 0;
+    var total = correct + wrong;
+    var parsedPlayedAt = Date.parse(sessionData.playedAt);
+    return {
+        playedAt: (sessionData.playedAt && !isNaN(parsedPlayedAt)) ? sessionData.playedAt : new Date().toISOString(),
+        durationSeconds: Number(sessionData.durationSeconds) || 0,
+        correct: correct,
+        wrong: wrong,
+        accuracy: total > 0 ? Math.round((100 * correct) / total) : 0,
+        details: sessionData.details || {}
+    };
+}
+function recomputeGameAggregates(gameStats) {
+    var agg = {
+        totalSessions: 0,
+        totalCorrect: 0,
+        totalWrong: 0,
+        practiceDays: 0,
+        bestAccuracy: 0,
+        firstPlayedAt: null,
+        lastPlayedAt: null
+    };
+    var dayMap = {};
+    gameStats.sessions.forEach(function(session) {
+        agg.totalSessions++;
+        agg.totalCorrect += session.correct;
+        agg.totalWrong += session.wrong;
+        if (session.accuracy > agg.bestAccuracy) agg.bestAccuracy = session.accuracy;
+        if (!agg.firstPlayedAt || session.playedAt < agg.firstPlayedAt) agg.firstPlayedAt = session.playedAt;
+        if (!agg.lastPlayedAt || session.playedAt > agg.lastPlayedAt) agg.lastPlayedAt = session.playedAt;
+        if (session.playedAt && session.playedAt.length >= 10) dayMap[session.playedAt.slice(0, 10)] = true;
+    });
+    agg.practiceDays = Object.keys(dayMap).length;
+    gameStats.aggregates = agg;
+}
+function loadStatsStore() {
+    var empty = createEmptyStatsStore();
+    try {
+        var raw = localStorage.getItem(STATS_STORAGE_KEY);
+        if (!raw) return empty;
+        var parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== 'object' || !parsed.games) return empty;
+        STATS_GAME_KEYS.forEach(function(key) {
+            var incoming = parsed.games[key];
+            var sessions = incoming && Array.isArray(incoming.sessions) ? incoming.sessions : [];
+            empty.games[key].sessions = sessions.map(normalizeSessionData);
+            recomputeGameAggregates(empty.games[key]);
+        });
+        return empty;
+    } catch (e) {
+        return empty;
+    }
+}
+function saveStatsStore() {
+    try {
+        localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(GAME_STATS));
+    } catch (e) {}
+}
+function recordGameSession(gameKey, sessionData) {
+    var gameStats = GAME_STATS.games[gameKey];
+    if (!gameStats) return;
+    gameStats.sessions.push(normalizeSessionData(sessionData));
+    recomputeGameAggregates(gameStats);
+    saveStatsStore();
+}
+function clearLastGameStats(gameKey) {
+    var gameStats = GAME_STATS.games[gameKey];
+    if (!gameStats || !gameStats.sessions.length) return;
+    gameStats.sessions.pop();
+    recomputeGameAggregates(gameStats);
+    saveStatsStore();
+}
+function clearAllGameStats() {
+    GAME_STATS = createEmptyStatsStore();
+    saveStatsStore();
+}
+function formatStatsDate(iso) {
+    if (!iso) return '—';
+    var date = new Date(iso);
+    if (isNaN(date.getTime())) return '—';
+    return date.toLocaleDateString();
+}
+function escapeHtml(text) {
+    return String(text).replace(/[&<>"']/g, function(ch) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+}
+function renderStatsBlock(gameKey) {
+    var safeGameKey = STATS_GAME_KEYS.indexOf(gameKey) >= 0 ? gameKey : 'find-note';
+    var safeGameKeyAttr = escapeHtml(safeGameKey);
+    var gameStats = GAME_STATS.games[safeGameKey] || createEmptyGameStats();
+    var agg = gameStats.aggregates;
+    var totalAnswers = agg.totalCorrect + agg.totalWrong;
+    var avgAccuracy = totalAnswers > 0 ? Math.round((100 * agg.totalCorrect) / totalAnswers) : 0;
+    var lastSession = gameStats.sessions.length ? gameStats.sessions[gameStats.sessions.length - 1] : null;
+    var gameLabel = escapeHtml(STATS_GAME_LABELS[safeGameKey] || safeGameKey);
+    var html = '<div class="stats-block" data-stats-game="' + safeGameKeyAttr + '">';
+    html += '<br><em>Progress (' + gameLabel + ')</em><br>';
+    html += '<div class="stats-privacy">Stored only in your browser (private, not sent to servers).</div>';
+    if (!agg.totalSessions) {
+        html += '<div class="stats-line">No saved sessions yet.</div>';
+    } else {
+        html += '<div class="stats-line">Sessions: ' + agg.totalSessions +
+            ' &nbsp; Practice days: ' + agg.practiceDays +
+            ' &nbsp; Total accuracy: ' + avgAccuracy + '%</div>';
+        html += '<div class="stats-line">Best session: ' + agg.bestAccuracy + '% &nbsp; First: ' + formatStatsDate(agg.firstPlayedAt) +
+            ' &nbsp; Last: ' + formatStatsDate(agg.lastPlayedAt) + '</div>';
+        if (lastSession) {
+            html += '<div class="stats-line">Last game: ✓ ' + lastSession.correct + ' &nbsp; ✗ ' + lastSession.wrong +
+                ' &nbsp; (' + lastSession.accuracy + '%)</div>';
+        }
+    }
+    html += '<div class="stats-actions">';
+    html += '<button class="stats-action" data-action="clear-last" data-game="' + safeGameKeyAttr + '">Clear last game stats</button>';
+    html += '<button class="stats-action" data-action="clear-all" data-game="' + safeGameKeyAttr + '">Clear all stats</button>';
+    html += '</div></div>';
+    return html;
+}
+function refreshStatsBlocks(gameKey) {
+    if (STATS_GAME_KEYS.indexOf(gameKey) < 0) return;
+    document.querySelectorAll('.stats-block[data-stats-game="' + gameKey + '"]').forEach(function(el) {
+        var tmp = document.createElement('div');
+        tmp.innerHTML = renderStatsBlock(gameKey);
+        if (tmp.firstElementChild) {
+            el.replaceWith(tmp.firstElementChild);
+        }
+    });
+}
+var GAME_STATS = loadStatsStore();
 var calculateFretWidths = function(numFrets, firstWidth) {
     var ratio = Math.pow(2, -1/12);
     return Array.from({length: numFrets}, function(_, i) {
@@ -431,6 +595,7 @@ function switchMode(mode) {
 
 function startGame() {
     GAME_RUNNING = true;
+    GAME_SESSION_START = Date.now();
     GAME_CORRECT = 0;
     GAME_WRONG = 0;
     GAME_COMPLETED = [];
@@ -498,6 +663,7 @@ function updateGameScore() {
 
 function endGame() {
     stopGame();
+    var durationSeconds = GAME_SESSION_START ? Math.max(0, Math.round((Date.now() - GAME_SESSION_START) / 1000)) : 0;
     document.getElementById('game-timer').textContent = '0:00';
     var total = GAME_CORRECT + GAME_WRONG;
     var pct = total > 0 ? Math.round(100 * GAME_CORRECT / total) : 0;
@@ -523,6 +689,14 @@ function endGame() {
         });
         html += '</ul>';
     }
+    recordGameSession('find-note', {
+        playedAt: new Date().toISOString(),
+        durationSeconds: durationSeconds,
+        correct: GAME_CORRECT,
+        wrong: GAME_WRONG,
+        details: { slowest: slowest, mistakes: GAME_MISTAKES.slice() }
+    });
+    html += renderStatsBlock('find-note');
     var resultsEl = document.getElementById('game-results');
     resultsEl.innerHTML = html;
     resultsEl.style.display = '';
@@ -531,6 +705,7 @@ function endGame() {
 
 function startNameGame() {
     NAME_RUNNING = true;
+    NAME_SESSION_START = Date.now();
     NAME_CORRECT = 0; NAME_WRONG = 0;
     NAME_COMPLETED = []; NAME_MISTAKES = [];
     NAME_SECONDS_LEFT = 60;
@@ -593,6 +768,7 @@ function updateNameScore() {
 
 function endNameGame() {
     stopNameGame();
+    var durationSeconds = NAME_SESSION_START ? Math.max(0, Math.round((Date.now() - NAME_SESSION_START) / 1000)) : 0;
     document.getElementById('name-timer').textContent = '0:00';
     var total = NAME_CORRECT + NAME_WRONG;
     var pct = total > 0 ? Math.round(100 * NAME_CORRECT / total) : 0;
@@ -610,6 +786,14 @@ function endNameGame() {
         sorted.forEach(function(m) { html += '<li>' + format_note_name(m.note) + ' on ' + m.stringName + ' string' + (m.count > 1 ? ' — ' + m.count + '\xd7' : '') + '</li>'; });
         html += '</ul>';
     }
+    recordGameSession('name-note', {
+        playedAt: new Date().toISOString(),
+        durationSeconds: durationSeconds,
+        correct: NAME_CORRECT,
+        wrong: NAME_WRONG,
+        details: { slowest: slowest, mistakes: NAME_MISTAKES.slice() }
+    });
+    html += renderStatsBlock('name-note');
     var resultsEl = document.getElementById('name-results');
     resultsEl.innerHTML = html;
     resultsEl.style.display = '';
@@ -618,6 +802,7 @@ function endNameGame() {
 
 function startIntervalGame() {
     INTGAME_RUNNING = true;
+    INTGAME_SESSION_START = Date.now();
     INTGAME_CORRECT = 0;
     INTGAME_WRONG = 0;
     INTGAME_COMPLETED = [];
@@ -704,6 +889,7 @@ function updateIntervalScore() {
 
 function endIntervalGame() {
     stopIntervalGame();
+    var durationSeconds = INTGAME_SESSION_START ? Math.max(0, Math.round((Date.now() - INTGAME_SESSION_START) / 1000)) : 0;
     document.getElementById('interval-timer').textContent = '0:00';
     var total = INTGAME_CORRECT + INTGAME_WRONG;
     var pct = total > 0 ? Math.round(100 * INTGAME_CORRECT / total) : 0;
@@ -721,6 +907,14 @@ function endIntervalGame() {
         sorted.forEach(function(m) { html += '<li>' + m.intervalName + (m.count > 1 ? ' — ' + m.count + '\xd7' : '') + '</li>'; });
         html += '</ul>';
     }
+    recordGameSession('interval-game', {
+        playedAt: new Date().toISOString(),
+        durationSeconds: durationSeconds,
+        correct: INTGAME_CORRECT,
+        wrong: INTGAME_WRONG,
+        details: { slowest: slowest, mistakes: INTGAME_MISTAKES.slice() }
+    });
+    html += renderStatsBlock('interval-game');
     var resultsEl = document.getElementById('interval-results');
     resultsEl.innerHTML = html;
     resultsEl.style.display = '';
@@ -759,6 +953,7 @@ function setChordTypeButtonsEnabled(enabled) {
 
 function startChordGame() {
     CHORDGAME_RUNNING = true;
+    CHORDGAME_SESSION_START = Date.now();
     CHORDGAME_CORRECT = 0;
     CHORDGAME_WRONG = 0;
     CHORDGAME_COMPLETED = [];
@@ -866,6 +1061,7 @@ function updateChordScore() {
 
 function endChordGame() {
     stopChordGame();
+    var durationSeconds = CHORDGAME_SESSION_START ? Math.max(0, Math.round((Date.now() - CHORDGAME_SESSION_START) / 1000)) : 0;
     document.getElementById('chord-timer').textContent = '0:00';
     var total = CHORDGAME_CORRECT + CHORDGAME_WRONG;
     var pct = total > 0 ? Math.round(100 * CHORDGAME_CORRECT / total) : 0;
@@ -883,6 +1079,14 @@ function endChordGame() {
         sorted.forEach(function(m) { html += '<li>' + m.chordName + (m.count > 1 ? ' \u2014 ' + m.count + '\xd7' : '') + '</li>'; });
         html += '</ul>';
     }
+    recordGameSession('chord-game', {
+        playedAt: new Date().toISOString(),
+        durationSeconds: durationSeconds,
+        correct: CHORDGAME_CORRECT,
+        wrong: CHORDGAME_WRONG,
+        details: { slowest: slowest, mistakes: CHORDGAME_MISTAKES.slice() }
+    });
+    html += renderStatsBlock('chord-game');
     var resultsEl = document.getElementById('chord-results');
     resultsEl.innerHTML = html;
     resultsEl.style.display = '';
@@ -1003,6 +1207,23 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     document.querySelectorAll('.chord-btn').forEach(function(btn) {
         btn.addEventListener('click', function() { handleChordTypeClick(this.dataset.chord); });
+    });
+    document.addEventListener('click', function(e) {
+        var btn = e.target.closest('.stats-action');
+        if (!btn) return;
+        e.preventDefault();
+        var action = btn.dataset.action;
+        var gameKey = btn.dataset.game;
+        if (STATS_GAME_KEYS.indexOf(gameKey) < 0) return;
+        if (action === 'clear-last') {
+            if (!confirm('Clear last saved game stats for this mode?')) return;
+            clearLastGameStats(gameKey);
+            refreshStatsBlocks(gameKey);
+        } else if (action === 'clear-all') {
+            if (!confirm('Clear all saved stats for every game mode?')) return;
+            clearAllGameStats();
+            STATS_GAME_KEYS.forEach(function(key) { refreshStatsBlocks(key); });
+        }
     });
 
     loadFromUrl(get_url_parameters());
